@@ -1,4 +1,10 @@
-.Rproj.user
+# History files
 .Rhistory
+
+# Session data files
 .RData
 .Ruserdata
+
+# Mac OS files
+.DS_Store
+.Rproj.user

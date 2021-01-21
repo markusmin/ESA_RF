@@ -28,6 +28,7 @@ occurrence_plot <- ggplot(species_counts, aes(x = Species, y = n,  fill = factor
   # scale_fill_manual(values = ESA_colors)+
   theme(axis.text.x = element_text(angle = 90, color = ESA_colors,vjust = 0.45,hjust = 1),
         legend.position = "none")+
-  ylab("Occurrences")
+  ylab("Occurrences")+
+  ggtitle("Total species occurrences from 1974-1977 Percy Washington Hook & Line Survey")
 
 ggsave(paste0(fig_dir,"/PW_species_counts.png"),occurrence_plot, width = 8, height = 6)

@@ -5,9 +5,9 @@ library(readxl)
 library(here)
 
 ## ----Load data----------------------------------------------------------------
-PW_survey_path <- here("hook_and_line_data","Washington_et_al_74-77_Puget_Sound_data.xls")
+PW_survey_path <- here("hook_and_line_data","Washington_et_al_74-77_Puget_Sound_data.xlsx")
 excel_sheets(PW_survey_path)
-PW_survey <- read_excel(PW_survey_path, sheet = "Main Data")
+PW_survey <- read_excel(PW_survey_path, sheet = "catch_species_names")
 
 # Set figure directory
 fig_dir <- here("exploratory_figures")

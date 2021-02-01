@@ -117,22 +117,22 @@ for (i in 1:dim(PW_effort)[1]){
 PW_effort %>% mutate(., angler_hours = angler_time/3600) -> PW_effort
 
 # Calculate total number of angler hours
-total_effort_angler_hours <- sum(PW_effort$angler_hours)
+PW_angler_hours <- sum(PW_effort$angler_hours)
 # 1761.955 angler hours total (estimate)
 
 # How many total yelloweye did they catch?
 PW_survey_YE <- subset(PW_survey, Species == "Yellow Eye")
-nYE <- dim(PW_survey_YE)[1]
+PW_nYE <- dim(PW_survey_YE)[1]
 
 # Yelloweye CPUE
-yelloweye_nominal_CPUE_angler_hours <- nYE/total_effort_angler_hours
+PW_yelloweye_nominal_CPUE_angler_hours <- PW_nYE/PW_angler_hours
 
 # How many total Bocaccio did they catch?
 PW_survey_boc <- subset(PW_survey, Species == "Bocaccio")
-nboc <- dim(PW_survey_boc)[1]
+PW_nboc <- dim(PW_survey_boc)[1]
 
 # Bocaccio CPUE
-bocaccio_nominal_CPUE_hours <- nboc/total_effort_hours
+PW_bocaccio_nominal_CPUE_hours <- PW_nboc/PW_hours
 
 
 ## ----Calculate CPUE by angler days-------------------------------------------
@@ -141,24 +141,24 @@ bocaccio_nominal_CPUE_hours <- nboc/total_effort_hours
 PW_effort %>% mutate(., date = paste0("19",Year,"-",Month,"-",Day)) -> PW_effort
 
 # Calculate total number of angler days
-total_effort_angler_days <- length(unique((PW_effort$date)))
+PW_angler_days <- length(unique((PW_effort$date)))
 # 1761.955 angler hours total (estimate)
 
 # How many total yelloweye did they catch?
 PW_survey_YE <- subset(PW_survey, Species == "Yellow Eye")
-nYE <- dim(PW_survey_YE)[1]
+PW_nYE <- dim(PW_survey_YE)[1]
 
 # Yelloweye CPUE
-yelloweye_nominal_CPUE_angler_days <- nYE/total_effort_angler_days
-yelloweye_nominal_CPUE_angler_days
+PW_yelloweye_nominal_CPUE_angler_days <- PW_nYE/PW_angler_days
+PW_yelloweye_nominal_CPUE_angler_days
 
 # How many total Bocaccio did they catch?
 PW_survey_boc <- subset(PW_survey, Species == "Bocaccio")
-nboc <- dim(PW_survey_boc)[1]
+PW_nboc <- dim(PW_survey_boc)[1]
 
 # Bocaccio CPUE
-bocaccio_nominal_CPUE_angler_days <- nboc/total_effort_angler_days
-bocaccio_nominal_CPUE_angler_days
+PW_bocaccio_nominal_CPUE_angler_days <- PW_nboc/PW_angler_days
+PW_bocaccio_nominal_CPUE_angler_days
 
 
 

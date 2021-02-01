@@ -10,9 +10,6 @@ PW_survey_path <- here("hook_and_line_data","Washington_et_al_74-77_Puget_Sound_
 excel_sheets(PW_survey_path)
 PW_survey <- read_excel(PW_survey_path, sheet = "catch_species_names")
 
-# Set figure directory
-fig_dir <- here("exploratory_figures")
-
 ## ----Prepare effort data------------------------------------------------------
 colnames(PW_survey)
 
@@ -114,22 +111,61 @@ for (i in 1:dim(PW_effort)[1]){
 
 }
 
+## ----Calculate CPUE by angler hours-------------------------------------------
+
 # Create angler_hours field by conversion from seconds
 PW_effort %>% mutate(., angler_hours = angler_time/3600) -> PW_effort
 
 # Calculate total number of angler hours
-sum(PW_effort$angler_hours)
+total_effort_angler_hours <- sum(PW_effort$angler_hours)
 # 1761.955 angler hours total (estimate)
 
+# How many total yelloweye did they catch?
+PW_survey_YE <- subset(PW_survey, Species == "Yellow Eye")
+nYE <- dim(PW_survey_YE)[1]
+
+# Yelloweye CPUE
+yelloweye_nominal_CPUE_angler_hours <- nYE/total_effort_angler_hours
+
+# How many total Bocaccio did they catch?
+PW_survey_boc <- subset(PW_survey, Species == "Bocaccio")
+nboc <- dim(PW_survey_boc)[1]
+
+# Bocaccio CPUE
+bocaccio_nominal_CPUE_hours <- nboc/total_effort_hours
+
+
+## ----Calculate CPUE by angler days-------------------------------------------
+
+# Create date field
+PW_effort %>% mutate(., date = paste0("19",Year,"-",Month,"-",Day)) -> PW_effort
+
+# Calculate total number of angler days
+total_effort_angler_days <- length(unique((PW_effort$date)))
+# 1761.955 angler hours total (estimate)
+
+# How many total yelloweye did they catch?
+PW_survey_YE <- subset(PW_survey, Species == "Yellow Eye")
+nYE <- dim(PW_survey_YE)[1]
+
+# Yelloweye CPUE
+yelloweye_nominal_CPUE_angler_days <- nYE/total_effort_angler_days
+yelloweye_nominal_CPUE_angler_days
+
+# How many total Bocaccio did they catch?
+PW_survey_boc <- subset(PW_survey, Species == "Bocaccio")
+nboc <- dim(PW_survey_boc)[1]
+
+# Bocaccio CPUE
+bocaccio_nominal_CPUE_angler_days <- nboc/total_effort_angler_days
+bocaccio_nominal_CPUE_angler_days
 
 
 
 
 
 
-
-
-
+## ----Supplements -------------------------------------------------------------
 
 # How many fishing events did they not catch any fish?
 # We can't know this for sure, but we can get a sense using the survey IDs

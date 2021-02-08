@@ -184,11 +184,12 @@ greater_PS_map <- ggplot(usa_spdf_fort, aes(x = long, y = lat, group = group))+
   # geom_vline(xintercept = seq(-123.1, min_lon, 1/nm), color = "gray50", size = 0.1)+
   # geom_hline(yintercept = seq(min_lat, 48.5, 1/60), color = "gray50", size = 0.1)+
   #base map
-  geom_polygon(color = "gray20", fill = "gray20")+
-  geom_polygon(data = BC_spdf_fort, aes(x = long, y = lat, group = group), inherit.aes = FALSE) +
+  geom_polygon(color = "black", fill = "black")+
+  geom_polygon(data = BC_spdf_fort, aes(x = long, y = lat, group = group), color = "black", fill = "black", inherit.aes = FALSE) +
   ylab("Latitude")+
+  xlab("Longitude")+
   coord_fixed(ylim = c(47.1,48.8),  xlim = c(-124.7,-122.1), ratio = 1.3)+
-  theme(plot.background = element_rect(fill = "white"),
+  theme(panel.background = element_rect(fill = "gray50"),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
@@ -201,6 +202,7 @@ excel_sheets(PW_survey_path)
 PW_survey <- read_excel(PW_survey_path, sheet = "catch_species_names")
 
 # Investigate locations that don't have a letter/number format
+sort(unique(PW_survey$Location))
 # as.data.frame(subset(PW_survey, Location %in% c("485", "490", "491", "492")))
 # All coppers
 
@@ -243,7 +245,7 @@ PW_survey %>%
   mutate(lat_est = point_monroe_lat - number_loc_numeric/60) %>%
   mutate(lon_est = point_monroe_lon - letter_loc_numeric/nm) -> PW_survey
 
-PW_effort <- left_join(PW_effort, PW_survey_locations, by = "Location")
+PW_effort <- left_join(PW_effort, PW_survey, by = "Location")
 
 
 
@@ -254,8 +256,8 @@ fig_dir <- here("figures", "map_figures")
 
 PW_effort_map <- greater_PS_map + stat_summary_2d(data = PW_effort, aes(x = lon_est, y = lat_est, z = angler_time/3600),
                                                   binwidth = c(0.02, 0.02),inherit.aes = FALSE)+
-  scale_fill_gradientn(limits=c(0,30), breaks=seq(0, 30, by=5), colours=c("#ffffb2", "#fed976", "#feb24c", "#fd8d3c", 
-                                                                          "#fc4e2a", "#e31a1c", "#b10026"))+
+  scale_fill_gradientn(limits=c(0,60), breaks=seq(0, 60, by = 10), colours=c("#ffffb2", "#fed976", "#feb24c", "#fd8d3c", 
+                                                                             "#fc4e2a", "#e31a1c", "#b10026"))+
   theme(legend.title = element_text(size = 14),
         legend.text = element_text(size = 12),
         axis.text = element_text(size = 12))+

@@ -111,14 +111,14 @@ greater_PS_map <- ggplot(usa_spdf_fort, aes(x = long, y = lat, group = group))+
   # geom_vline(xintercept = seq(-123.1, min_lon, 1/nm), color = "gray50", size = 0.1)+
   # geom_hline(yintercept = seq(min_lat, 48.5, 1/60), color = "gray50", size = 0.1)+
   #base map
-  geom_polygon(color = "gray20", fill = "gray20")+
-  geom_polygon(data = BC_spdf_fort, aes(x = long, y = lat, group = group), inherit.aes = FALSE) +
+  geom_polygon(color = "black", fill = "black")+
+  geom_polygon(data = BC_spdf_fort, aes(x = long, y = lat, group = group), color = "black", fill = "black", inherit.aes = FALSE) +
   ylab("Latitude")+
+  xlab("Longitude")+
   coord_fixed(ylim = c(47.1,48.8),  xlim = c(-124.7,-122.1), ratio = 1.3)+
-  theme(plot.background = element_rect(fill = "white"),
+  theme(panel.background = element_rect(fill = "gray50"),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
-
 
 ## ---- Prepare data for map ---------------------------------------------------
 

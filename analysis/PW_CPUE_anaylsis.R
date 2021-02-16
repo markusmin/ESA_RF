@@ -11,7 +11,20 @@ excel_sheets(PW_survey_path)
 PW_survey <- read_excel(PW_survey_path, sheet = "catch_species_names")
 
 ## ----Prepare effort data------------------------------------------------------
-colnames(PW_survey)
+
+# Edit the odd locations
+# See "PW_survey_site_adjustment_justifications" for reasoning
+PW_survey %>% 
+  mutate(Location = ifelse(Location == "485", "H85", 
+                    ifelse(Location == "490", "H90", 
+                    ifelse(Location == "491", "H91", 
+                    ifelse(Location == "492", "H92", 
+                    ifelse(Location == "B110", "R110", 
+                    ifelse(Location == "M110", NA, 
+                    ifelse(Location == "I21", "I82", 
+                    ifelse(Location == "N10", NA, 
+                    ifelse(Location == "Q10", NA, Location)))))))))) -> PW_survey
+
 
 # Subset data to only columns relevant to effort; rename columns
 dplyr::select(PW_survey, c("Year", "Survey No.", "Month", "Day", "Time Start", "Location", "Time Stop", "No. Anglers")) %>%
@@ -111,7 +124,7 @@ for (i in 1:dim(PW_effort)[1]){
 
 }
 
-## ----Calculate CPUE by angler hours-------------------------------------------
+## ----Calculate CPUE by angler hours (full survey)-----------------------------
 
 # Create angler_hours field by conversion from seconds
 PW_effort %>% mutate(., angler_hours = angler_time/3600) -> PW_effort
@@ -132,10 +145,10 @@ PW_survey_boc <- subset(PW_survey, Species == "Bocaccio")
 PW_nboc <- dim(PW_survey_boc)[1]
 
 # Bocaccio CPUE
-PW_bocaccio_nominal_CPUE_hours <- PW_nboc/PW_hours
+PW_bocaccio_nominal_CPUE_angler_hours <- PW_nboc/PW_angler_hours
 
 
-## ----Calculate CPUE by angler days-------------------------------------------
+## ----Calculate CPUE by angler days (full survey)------------------------------
 
 # Create date field
 PW_effort %>% mutate(., date = paste0("19",Year,"-",Month,"-",Day)) -> PW_effort
@@ -159,6 +172,74 @@ PW_nboc <- dim(PW_survey_boc)[1]
 # Bocaccio CPUE
 PW_bocaccio_nominal_CPUE_angler_days <- PW_nboc/PW_angler_days
 PW_bocaccio_nominal_CPUE_angler_days
+
+## ----Look at only Puget Sound Proper------------------------------
+
+PW_PSP_effort <- subset(PW_effort, !(Location %in% c(NA,"BB52", "BB53", "LL49", "WW52", "ZZ52", "ZZ50", "FFF51")))
+PW_PSP_survey <- subset(PW_survey, !(Location %in% c(NA,"BB52", "BB53", "LL49", "WW52", "ZZ52", "ZZ50", "FFF51")))
+
+## ----Calculate CPUE by angler hours (PSP)-----------------------------------
+
+# Create angler_hours field by conversion from seconds
+PW_PSP_effort %>% mutate(., angler_hours = angler_time/3600) -> PW_PSP_effort
+
+# Calculate total number of angler hours
+PW_PSP_angler_hours <- sum(PW_PSP_effort$angler_hours)
+# 1761.955 angler hours total (estimate)
+
+# How many total yelloweye did they catch?
+PW_PSP_survey_YE <- subset(PW_PSP_survey, Species == "Yellow Eye")
+PW_PSP_nYE <- dim(PW_PSP_survey_YE)[1]
+
+# Yelloweye CPUE
+PW_PSP_yelloweye_nominal_CPUE_angler_hours <- PW_PSP_nYE/PW_PSP_angler_hours
+
+# How many total Bocaccio did they catch?
+PW_PSP_survey_boc <- subset(PW_PSP_survey, Species == "Bocaccio")
+PW_PSP_nboc <- dim(PW_PSP_survey_boc)[1]
+
+# Bocaccio CPUE
+PW_PSP_bocaccio_nominal_CPUE_angler_hours <- PW_PSP_nboc/PW_PSP_angler_hours
+
+
+## ----Calculate CPUE by angler days (PSP)--------------------------------------
+
+# Create date field
+PW_PSP_effort %>% mutate(., date = paste0("19",Year,"-",Month,"-",Day)) -> PW_PSP_effort
+
+# Calculate total number of angler days
+PW_PSP_angler_days <- length(unique((PW_PSP_effort$date)))
+# 1761.955 angler hours total (estimate)
+
+# How many total yelloweye did they catch?
+PW_PSP_survey_YE <- subset(PW_PSP_survey, Species == "Yellow Eye")
+PW_PSP_nYE <- dim(PW_PSP_survey_YE)[1]
+
+# Yelloweye CPUE
+PW_PSP_yelloweye_nominal_CPUE_angler_days <- PW_PSP_nYE/PW_PSP_angler_days
+PW_PSP_yelloweye_nominal_CPUE_angler_days
+
+# How many total Bocaccio did they catch?
+PW_PSP_survey_boc <- subset(PW_PSP_survey, Species == "Bocaccio")
+PW_PSP_nboc <- dim(PW_PSP_survey_boc)[1]
+
+# Bocaccio CPUE
+PW_PSP_bocaccio_nominal_CPUE_angler_days <- PW_PSP_nboc/PW_PSP_angler_days
+PW_PSP_bocaccio_nominal_CPUE_angler_days
+
+## ---Summarize all data--------------------------------------------------
+PW_CPUE_stats <- cbind(effort = c("Angler Days (full survey)", "Angler Hours (full survey)",
+                                  "Angler Days (PSP)", "Angler Hours (PSP)"),
+                            yelloweye_CPUE = round(c(PW_yelloweye_nominal_CPUE_angler_days,PW_yelloweye_nominal_CPUE_angler_hours,
+                                                     PW_PSP_yelloweye_nominal_CPUE_angler_days,PW_PSP_yelloweye_nominal_CPUE_angler_hours),3),            
+                            bocaccio_CPUE = round(c(PW_bocaccio_nominal_CPUE_angler_days, PW_bocaccio_nominal_CPUE_angler_hours,
+                                                    PW_PSP_bocaccio_nominal_CPUE_angler_days, PW_PSP_bocaccio_nominal_CPUE_angler_hours), 3))
+
+PW_CPUE_stats 
+PW_PSP_nYE
+PW_PSP_nboc
+PW_nYE
+PW_nboc
 
 ## ---CREATE HEATMAP of effort--------------------------------------------------
 

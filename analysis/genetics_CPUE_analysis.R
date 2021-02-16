@@ -68,6 +68,8 @@ set.seed(123)
 # in recording - this is because the first and last times will be informative, whether
 # they are start/end times or fish caught
 
+##--Calculate CPUE for entire survey--------------------------------------------
+
 gen_survey %>%
   group_by(date) %>%
   mutate(total_time = as.numeric(max(time) - min(time), units = "hours")) %>% 
@@ -77,7 +79,7 @@ gen_survey %>%
   dplyr::select(date, total_time, mean_anglers,total_angler_hours)-> gen_survey_effort_per_day
 gen_survey_effort_per_day <- gen_survey_effort_per_day[!duplicated(gen_survey_effort_per_day[,c("date")]),]
 
-# Sum effot
+# Sum effort
 gen_total_angler_hours <- sum(gen_survey_effort_per_day$total_angler_hours)
 
 ## ----Sum yelloweye and bocaccio catch-----------------------------------------
@@ -99,6 +101,58 @@ gen_total_angler_hours
 gen_YE_CPUE
 gen_boc_CPUE
 
+
+##--Calculate CPUE for PSP------------------------------------------------------
+
+# There are a few catches from the entrance to Hood Canal in the PW survey; none in the bycatch
+# We will keep the Hood Canal samples that cover the same area as the PW survey (up to Coyle)
+gen_survey_PSP <- subset(gen_survey, Region %in% c("Central Puget Sound", "South Puget Sound") |
+                           Region == "Hood Canal" & lon > -122.82)
+
+
+gen_survey_PSP %>%
+  group_by(date) %>%
+  mutate(total_time = as.numeric(max(time) - min(time), units = "hours")) %>% 
+  # Calculate the mean number of anglers that day
+  mutate(mean_anglers = mean(anglers)) %>%
+  mutate(total_angler_hours = total_time * mean_anglers) %>%
+  dplyr::select(date, total_time, mean_anglers,total_angler_hours)-> gen_survey_PSP_effort_per_day
+gen_survey_PSP_effort_per_day <- gen_survey_PSP_effort_per_day[!duplicated(gen_survey_PSP_effort_per_day[,c("date")]),]
+
+# Sum effort
+gen_total_angler_hours_PSP <- sum(gen_survey_PSP_effort_per_day$total_angler_hours)
+
+## ----Sum yelloweye and bocaccio catch-----------------------------------------
+
+# How many total yelloweye did they catch?
+gen_catch_YE_PSP <- subset(gen_survey_PSP, Species == "yelloweye rockfish")
+gen_nYE_PSP <- dim(gen_catch_YE_PSP)[1]
+
+# How many total Bocaccio did they catch?
+gen_catch_boc_PSP <- subset(gen_survey_PSP, Species == "bocaccio")
+gen_nboc_PSP <- dim(gen_catch_boc_PSP)[1]
+
+
+##--Calculate CPUE--------------------------------------------------------------
+gen_YE_CPUE_PSP <- gen_nYE_PSP/gen_total_angler_hours_PSP
+gen_boc_CPUE_PSP <- gen_nboc_PSP/gen_total_angler_hours_PSP
+
+gen_total_angler_hours_PSP
+gen_YE_CPUE_PSP
+gen_boc_CPUE_PSP
+
+##--Summarize CPUE--------------------------------------------------------------
+
+genetics_CPUE_stats <- cbind(effort = c("Angler Hours (Full Survey)", "Angler Hours (PSP)"),
+                            yelloweye_CPUE = round(c(gen_YE_CPUE, gen_YE_CPUE_PSP),3),            
+                            bocaccio_CPUE = round(c(gen_boc_CPUE, gen_boc_CPUE_PSP),3))
+
+genetics_CPUE_stats
+
+gen_nYE
+gen_nboc
+gen_nYE_PSP
+gen_nboc_PSP
 
 ## ---CREATE HEATMAP of effort--------------------------------------------------
 

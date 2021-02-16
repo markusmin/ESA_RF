@@ -29,6 +29,19 @@ bycatch_effort %>%
   # Calculate the mean number of anglers per drift on that day
   mutate(mean_anglers = mean(Anglers)) %>%
   mutate(total_angler_hours = total_hours * mean_anglers) -> bycatch_effort_per_day
+
+# Add lat/long
+bycatch_catch %>%
+  dplyr::select(Site, Latitude, Longitude) -> bycatch_catch_locations
+bycatch_catch_locations <- bycatch_catch_locations[!duplicated(bycatch_catch_locations[,c("Site")]),]
+
+bycatch_effort_per_day %>%
+  group_by(Site) %>%
+  left_join(., bycatch_catch_locations, by = "Site") -> bycatch_effort_per_day
+
+bycatch_effort %>%
+  left_join(., bycatch_catch_locations, by = "Site") -> bycatch_effort
+
 bycatch_effort_per_day <- bycatch_effort_per_day[!duplicated(bycatch_effort_per_day[,c("Date")]),]
 
 ## ----Sum yelloweye and bocaccio catch-------------------------------------------
@@ -79,14 +92,83 @@ bycatch_yelloweye_nominal_CPUE_angler_days
 bycatch_bocaccio_nominal_CPUE_angler_days <- bycatch_nboc/bycatch_angler_days
 bycatch_bocaccio_nominal_CPUE_angler_days
 
+
+## ----Look at only Puget Sound Proper------------------------------
+bycatch_catch_PSP <- subset(bycatch_catch, Latitude < 48.25)
+bycatch_effort_per_day_PSP <- subset(bycatch_effort_per_day, Latitude < 48.25)
+bycatch_effort_PSP <- subset(bycatch_effort, Latitude < 48.25)
+
+## ----Sum yelloweye and bocaccio catch-------------------------------------------
+
+# How many total yelloweye did they catch?
+bycatch_catch_PSP_YE <- subset(bycatch_catch_PSP, Species == "yelloweye rockfish")
+bycatch_PSP_nYE <- dim(bycatch_catch_PSP_YE)[1]
+
+# How many total Bocaccio did they catch?
+bycatch_catch_PSP_boc <- subset(bycatch_catch_PSP, Species == "bocaccio")
+bycatch_PSP_nboc <- dim(bycatch_catch_PSP_boc)[1]
+
+## ----Calculate CPUE by time on water-------------------------------------
+total_angler_hours_on_water_PSP <- as.numeric(sum(bycatch_effort_per_day_PSP$total_angler_hours))
+
+# Yelloweye CPUE
+bycatch_yelloweye_nominal_CPUE_angler_time_water_PSP <- bycatch_PSP_nYE/total_angler_hours_on_water_PSP
+bycatch_yelloweye_nominal_CPUE_angler_time_water_PSP
+
+# Bocaccio CPUE
+bycatch_bocaccio_nominal_CPUE_angler_time_water_PSP <- bycatch_PSP_nboc/total_angler_hours_on_water_PSP
+bycatch_bocaccio_nominal_CPUE_angler_time_water_PSP
+
+
+## ----Calculate CPUE by angler hours (exact)-------------------------------------
+
+# Total days
+bycatch_PSP_angler_days <- length(unique(bycatch_effort$Date))
+
+# Total hours
+bycatch_PSP_angler_hours <- sum(bycatch_effort_PSP$effort..angler.hours.)
+
+# Yelloweye CPUE
+bycatch_yelloweye_nominal_CPUE_angler_hours_PSP <- bycatch_PSP_nYE/bycatch_PSP_angler_hours
+bycatch_yelloweye_nominal_CPUE_angler_hours_PSP
+
+# Bocaccio CPUE
+bycatch_bocaccio_nominal_CPUE_angler_hours_PSP <- bycatch_PSP_nboc/bycatch_PSP_angler_hours
+bycatch_bocaccio_nominal_CPUE_angler_hours_PSP
+
+## ----Calculate CPUE by angler days-------------------------------------------
+
+# Yelloweye CPUE
+bycatch_yelloweye_nominal_CPUE_angler_days_PSP <- bycatch_PSP_nYE/bycatch_PSP_angler_days
+bycatch_yelloweye_nominal_CPUE_angler_days_PSP
+
+# Bocaccio CPUE
+bycatch_bocaccio_nominal_CPUE_angler_days_PSP <- bycatch_PSP_nboc/bycatch_PSP_angler_days
+bycatch_bocaccio_nominal_CPUE_angler_days_PSP
+
+
+
+
+
+
+
+
 ## ----Summarize CPUE stats-------------------------------------------
-bycatch_CPUE_stats <- cbind(effort = c("Angler Days", "Fishing Time", "Drift Time"),
+bycatch_CPUE_stats <- cbind(effort = c("Angler Days (Full Survey)", "Fishing Time (Full Survey)", "Drift Time (Full Survey)",
+                                       "Angler Days (PSP)", "Fishing Time (PSP)", "Drift Time (PSP)"),
             yelloweye_CPUE = round(c(bycatch_yelloweye_nominal_CPUE_angler_days, bycatch_yelloweye_nominal_CPUE_angler_time_water, 
-                                    bycatch_yelloweye_nominal_CPUE_angler_hours),3),            
-            bocaccio_CPUE = c(bycatch_bocaccio_nominal_CPUE_angler_days, bycatch_bocaccio_nominal_CPUE_angler_time_water, 
-                     bycatch_bocaccio_nominal_CPUE_angler_hours))
+                                    bycatch_yelloweye_nominal_CPUE_angler_hours, bycatch_yelloweye_nominal_CPUE_angler_days_PSP, 
+                                    bycatch_yelloweye_nominal_CPUE_angler_time_water_PSP, bycatch_yelloweye_nominal_CPUE_angler_hours_PSP),3),            
+            bocaccio_CPUE = round(c(bycatch_bocaccio_nominal_CPUE_angler_days, bycatch_bocaccio_nominal_CPUE_angler_time_water, 
+                     bycatch_bocaccio_nominal_CPUE_angler_hours, bycatch_bocaccio_nominal_CPUE_angler_days_PSP, 
+                     bycatch_bocaccio_nominal_CPUE_angler_time_water_PSP, bycatch_bocaccio_nominal_CPUE_angler_hours_PSP),3))
 
 bycatch_CPUE_stats
+
+bycatch_PSP_nYE
+bycatch_PSP_nboc
+bycatch_nYE
+bycatch_nboc
 
 ## ---CREATE HEATMAP of effort--------------------------------------------------
 

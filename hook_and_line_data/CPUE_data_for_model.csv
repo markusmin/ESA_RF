@@ -1,0 +1,629 @@
+"","set","mean_depth","yelloweye_catch","bocaccio_catch","bait","lure","effort_sec","date","month","start_time","end_time","avg_anglers","Site","basin","survey","angler_hours"
+"1","PW_74_001_H78",61.729728,0,0,"Herring","Hook only",6600,1974-05-03,5,09:10:00,11:00:00,4,"H78","Central Sound","Percy_Washington",7.33333333333333
+"2","PW_74_002_L73",32.779998,0,0,"Herring","Hook only",5400,1974-05-03,5,11:30:00,13:00:00,4,"L73","Central Sound","Percy_Washington",6
+"3","PW_74_003_I82",6.083333,0,0,"Herring","Hook only",5400,1974-05-03,5,14:00:00,15:30:00,4,"I82","Central Sound","Percy_Washington",6
+"4","PW_74_006_M86",26.421052,0,0,"Herring","Hook only",5400,1974-05-08,5,12:00:00,13:30:00,4,"M86","Central Sound","Percy_Washington",6
+"5","PW_74_008_I79",45.324325,0,0,"Herring","Hook only",9000,1974-05-15,5,09:15:00,11:45:00,2,"I79","Central Sound","Percy_Washington",5
+"6","PW_74_009_H78",61.729728,0,0,"Herring","Hook only",7800,1974-05-15,5,13:10:00,15:20:00,2,"H78","Central Sound","Percy_Washington",4.33333333333333
+"7","PW_74_010_L73",27.4533316666667,0,0,"Herring","Hook only",10800,1974-05-21,5,10:30:00,13:30:00,5,"L73","Central Sound","Percy_Washington",15
+"8","PW_74_012_H66",16.799999,0,0,"Herring","Hook only",16200,1974-05-30,5,13:00:00,17:30:00,2,"H66","Central Sound","Percy_Washington",9
+"9","PW_74_013_H66",16.799999,0,0,"Herring","Hook only",5400,1974-05-31,5,11:45:00,13:15:00,2,"H66","Central Sound","Percy_Washington",3
+"10","PW_74_014_N86",18.72093,0,0,"Herring","Hook only",4200,1974-06-05,6,11:00:00,12:10:00,2,"N86","Central Sound","Percy_Washington",2.33333333333333
+"11","PW_74_015_N86",18.72093,0,0,"Herring","Hook only",11700,1974-06-06,6,12:00:00,15:15:00,2,"N86","Central Sound","Percy_Washington",6.5
+"12","PW_74_016_H78",61.729728,0,0,"Herring","Hook only",12000,1974-06-12,6,11:30:00,14:50:00,2,"H78","Central Sound","Percy_Washington",6.66666666666667
+"13","PW_74_017_J67",23.163265,0,0,"Herring","Hook only",18900,1974-06-14,6,09:30:00,14:45:00,2,"J67","Central Sound","Percy_Washington",10.5
+"14","PW_74_018_H78",61.729728,0,0,"Herring","Hook only",2700,1974-06-28,6,07:40:00,08:25:00,3,"H78","Central Sound","Percy_Washington",2.25
+"15","PW_74_019_H78",61.729728,0,0,"Herring","Hook only",26100,1974-06-28,6,08:30:00,15:45:00,3,"H78","Central Sound","Percy_Washington",21.75
+"16","PW_74_020_H78",61.729728,0,0,"Herring","Hook only",9900,1974-07-03,7,19:00:00,21:45:00,1,"H78","Central Sound","Percy_Washington",2.75
+"17","PW_74_021_M66",56.60756683,0,0,"Herring","Hook only",12000,1974-07-04,7,10:40:00,14:00:00,2,"M66","Central Sound","Percy_Washington",6.66666666666667
+"18","PW_74_022_P63",103.453125,0,0,"Herring","Hook only",3600,1974-07-04,7,09:00:00,10:00:00,2,"P63","Central Sound","Percy_Washington",2
+"19","PW_74_023_L85",46.274509,0,0,"Herring","Hook only",20400,1974-07-05,7,09:40:00,15:20:00,3,"L85","Central Sound","Percy_Washington",17
+"20","PW_74_024_L89",42.707317,0,0,"Herring","Hook only",6000,1974-07-05,7,15:20:00,17:00:00,3,"L89","Central Sound","Percy_Washington",5
+"21","PW_74_025_H78",61.729728,0,0,"Herring","Hook only",7380,1974-07-07,7,19:37:00,21:40:00,3,"H78","Central Sound","Percy_Washington",6.15
+"22","PW_74_026_G57",60.529411,0,0,"Herring","Hook only",14700,1974-07-12,7,15:40:00,19:45:00,3,"G57","Whidbey Island","Percy_Washington",12.25
+"23","PW_74_027_H78",61.729728,0,0,"no bait","Artificial Lure",7200,1974-07-16,7,20:00:00,22:00:00,4,"H78","Central Sound","Percy_Washington",8
+"24","PW_74_028_H78",61.729728,0,0,"no bait","Artificial Lure",7200,1974-07-19,7,19:30:00,21:30:00,3,"H78","Central Sound","Percy_Washington",6
+"25","PW_74_029_I79",45.324325,0,0,"Herring","Hook only",22500,1974-07-23,7,09:15:00,15:30:00,2,"I79","Central Sound","Percy_Washington",12.5
+"26","PW_74_030_I82",5.35714257142857,0,0,"Herring","Hook only",3600,1974-07-23,7,14:30:00,15:30:00,2,"I82","Central Sound","Percy_Washington",2
+"27","PW_74_031_H79",7.98198166666667,0,0,"Herring","Hook only",6360,1974-07-24,7,19:14:00,21:00:00,3,"H79","Central Sound","Percy_Washington",5.3
+"28","PW_74_032_P82",21.945945,0,0,"Herring","Hook only",11400,1974-07-25,7,09:25:00,12:35:00,4,"P82","Central Sound","Percy_Washington",12.6666666666667
+"29","PW_74_034_I79",45.324325,0,0,"Herring","Hook only",3600,1974-07-30,7,14:00:00,15:00:00,1,"I79","Central Sound","Percy_Washington",1
+"30","PW_74_035_L73",32.779998,0,2,"Herring","Hook only",18900,1974-08-07,8,10:45:00,16:00:00,4,"L73","Central Sound","Percy_Washington",21
+"31","PW_74_038_I87",65.324325,0,0,"Herring","Hook only",7200,1974-08-11,8,09:30:00,11:30:00,2,"I87","Central Sound","Percy_Washington",4
+"32","PW_74_039_G57",60.529411,0,1,"Herring","Hook only",5400,1974-08-12,8,16:00:00,17:30:00,2,"G57","Whidbey Island","Percy_Washington",3
+"33","PW_74_040_I79",45.324325,0,0,"Herring","Hook only",7532.41379310345,1974-08-14,8,NA,NA,2,"I79","Central Sound","Percy_Washington",4.18467432950192
+"34","PW_74_041_L72",30.181818,0,0,"Herring","Hook only",15900,1974-08-21,8,09:15:00,13:40:00,4,"L72","Central Sound","Percy_Washington",17.6666666666667
+"35","PW_74_041_M69",40.108108,0,0,"Herring","Hook only",9600,1974-08-21,8,13:50:00,16:30:00,4,"M69","Central Sound","Percy_Washington",10.6666666666667
+"36","PW_74_042_I86",27.652173,0,0,"Herring","Hook only",8100,1974-08-28,8,10:30:00,12:45:00,2,"I86","Central Sound","Percy_Washington",4.5
+"37","PW_74_042_M69",40.108108,0,0,"Herring","Hook only",7532.41379310345,1974-09-20,9,NA,NA,3,"M69","Central Sound","Percy_Washington",6.27701149425287
+"38","PW_74_043_I82",6.083333,0,0,"Herring","Hook only",1800,1974-08-28,8,13:00:00,13:30:00,2,"I82","Central Sound","Percy_Washington",1
+"39","PW_74_044_I79",45.324325,0,0,"Herring","Hook only",1800,1974-08-28,8,14:00:00,14:30:00,2,"I79","Central Sound","Percy_Washington",1
+"40","PW_74_045_M69",40.108108,0,0,"Herring","Hook only",7532.41379310345,1974-09-20,9,NA,NA,3,"M69","Central Sound","Percy_Washington",6.27701149425287
+"41","PW_74_33_H67",59.612243,0,0,"Herring","Hook only",15900,1974-07-26,7,10:00:00,14:25:00,3,"H67","Central Sound","Percy_Washington",13.25
+"42","PW_75_001_N77",39.163265,0,0,"Herring","Artificial Lure",12600,1975-02-07,2,11:30:00,15:00:00,3,"N77","Central Sound","Percy_Washington",10.5
+"43","PW_75_002_K85",200.234375,0,0,"Herring","Artificial Lure",10800,1975-02-22,2,09:00:00,12:00:00,3,"K85","Central Sound","Percy_Washington",9
+"44","PW_75_003_L72",30.181818,0,0,"Herring","Artificial Lure",9000,1975-02-26,2,11:30:00,14:00:00,3,"L72","Central Sound","Percy_Washington",7.5
+"45","PW_75_004_H78",61.729728,0,0,"Herring","Hook only",8100,1975-02-27,2,11:30:00,13:45:00,2,"H78","Central Sound","Percy_Washington",4.5
+"46","PW_75_006_G59",135.489791,0,0,"Herring","Hook only",23100,1975-03-06,3,10:45:00,17:10:00,4,"G59","Whidbey Island","Percy_Washington",25.6666666666667
+"47","PW_75_007_K89",61.410713,0,0,"Herring","Hook only",3300,1975-03-13,3,14:10:00,15:05:00,2,"K89","Central Sound","Percy_Washington",1.83333333333333
+"48","PW_75_008_H74",2.857142,0,0,"Herring","Hook only",2700,1975-04-09,4,15:00:00,15:45:00,3,"H74","Central Sound","Percy_Washington",2.25
+"49","PW_75_008_H78",61.729728,0,0,"Herring","Hook only",12300,1975-04-07,4,11:00:00,14:25:00,3,"H78","Central Sound","Percy_Washington",10.25
+"50","PW_75_009_I68",61.673469,0,0,"Herring","Hook only",21000,1975-04-10,4,10:40:00,16:30:00,2,"I68","Central Sound","Percy_Washington",11.6666666666667
+"51","PW_75_010_F69",73.29412,0,0,"Herring","Hook only",4200,1975-04-15,4,11:50:00,13:00:00,2,"F69","Whidbey Island","Percy_Washington",2.33333333333333
+"52","PW_75_010_G66",164.387756,0,0,"Herring","Artificial Lure",6000,1975-04-15,4,15:10:00,16:50:00,2,"G66","Central Sound","Percy_Washington",3.33333333333333
+"53","PW_75_010_H74",2.857142,0,0,"Herring","Hook only",3600,1975-04-15,4,10:35:00,11:35:00,2,"H74","Central Sound","Percy_Washington",2
+"54","PW_75_010_J68",35.224491,0,0,"Herring","Hook only",7020,1975-04-15,4,13:08:00,15:05:00,2,"J68","Central Sound","Percy_Washington",3.9
+"55","PW_75_011_F69",73.29412,0,0,"Herring","Hook only",5400,1975-04-18,4,12:00:00,13:30:00,2,"F69","Whidbey Island","Percy_Washington",3
+"56","PW_75_012_N86",18.72093,0,0,"Herring","Hook only",9000,1975-04-24,4,12:00:00,14:30:00,2,"N86","Central Sound","Percy_Washington",5
+"57","PW_75_013_N77",39.163265,0,0,"Herring","Artificial Lure",8580,1975-04-30,4,11:30:00,13:53:00,3,"N77","Central Sound","Percy_Washington",7.15
+"58","PW_75_014_N103",43.166667,0,0,"Herring","Artificial Lure",6300,1975-05-08,5,12:15:00,14:00:00,2,"N103","Central Sound","Percy_Washington",3.5
+"59","PW_75_016_E65",79.652175,0,4,"Herring","Artificial Lure",13080,1975-06-03,6,12:00:00,15:38:00,3,"E65","Whidbey Island","Percy_Washington",10.9
+"60","PW_75_017_I79",45.324325,0,0,"Herring","Artificial Lure",2100,1975-06-09,6,19:30:00,20:05:00,3,"I79","Central Sound","Percy_Washington",1.75
+"61","PW_75_019_L89",42.707317,0,0,"Herring","Hook only",17100,1975-06-17,6,11:30:00,16:15:00,3,"L89","Central Sound","Percy_Washington",14.25
+"62","PW_75_020_N86",18.72093,0,0,"Herring","Hook only",12360,1975-06-18,6,12:24:00,15:50:00,3,"N86","Central Sound","Percy_Washington",10.3
+"63","PW_75_021_N86",18.72093,0,0,"Herring","Hook only",9000,1975-06-19,6,10:30:00,13:00:00,4,"N86","Central Sound","Percy_Washington",10
+"64","PW_75_022_E65",79.652175,0,0,"no bait","Artificial Lure",7532.41379310345,1975-06-27,6,NA,NA,3,"E65","Whidbey Island","Percy_Washington",6.27701149425287
+"65","PW_75_024_E65",79.652175,0,1,"Herring","Artificial Lure",22560,1975-07-02,7,10:14:00,16:30:00,3,"E65","Whidbey Island","Percy_Washington",18.8
+"66","PW_75_025_F60",99.744186,0,0,"Herring","Artificial Lure",9000,1975-07-03,7,12:00:00,14:30:00,4,"F60","Whidbey Island","Percy_Washington",10
+"67","PW_75_026_E65",79.652175,0,0,"Herring","Artificial Lure",7532.41379310345,1975-07-04,7,NA,NA,4,"E65","Whidbey Island","Percy_Washington",8.36934865900383
+"68","PW_75_027_H78",61.729728,0,0,"Herring","Artificial Lure",2700,1975-07-14,7,12:05:00,12:50:00,4,"H78","Central Sound","Percy_Washington",3
+"69","PW_75_027_L78",153.946426,0,0,"Herring","Artificial Lure",11640,1975-07-14,7,08:50:00,12:04:00,4,"L78","Central Sound","Percy_Washington",12.9333333333333
+"70","PW_75_028_E65",79.652175,0,0,"Herring","Artificial Lure",7532.41379310345,1975-07-15,7,NA,NA,4,"E65","Whidbey Island","Percy_Washington",8.36934865900383
+"71","PW_75_029_G57",60.529411,0,6,"Herring","Artificial Lure",11280,1975-07-17,7,10:30:00,13:38:00,3,"G57","Whidbey Island","Percy_Washington",9.4
+"72","PW_75_03_L72",30.181818,0,0,"Herring","Artificial Lure",9000,1975-02-26,2,11:30:00,14:00:00,3,"L72","Central Sound","Percy_Washington",7.5
+"73","PW_75_030_F60",99.744186,0,0,"Herring","Artificial Lure",3120,1975-07-17,7,13:50:00,14:42:00,3,"F60","Whidbey Island","Percy_Washington",2.6
+"74","PW_75_031_F60",99.744186,0,0,"Herring","Artificial Lure",7532.41379310345,1975-07-18,7,NA,NA,3,"F60","Whidbey Island","Percy_Washington",6.27701149425287
+"75","PW_75_031_G57",60.529411,0,0,"Herring","Artificial Lure",7532.41379310345,1975-07-18,7,NA,NA,3,"G57","Whidbey Island","Percy_Washington",6.27701149425287
+"76","PW_75_033_H90",34.285713,0,0,"no bait","Artificial Lure",25500,1975-07-30,7,07:25:00,14:30:00,2,"H90","Central Sound","Percy_Washington",14.1666666666667
+"77","PW_75_034_H90",34.285713,0,0,"Herring","Hook only",13500,1975-08-05,8,10:45:00,14:30:00,2,"H90","Central Sound","Percy_Washington",7.5
+"78","PW_75_035_J67",23.163265,0,0,"no bait","Artificial Lure",15000,1975-08-12,8,08:00:00,12:10:00,3,"J67","Central Sound","Percy_Washington",12.5
+"79","PW_75_035_P63",103.453125,0,0,"no bait","Artificial Lure",4200,1975-08-12,8,12:10:00,13:20:00,3,"P63","Central Sound","Percy_Washington",3.5
+"80","PW_75_036_N104",39.61111,0,0,"no bait","Artificial Lure",7532.41379310345,1975-08-13,8,NA,NA,3,"N104","Central Sound","Percy_Washington",6.27701149425287
+"81","PW_75_036_Q108",70.490905,0,0,"no bait","Artificial Lure",7532.41379310345,1975-08-13,8,NA,NA,3,"Q108","South Sound","Percy_Washington",6.27701149425287
+"82","PW_75_036_R110",147.015625,0,6,"no bait","Artificial Lure",1800,1975-08-13,8,14:30:00,15:00:00,3,"R110","South Sound","Percy_Washington",1.5
+"83","PW_75_037_L85",46.274509,0,0,"Herring","Hook only",6300,1975-08-14,8,15:00:00,16:45:00,3,"L85","Central Sound","Percy_Washington",5.25
+"84","PW_75_038_L78",153.946426,0,0,"Herring","Hook only",9900,1975-08-20,8,12:30:00,15:15:00,3,"L78","Central Sound","Percy_Washington",8.25
+"85","PW_75_039_E65",79.652175,0,0,"Herring","Hook only",12600,1975-08-18,8,11:00:00,14:30:00,3,"E65","Whidbey Island","Percy_Washington",10.5
+"86","PW_75_039_H66",16.799999,0,0,"Herring","Hook only",5400,1975-08-18,8,09:00:00,10:30:00,3,"H66","Central Sound","Percy_Washington",4.5
+"87","PW_75_040_F60",99.744186,0,0,"Herring","Hook only",34800,1975-08-22,8,09:20:00,19:00:00,2,"F60","Whidbey Island","Percy_Washington",19.3333333333333
+"88","PW_75_041_L89",42.707317,0,0,"Herring","Hook only",7532.41379310345,1975-09-03,9,NA,NA,2,"L89","Central Sound","Percy_Washington",4.18467432950192
+"89","PW_75_042_I68",61.673469,0,0,"no bait","Artificial Lure",10800,1975-09-09,9,12:00:00,15:00:00,3,"I68","Central Sound","Percy_Washington",9
+"90","PW_75_043_G57",60.529411,0,0,"no bait","Artificial Lure",8100,1975-09-17,9,10:10:00,12:25:00,3,"G57","Whidbey Island","Percy_Washington",6.75
+"91","PW_75_043_H54",112.3564835,0,0,"no bait","Artificial Lure",8100,1975-09-17,9,12:30:00,14:45:00,3,"H54","Whidbey Island","Percy_Washington",6.75
+"92","PW_75_044_F60",99.744186,0,0,"no bait","Artificial Lure",27300,1975-09-19,9,09:15:00,16:50:00,2,"F60","Whidbey Island","Percy_Washington",15.1666666666667
+"93","PW_75_045_R110",147.015625,0,0,"no bait","Artificial Lure",26100,1975-09-23,9,10:45:00,18:00:00,2,"R110","South Sound","Percy_Washington",14.5
+"94","PW_75_046_L78",153.946426,0,0,"no bait","Artificial Lure",9300,1975-09-24,9,12:35:00,15:10:00,3,"L78","Central Sound","Percy_Washington",7.75
+"95","PW_75_046_N77",39.163265,0,0,"no bait","Artificial Lure",7260,1975-09-24,9,15:20:00,17:21:00,3,"N77","Central Sound","Percy_Washington",6.05
+"96","PW_75_047_L78",153.946426,9,0,"no bait","Artificial Lure",19800,1975-10-02,10,09:30:00,15:00:00,2,"L78","Central Sound","Percy_Washington",11
+"97","PW_75_049_L81",217.4857788,0,0,"no bait","Artificial Lure",7532.41379310345,1975-10-22,10,NA,NA,2,"L81","Central Sound","Percy_Washington",4.18467432950192
+"98","PW_75_050_L71",100.611114,0,0,"no bait","Artificial Lure",10500,1975-10-23,10,10:15:00,13:10:00,2,"L71","Central Sound","Percy_Washington",5.83333333333333
+"99","PW_75_051_E65",79.652175,0,0,"no bait","Artificial Lure",5400,1975-10-23,10,15:00:00,16:30:00,2,"E65","Whidbey Island","Percy_Washington",3
+"100","PW_75_052_I78",143.160003,0,0,"Herring","Hook only",3600,1975-10-04,10,10:15:00,11:15:00,2,"I78","Central Sound","Percy_Washington",2
+"101","PW_75_053_J82",42.85984421,0,0,"no bait","Artificial Lure",7532.41379310345,1975-10-04,10,NA,NA,2,"J82","Central Sound","Percy_Washington",4.18467432950192
+"102","PW_75_054_N86",18.72093,0,0,"Herring","Hook only",6300,1975-11-24,11,11:30:00,13:15:00,2,"N86","Central Sound","Percy_Washington",3.5
+"103","PW_75_055_N86",18.72093,0,0,"Other","Hook only",17400,1975-11-26,11,08:20:00,13:10:00,2,"N86","Central Sound","Percy_Washington",9.66666666666667
+"104","PW_75_056_N77",39.163265,0,0,"no bait","Artificial Lure",9000,1975-12-10,12,10:30:00,13:00:00,2,"N77","Central Sound","Percy_Washington",5
+"105","PW_75_057_L78",153.946426,3,0,"Herring","Artificial Lure",23400,1975-12-11,12,09:15:00,15:45:00,2,"L78","Central Sound","Percy_Washington",13
+"106","PW_75_058_L78",153.946426,2,0,"no bait","Artificial Lure",7532.41379310345,1975-12-12,12,NA,NA,3,"L78","Central Sound","Percy_Washington",6.27701149425287
+"107","PW_75_059_L78",153.946426,0,0,"no bait","Artificial Lure",5400,1975-12-17,12,08:00:00,09:30:00,3,"L78","Central Sound","Percy_Washington",4.5
+"108","PW_75_059_N77",39.163265,0,0,"no bait","Artificial Lure",15600,1975-12-17,12,09:45:00,14:05:00,3,"N77","Central Sound","Percy_Washington",13
+"109","PW_75_060_E66",16.666666,0,0,"Herring","Artificial Lure",10500,1975-12-18,12,10:50:00,13:45:00,3,"E66","Whidbey Island","Percy_Washington",8.75
+"110","PW_76_001_H85",56.358974,0,0,"no bait","Artificial Lure",5700,1976-01-06,1,09:45:00,11:20:00,3,"H85","Central Sound","Percy_Washington",4.75
+"111","PW_76_002_G91",5.333333,0,0,"Herring","Artificial Lure",8100,1976-01-06,1,11:45:00,14:00:00,2,"G91","Central Sound","Percy_Washington",4.5
+"112","PW_76_003_N86",18.72093,0,0,"Herring","Hook only",20700,1976-01-08,1,08:25:00,14:10:00,2,"N86","Central Sound","Percy_Washington",11.5
+"113","PW_76_004_F96",61.142856,0,0,"no bait","Artificial Lure",14400,1976-01-12,1,11:00:00,15:00:00,3,"F96","Central Sound","Percy_Washington",12
+"114","PW_76_005_M78",50.836734,2,0,"no bait","Artificial Lure",9600,1976-01-13,1,09:10:00,11:50:00,3,"M78","Central Sound","Percy_Washington",8
+"115","PW_76_006_O77",6.307692,0,0,"no bait","Artificial Lure",5100,1976-01-13,1,12:05:00,13:30:00,3,"O77","Central Sound","Percy_Washington",4.25
+"116","PW_76_007_N86",18.72093,0,0,"no bait","Artificial Lure",2700,1976-01-14,1,10:00:00,10:45:00,4,"N86","Central Sound","Percy_Washington",3
+"117","PW_76_008_N86",18.72093,0,0,"Herring","Hook only",20100,1976-01-14,1,11:05:00,16:40:00,4,"N86","Central Sound","Percy_Washington",22.3333333333333
+"118","PW_76_009_I79",45.324325,0,0,"no bait","Artificial Lure",4200,1976-01-29,1,09:15:00,10:25:00,4,"I79","Central Sound","Percy_Washington",4.66666666666667
+"119","PW_76_010_H77",161.159668,0,0,"no bait","Artificial Lure",6120,1976-01-29,1,10:38:00,12:20:00,4,"H77","Central Sound","Percy_Washington",6.8
+"120","PW_76_011_H76",88.675003,0,0,"no bait","Artificial Lure",9300,1976-01-29,1,12:30:00,15:05:00,4,"H76","Central Sound","Percy_Washington",10.3333333333333
+"121","PW_76_012_N100",51.979999,0,0,"no bait","Artificial Lure",3300,1976-01-30,1,10:05:00,11:00:00,2,"N100","Central Sound","Percy_Washington",1.83333333333333
+"122","PW_76_013_N103",43.166667,0,0,"no bait","Artificial Lure",1800,1976-01-30,1,11:40:00,12:10:00,2,"N103","Central Sound","Percy_Washington",1
+"123","PW_76_014_R110",147.015625,0,0,"no bait","Artificial Lure",6900,1976-01-30,1,12:40:00,14:35:00,2,"R110","South Sound","Percy_Washington",3.83333333333333
+"124","PW_76_015_Q108",70.490905,0,0,"no bait","Artificial Lure",900,1976-01-30,1,14:45:00,15:00:00,2,"Q108","South Sound","Percy_Washington",0.5
+"125","PW_76_016_G91",5.333333,0,0,"no bait","Artificial Lure",6600,1976-02-02,2,11:55:00,13:45:00,4,"G91","Central Sound","Percy_Washington",7.33333333333333
+"126","PW_76_017_J90",167.714279,0,0,"no bait","Artificial Lure",2700,1976-02-02,2,14:05:00,14:50:00,4,"J90","Central Sound","Percy_Washington",3
+"127","PW_76_018_K90",35.549999,0,0,"Herring","Artificial Lure",2400,1976-02-02,2,15:00:00,15:40:00,4,"K90","Central Sound","Percy_Washington",2.66666666666667
+"128","PW_76_019_I86",27.652173,0,0,"no bait","Artificial Lure",2400,1976-02-02,2,15:50:00,16:30:00,4,"I86","Central Sound","Percy_Washington",2.66666666666667
+"129","PW_76_020_O77",6.307692,0,0,"Herring","Artificial Lure",10200,1976-02-05,2,10:10:00,13:00:00,3,"O77","Central Sound","Percy_Washington",8.5
+"130","PW_76_021_O78",3.933333,0,0,"Herring","Artificial Lure",900,1976-02-05,2,13:15:00,13:30:00,3,"O78","Central Sound","Percy_Washington",0.75
+"131","PW_76_022_O78",3.933333,0,0,"Herring","Hook only",7200,1976-02-05,2,13:40:00,15:40:00,3,"O78","Central Sound","Percy_Washington",6
+"132","PW_76_023_H57",99.696968,0,0,"Herring","Hook only",4500,1976-02-19,2,10:20:00,11:35:00,3,"H57","Whidbey Island","Percy_Washington",3.75
+"133","PW_76_024_G57",60.529411,0,0,"Herring","Hook only",600,1976-02-19,2,11:45:00,11:55:00,2,"G57","Whidbey Island","Percy_Washington",0.333333333333333
+"134","PW_76_025_F59",80.964286,0,0,"Herring","Hook only",2700,1976-02-20,2,12:00:00,12:45:00,3,"F59","Whidbey Island","Percy_Washington",2.25
+"135","PW_76_026_F97",111.021736,0,0,"Herring","Hook only",8400,1976-02-20,2,11:00:00,13:20:00,4,"F97","Central Sound","Percy_Washington",9.33333333333333
+"136","PW_76_027_H93",119.551017,0,0,"Herring","Hook only",2400,1976-02-20,2,13:30:00,14:10:00,3,"H93","Central Sound","Percy_Washington",2
+"137","PW_76_028_F96",61.142856,0,0,"no bait","Artificial Lure",1500,1976-02-20,2,15:20:00,15:45:00,4,"F96","Central Sound","Percy_Washington",1.66666666666667
+"138","PW_76_029_N86",18.72093,0,0,"Other","Hook only",17100,1976-03-04,3,10:15:00,15:00:00,3,"N86","Central Sound","Percy_Washington",14.25
+"139","PW_76_030_M78",50.836734,7,0,"no bait","Artificial Lure",28800,1976-03-08,3,09:00:00,17:00:00,2,"M78","Central Sound","Percy_Washington",16
+"140","PW_76_031_K86",210.107147,0,0,"no bait","Artificial Lure",9900,1976-03-09,3,09:40:00,12:25:00,4,"K86","Central Sound","Percy_Washington",11
+"141","PW_76_032_L85",46.274509,0,0,"Other","Artificial Lure",1800,1976-03-09,3,12:30:00,13:00:00,4,"L85","Central Sound","Percy_Washington",2
+"142","PW_76_033_L84",32.886791,0,0,"no bait","Artificial Lure",1200,1976-03-09,3,13:10:00,13:30:00,4,"L84","Central Sound","Percy_Washington",1.33333333333333
+"143","PW_76_034_M78",50.836734,0,0,"no bait","Artificial Lure",600,1976-03-09,3,13:45:00,13:55:00,4,"M78","Central Sound","Percy_Washington",0.666666666666667
+"144","PW_76_035_O77",6.307692,0,0,"no bait","Artificial Lure",6600,1976-03-09,3,14:00:00,15:50:00,4,"O77","Central Sound","Percy_Washington",7.33333333333333
+"145","PW_76_036_O77",6.307692,0,0,"no bait","Artificial Lure",9000,1976-03-11,3,10:00:00,12:30:00,3,"O77","Central Sound","Percy_Washington",7.5
+"146","PW_76_037_P83",23.184209,0,0,"no bait","Artificial Lure",9000,1976-03-15,3,09:30:00,12:00:00,3,"P83","Central Sound","Percy_Washington",7.5
+"147","PW_76_038_O77",6.307692,0,0,"no bait","Artificial Lure",12300,1976-03-15,3,12:20:00,15:45:00,3,"O77","Central Sound","Percy_Washington",10.25
+"148","PW_76_039_L78",153.946426,0,0,"no bait","Artificial Lure",1500,1976-03-15,3,15:50:00,16:15:00,3,"L78","Central Sound","Percy_Washington",1.25
+"149","PW_76_040_H67",59.612243,0,0,"no bait","Artificial Lure",900,1976-03-16,3,09:45:00,10:00:00,3,"H67","Central Sound","Percy_Washington",0.75
+"150","PW_76_041_F66",151.254547,0,0,"no bait","Artificial Lure",10200,1976-03-16,3,10:10:00,13:00:00,3,"F66","Whidbey Island","Percy_Washington",8.5
+"151","PW_76_042_H66",16.799999,0,0,"Herring","Hook only",7320,1976-03-16,3,13:10:00,15:12:00,3,"H66","Central Sound","Percy_Washington",6.1
+"152","PW_76_043_F67",97.823532,0,0,"no bait","Artificial Lure",900,1976-03-16,3,15:30:00,15:45:00,3,"F67","Whidbey Island","Percy_Washington",0.75
+"153","PW_76_044_N77",39.163265,0,0,"no bait","Artificial Lure",9900,1976-03-19,3,12:15:00,15:00:00,2,"N77","Central Sound","Percy_Washington",5.5
+"154","PW_76_045_L78",153.946426,0,0,"no bait","Artificial Lure",7200,1976-03-30,3,07:15:00,09:15:00,2,"L78","Central Sound","Percy_Washington",4
+"155","PW_76_046_N77",39.163265,0,0,"no bait","Artificial Lure",6600,1976-03-30,3,10:00:00,11:50:00,2,"N77","Central Sound","Percy_Washington",3.66666666666667
+"156","PW_76_047_P82",21.945945,0,0,"no bait","Artificial Lure",1200,1976-03-30,3,12:10:00,12:30:00,2,"P82","Central Sound","Percy_Washington",0.666666666666667
+"157","PW_76_048_BB53",89.02838898,0,0,"no bait","Artificial Lure",6600,1976-04-07,4,15:30:00,17:20:00,3,"BB53","Straits of Juan de Fuca","Percy_Washington",5.5
+"158","PW_76_049_BB52",91.77871704,0,0,"no bait","Artificial Lure",23100,1976-04-08,4,06:35:00,13:00:00,3,"BB52","Straits of Juan de Fuca","Percy_Washington",19.25
+"159","PW_76_050_LL49",109.875351,0,0,"no bait","Artificial Lure",1800,1976-04-08,4,11:05:00,11:35:00,3,"LL49","Straits of Juan de Fuca","Percy_Washington",1.5
+"160","PW_76_055_N86",18.72093,0,0,"Other","Hook only",12000,1976-04-14,4,08:10:00,11:30:00,2,"N86","Central Sound","Percy_Washington",6.66666666666667
+"161","PW_76_056_F59",80.964286,0,0,"Other","Hook only",600,1976-04-20,4,09:35:00,09:45:00,2,"F59","Whidbey Island","Percy_Washington",0.333333333333333
+"162","PW_76_057_G57",60.529411,0,0,"no bait","Artificial Lure",8400,1976-04-20,4,09:55:00,12:15:00,2,"G57","Whidbey Island","Percy_Washington",4.66666666666667
+"163","PW_76_058_M78",50.836734,0,0,"no bait","Artificial Lure",18300,1976-04-21,4,07:10:00,12:15:00,2,"M78","Central Sound","Percy_Washington",10.1666666666667
+"164","PW_76_059_G97",183.244903,0,0,"no bait","Artificial Lure",3600,1976-04-28,4,07:50:00,08:50:00,3,"G97","Central Sound","Percy_Washington",3
+"165","PW_76_060_G95",134.958328,0,0,"no bait","Artificial Lure",7200,1976-04-28,4,09:10:00,11:10:00,3,"G95","Central Sound","Percy_Washington",6
+"166","PW_76_061_J93",112.76316,0,0,"Herring","Hook only",3900,1976-04-28,4,11:25:00,12:30:00,3,"J93","Central Sound","Percy_Washington",3.25
+"167","PW_76_062_H90",34.285713,0,0,"no bait","Artificial Lure",2400,1976-04-28,4,13:00:00,13:40:00,3,"H90","Central Sound","Percy_Washington",2
+"168","PW_76_063_Q82",8.941176,0,0,"no bait","Artificial Lure",5700,1976-05-06,5,07:35:00,09:10:00,3,"Q82","Central Sound","Percy_Washington",4.75
+"169","PW_76_064_P81",13.8,0,0,"no bait","Artificial Lure",1800,1976-05-06,5,09:15:00,09:45:00,3,"P81","Central Sound","Percy_Washington",1.5
+"170","PW_76_065_P83",23.184209,0,0,"no bait","Artificial Lure",10200,1976-05-06,5,09:50:00,12:40:00,3,"P83","Central Sound","Percy_Washington",8.5
+"171","PW_76_066_N85",12,0,0,"no bait","Artificial Lure",1500,1976-05-06,5,12:45:00,13:10:00,3,"N85","Central Sound","Percy_Washington",1.25
+"172","PW_76_067_O85",0.142951444,0,0,"no bait","Artificial Lure",1500,1976-05-06,5,13:15:00,13:40:00,3,"O85","Central Sound","Percy_Washington",1.25
+"173","PW_76_068_N86",18.72093,0,0,"no bait","Artificial Lure",12900,1976-05-07,5,08:40:00,12:15:00,3,"N86","Central Sound","Percy_Washington",10.75
+"174","PW_76_069_N86",18.72093,0,0,"no bait","Artificial Lure",4800,1976-05-07,5,12:25:00,13:45:00,3,"N86","Central Sound","Percy_Washington",4
+"175","PW_76_070_H66",16.799999,0,0,"no bait","Artificial Lure",13200,1976-05-18,5,12:00:00,15:40:00,3,"H66","Central Sound","Percy_Washington",11
+"176","PW_76_071_M86",26.421052,0,0,"no bait","Artificial Lure",6300,1976-05-19,5,07:30:00,09:15:00,3,"M86","Central Sound","Percy_Washington",5.25
+"177","PW_76_072_N86",18.72093,0,0,"no bait","Artificial Lure",6000,1976-05-19,5,09:15:00,10:55:00,3,"N86","Central Sound","Percy_Washington",5
+"178","PW_76_073_L86",54.386363,0,0,"no bait","Artificial Lure",9420,1976-05-19,5,10:58:00,13:35:00,3,"L86","Central Sound","Percy_Washington",7.85
+"179","PW_76_074_I87",65.324325,0,0,"no bait","Artificial Lure",3300,1976-05-25,5,10:20:00,11:15:00,2,"I87","Central Sound","Percy_Washington",1.83333333333333
+"180","PW_76_075_H89",0.333333,0,0,"no bait","Artificial Lure",9780,1976-05-25,5,11:17:00,14:00:00,2,"H89","Central Sound","Percy_Washington",5.43333333333333
+"181","PW_76_076_I66",1.844444,0,0,"no bait","Artificial Lure",13500,1976-05-28,5,11:05:00,14:50:00,3,"I66","Central Sound","Percy_Washington",11.25
+"182","PW_76_077_I66",1.844444,0,0,"no bait","Artificial Lure",2700,1976-05-31,5,13:25:00,14:10:00,3,"I66","Central Sound","Percy_Washington",2.25
+"183","PW_76_078_F70",28.833333,0,0,"no bait","Artificial Lure",2400,1976-05-31,5,14:20:00,15:00:00,3,"F70","Central Sound","Percy_Washington",2
+"184","PW_76_079_F60",99.744186,0,0,"no bait","Artificial Lure",4500,1976-06-03,6,09:15:00,10:30:00,3,"F60","Whidbey Island","Percy_Washington",3.75
+"185","PW_76_080_G57",60.529411,0,0,"no bait","Artificial Lure",2400,1976-06-03,6,10:40:00,11:20:00,3,"G57","Whidbey Island","Percy_Washington",2
+"186","PW_76_081_H66",16.799999,0,0,"no bait","Artificial Lure",2700,1976-06-03,6,12:00:00,12:45:00,2,"H66","Central Sound","Percy_Washington",1.5
+"187","PW_76_082_I66",1.844444,0,0,"no bait","Artificial Lure",7200,1976-06-03,6,13:00:00,15:00:00,3,"I66","Central Sound","Percy_Washington",6
+"188","PW_76_083_P63",103.453125,0,0,"no bait","Artificial Lure",3900,1976-06-04,6,07:45:00,08:50:00,4,"P63","Central Sound","Percy_Washington",4.33333333333333
+"189","PW_76_084_S64",18.979591,0,0,"no bait","Artificial Lure",6000,1976-06-04,6,09:10:00,10:50:00,4,"S64","Hood Canal","Percy_Washington",6.66666666666667
+"190","PW_76_085_S63",53.44643,0,0,"no bait","Artificial Lure",4800,1976-06-04,6,10:55:00,12:15:00,3,"S63","Central Sound","Percy_Washington",4
+"191","PW_76_086_S63",53.44643,0,0,"no bait","Artificial Lure",6780,1976-06-04,6,12:17:00,14:10:00,3,"S63","Central Sound","Percy_Washington",5.65
+"192","PW_76_087_S65",12.486486,0,0,"no bait","Artificial Lure",3600,1976-06-05,6,08:20:00,09:20:00,2,"S65","Hood Canal","Percy_Washington",2
+"193","PW_76_088_Y80",88.64151,2,0,"no bait","Artificial Lure",5700,1976-06-05,6,10:45:00,12:20:00,3,"Y80","Hood Canal","Percy_Washington",4.75
+"194","PW_76_089_X79",31.357143,0,0,"no bait","Artificial Lure",7500,1976-06-05,6,12:30:00,14:35:00,3,"X79","Hood Canal","Percy_Washington",6.25
+"195","PW_76_091_F67",97.823532,0,0,"Herring","Hook only",5100,1976-06-08,6,16:30:00,17:55:00,3,"F67","Whidbey Island","Percy_Washington",4.25
+"196","PW_76_092_U54",13.632653,0,0,"no bait","Artificial Lure",5100,1976-06-09,6,12:50:00,14:15:00,3,"U54","Central Sound","Percy_Washington",4.25
+"197","PW_76_093_M96",32,0,0,"no bait","Artificial Lure",1800,1976-06-10,6,15:00:00,15:30:00,3,"M96","Central Sound","Percy_Washington",1.5
+"198","PW_76_094_J66",9.5,0,0,"no bait","Artificial Lure",13800,1976-06-10,6,11:45:00,15:35:00,3,"J66","Central Sound","Percy_Washington",11.5
+"199","PW_76_095_H66",16.799999,0,0,"no bait","Artificial Lure",4500,1976-06-10,6,15:45:00,17:00:00,3,"H66","Central Sound","Percy_Washington",3.75
+"200","PW_76_096_H66",16.799999,0,0,"no bait","Artificial Lure",9300,1976-06-17,6,18:55:00,21:30:00,4,"H66","Central Sound","Percy_Washington",10.3333333333333
+"201","PW_76_097_H66",16.799999,0,0,"no bait","Artificial Lure",3900,1976-06-18,6,08:45:00,09:50:00,3,"H66","Central Sound","Percy_Washington",3.25
+"202","PW_76_098_H66",16.799999,0,0,"no bait","Artificial Lure",2400,1976-06-18,6,10:00:00,10:40:00,3,"H66","Central Sound","Percy_Washington",2
+"203","PW_76_099_H66",16.799999,0,0,"no bait","Artificial Lure",2400,1976-06-18,6,10:50:00,11:30:00,3,"H66","Central Sound","Percy_Washington",2
+"204","PW_76_100_H66",16.799999,1,0,"no bait","Artificial Lure",4200,1976-06-22,6,15:30:00,16:40:00,3,"H66","Central Sound","Percy_Washington",3.5
+"205","PW_76_101_H66",16.799999,0,0,"no bait","Artificial Lure",2700,1976-06-02,6,16:45:00,17:30:00,3,"H66","Central Sound","Percy_Washington",2.25
+"206","PW_76_103_H66",16.799999,0,0,"no bait","Artificial Lure",6300,1976-06-30,6,11:45:00,13:30:00,4,"H66","Central Sound","Percy_Washington",7
+"207","PW_76_104_P81",13.8,0,0,"no bait","Artificial Lure",1800,1976-05-06,5,09:15:00,09:45:00,3,"P81","Central Sound","Percy_Washington",1.5
+"208","PW_76_105_H90",34.285713,0,0,"no bait","Artificial Lure",5400,1976-07-28,7,12:50:00,14:20:00,2,"H90","Central Sound","Percy_Washington",3
+"209","PW_76_107_M78",50.836734,0,0,"Herring","Hook only",5700,1976-08-12,8,11:25:00,13:00:00,2,"M78","Central Sound","Percy_Washington",3.16666666666667
+"210","PW_76_108_M78",50.836734,0,0,"Herring","Hook only",1800,1976-08-12,8,13:10:00,13:40:00,2,"M78","Central Sound","Percy_Washington",1
+"211","PW_76_109_N78",16.641025,0,0,"Herring","Hook only",5100,1976-08-12,8,13:10:00,14:35:00,2,"N78","Central Sound","Percy_Washington",2.83333333333333
+"212","PW_76_109_N78",16.641025,0,0,"Herring","Hook only",5100,1976-08-12,8,14:00:00,14:35:00,2,"N78","Central Sound","Percy_Washington",2.83333333333333
+"213","PW_76_110_F60",99.744186,0,0,"no bait","Artificial Lure",14700,1976-08-17,8,14:00:00,16:45:00,3,"F60","Whidbey Island","Percy_Washington",12.25
+"214","PW_76_110_F60",99.744186,0,0,"no bait","Artificial Lure",14700,1976-08-17,8,12:40:00,16:45:00,3,"F60","Whidbey Island","Percy_Washington",12.25
+"215","PW_76_111_L78",153.946426,1,0,"Herring","Artificial Lure",15300,1976-08-19,8,07:45:00,12:00:00,3,"L78","Central Sound","Percy_Washington",12.75
+"216","PW_76_112_G66",164.387756,0,0,"no bait","Artificial Lure",7800,1976-08-24,8,12:00:00,14:10:00,3,"G66","Central Sound","Percy_Washington",6.5
+"217","PW_76_114_G66",164.387756,0,0,"no bait","Artificial Lure",7800,1976-08-25,8,10:50:00,13:00:00,3,"G66","Central Sound","Percy_Washington",6.5
+"218","PW_76_115_G66",164.387756,0,0,"no bait","Artificial Lure",9000,1976-08-26,8,11:30:00,14:00:00,3,"G66","Central Sound","Percy_Washington",7.5
+"219","PW_76_116_G66",164.387756,0,0,"no bait","Artificial Lure",9000,1976-08-31,8,08:00:00,10:30:00,3,"G66","Central Sound","Percy_Washington",7.5
+"220","PW_76_117_G66",164.387756,0,0,"no bait","Artificial Lure",2700,1976-08-31,8,11:30:00,12:15:00,3,"G66","Central Sound","Percy_Washington",2.25
+"221","PW_76_118_E65",79.652175,0,0,"Herring","Hook only",3300,1976-08-31,8,12:25:00,13:20:00,3,"E65","Whidbey Island","Percy_Washington",2.75
+"222","PW_76_119_H65",1.416666,0,0,"Herring","Artificial Lure",4200,1976-08-31,8,13:30:00,14:40:00,3,"H65","Central Sound","Percy_Washington",3.5
+"223","PW_76_120_H65",1.416666,0,0,"no bait","Artificial Lure",7200,1976-09-03,9,08:00:00,10:00:00,2,"H65","Central Sound","Percy_Washington",4
+"224","PW_76_121_H65",1.416666,0,0,"no bait","Artificial Lure",9000,1976-09-03,9,10:10:00,12:40:00,2,"H65","Central Sound","Percy_Washington",5
+"225","PW_76_122_L89",42.707317,0,0,"no bait","Artificial Lure",7200,1976-09-09,9,08:00:00,10:00:00,2,"L89","Central Sound","Percy_Washington",4
+"226","PW_76_123_P82",21.945945,0,0,"no bait","Artificial Lure",3600,1976-09-20,9,12:15:00,13:15:00,2,"P82","Central Sound","Percy_Washington",2
+"227","PW_76_125_P81",13.8,0,0,"no bait","Artificial Lure",2700,1976-09-20,9,13:50:00,14:35:00,2,"P81","Central Sound","Percy_Washington",1.5
+"228","PW_76_126_L86",54.386363,0,0,"Herring","Artificial Lure",1800,1976-09-20,9,15:50:00,16:20:00,2,"L86","Central Sound","Percy_Washington",1
+"229","PW_76_130_M91",69.472221,0,0,"no bait","Artificial Lure",3600,1976-10-05,10,12:30:00,13:30:00,2,"M91","Central Sound","Percy_Washington",2
+"230","PW_76_131_J66",9.5,0,0,"no bait","Artificial Lure",8100,1976-10-29,10,12:15:00,14:30:00,2,"J66","Central Sound","Percy_Washington",4.5
+"231","PW_76_132_G66",164.387756,0,0,"no bait","Artificial Lure",8700,1976-10-29,10,14:35:00,17:00:00,2,"G66","Central Sound","Percy_Washington",4.83333333333333
+"232","PW_76_134_L83",10.27217865,0,0,"no bait","Artificial Lure",2700,1976-11-12,11,10:15:00,11:00:00,5,"L83","Central Sound","Percy_Washington",3.75
+"233","PW_76_135_P83",23.184209,0,0,"no bait","Artificial Lure",3600,1976-11-12,11,14:00:00,15:00:00,5,"P83","Central Sound","Percy_Washington",5
+"234","PW_76_138_L90",53.269853,0,0,"no bait","Artificial Lure",3600,1976-11-18,11,14:00:00,15:00:00,3,"L90","Central Sound","Percy_Washington",3
+"235","PW_76_139_L90",59.176471,0,0,"no bait","Artificial Lure",11400,1976-11-28,11,13:10:00,16:20:00,3,"L90","Central Sound","Percy_Washington",9.5
+"236","PW_76_140_L90",59.176471,0,0,"no bait","Artificial Lure",4800,1976-12-02,12,12:00:00,13:20:00,3,"L90","Central Sound","Percy_Washington",4
+"237","PW_76_141_M92",71.083335,0,0,"no bait","Artificial Lure",3600,1976-12-02,12,13:25:00,14:25:00,3,"M92","Central Sound","Percy_Washington",3
+"238","PW_76_142_K86",210.107147,0,0,"Herring","Hook only",1800,1976-12-02,12,15:30:00,16:00:00,3,"K86","Central Sound","Percy_Washington",1.5
+"239","PW_76_143_P81",13.8,0,0,"no bait","Artificial Lure",1800,1976-12-18,12,10:15:00,10:45:00,2,"P81","Central Sound","Percy_Washington",1
+"240","PW_76_144_H90",34.285713,0,0,"no bait","Artificial Lure",5400,1976-12-21,12,08:30:00,10:00:00,2,"H90","Central Sound","Percy_Washington",3
+"241","PW_76_145_H91",106.690475,0,0,"no bait","Artificial Lure",600,1976-12-21,12,10:10:00,10:20:00,2,"H91","Central Sound","Percy_Washington",0.333333333333333
+"242","PW_76_146_H92",172.245285,0,0,"no bait","Artificial Lure",3300,1976-12-21,12,10:25:00,11:20:00,2,"H92","Central Sound","Percy_Washington",1.83333333333333
+"243","PW_76_147_F85",18.166666,0,0,"no bait","Artificial Lure",3000,1976-12-27,12,11:10:00,12:00:00,3,"F85","Central Sound","Percy_Washington",2.5
+"244","PW_76_148_G84",65.045455,0,0,"no bait","Artificial Lure",3000,1976-12-27,12,12:10:00,13:00:00,3,"G84","Central Sound","Percy_Washington",2.5
+"245","PW_76_150_H85",56.358974,0,0,"no bait","Artificial Lure",2100,1976-12-27,12,13:10:00,13:45:00,3,"H85","Central Sound","Percy_Washington",1.75
+"246","PW_76_150_H89",0.333333,0,0,"no bait","Artificial Lure",3600,1976-12-27,12,14:00:00,15:00:00,3,"H89","Central Sound","Percy_Washington",3
+"247","PW_76_151_L90",59.176471,0,0,"no bait","Artificial Lure",4500,1976-12-29,12,13:15:00,14:30:00,3,"L90","Central Sound","Percy_Washington",3.75
+"248","PW_76_152_L92",10.307692,0,0,"no bait","Artificial Lure",2400,1976-12-29,12,14:35:00,15:15:00,3,"L92","Central Sound","Percy_Washington",2
+"249","PW_76_154_H90",34.285713,0,0,"no bait","Artificial Lure",1500,1976-12-29,12,16:00:00,16:25:00,3,"H90","Central Sound","Percy_Washington",1.25
+"250","PW_76_803_H89",0.333333,0,0,"no bait","Artificial Lure",3600,1976-12-05,12,14:00:00,15:00:00,2,"H89","Central Sound","Percy_Washington",2
+"251","PW_77_001_L79",175.214279,0,0,"no bait","Artificial Lure",8400,1977-01-05,1,09:40:00,12:00:00,3,"L79","Central Sound","Percy_Washington",7
+"252","PW_77_002_L85",46.274509,0,0,"no bait","Artificial Lure",2700,1977-01-05,1,12:00:00,12:45:00,3,"L85","Central Sound","Percy_Washington",2.25
+"253","PW_77_003_M86",26.421052,0,0,"no bait","Artificial Lure",1800,1977-01-05,1,14:30:00,15:00:00,3,"M86","Central Sound","Percy_Washington",1.5
+"254","PW_77_004_L78",153.946426,3,0,"no bait","Artificial Lure",15300,1977-01-06,1,12:05:00,16:20:00,2,"L78","Central Sound","Percy_Washington",8.5
+"255","PW_77_005_G83",16.5,0,0,"no bait","Artificial Lure",6000,1977-01-12,1,11:10:00,12:50:00,2,"G83","Central Sound","Percy_Washington",3.33333333333333
+"256","PW_77_006_H85",56.358974,0,0,"no bait","Artificial Lure",900,1977-01-12,1,12:50:00,13:05:00,2,"H85","Central Sound","Percy_Washington",0.5
+"257","PW_77_007_F85",18.166666,0,0,"no bait","Artificial Lure",1200,1977-01-12,1,13:40:00,14:00:00,2,"F85","Central Sound","Percy_Washington",0.666666666666667
+"258","PW_77_008_H78",61.729728,0,0,"no bait","Artificial Lure",1800,1977-01-14,1,10:15:00,10:45:00,4,"H78","Central Sound","Percy_Washington",2
+"259","PW_77_009_G66",164.387756,0,0,"no bait","Artificial Lure",7500,1977-01-14,1,11:35:00,13:40:00,4,"G66","Central Sound","Percy_Washington",8.33333333333333
+"260","PW_77_010_L90",59.176471,0,0,"no bait","Artificial Lure",7200,1977-01-19,1,09:05:00,11:05:00,3,"L90","Central Sound","Percy_Washington",6
+"261","PW_77_012_M92",71.083335,0,0,"no bait","Artificial Lure",3300,1977-01-19,1,11:45:00,12:40:00,3,"M92","Central Sound","Percy_Washington",2.75
+"262","PW_77_014_N85",12,0,0,"no bait","Artificial Lure",3000,1977-01-25,1,12:25:00,13:15:00,2,"N85","Central Sound","Percy_Washington",1.66666666666667
+"263","PW_77_015_N86",18.72093,0,0,"no bait","Artificial Lure",3000,1977-01-25,1,13:30:00,14:20:00,2,"N86","Central Sound","Percy_Washington",1.66666666666667
+"264","PW_77_016_O85",0.142951444,0,0,"no bait","Artificial Lure",6900,1977-01-27,1,09:50:00,11:45:00,3,"O85","Central Sound","Percy_Washington",5.75
+"265","PW_77_017_P83",23.184209,0,0,"no bait","Artificial Lure",4500,1977-01-27,1,13:30:00,14:45:00,3,"P83","Central Sound","Percy_Washington",3.75
+"266","PW_77_018_T54",25.1347065,0,0,"no bait","Artificial Lure",1200,1977-02-14,2,12:30:00,12:50:00,2,"T54","Central Sound","Percy_Washington",0.666666666666667
+"267","PW_77_019_Q57",51.35608673,0,0,"no bait","Artificial Lure",3000,1977-02-14,2,13:10:00,14:00:00,2,"Q57","Central Sound","Percy_Washington",1.66666666666667
+"268","PW_77_020_P60",3.170530558,0,0,"no bait","Artificial Lure",1200,1977-02-14,2,14:05:00,14:25:00,2,"P60","Central Sound","Percy_Washington",0.666666666666667
+"269","PW_77_021_L79",175.214279,0,0,"no bait","Artificial Lure",2100,1977-02-15,2,11:10:00,11:45:00,3,"L79","Central Sound","Percy_Washington",1.75
+"270","PW_77_022_E65",79.652175,0,0,"no bait","Artificial Lure",8100,1977-02-18,2,11:15:00,13:30:00,3,"E65","Whidbey Island","Percy_Washington",6.75
+"271","PW_77_023_H66",16.799999,0,0,"no bait","Artificial Lure",8400,1977-02-18,2,13:45:00,16:05:00,3,"H66","Central Sound","Percy_Washington",7
+"272","PW_77_024_M93",81.153846,0,0,"no bait","Artificial Lure",3300,1977-02-24,2,14:05:00,15:00:00,3,"M93","Central Sound","Percy_Washington",2.75
+"273","PW_77_025_N85",12,0,0,"no bait","Artificial Lure",3600,1977-03-11,3,09:30:00,10:30:00,3,"N85","Central Sound","Percy_Washington",3
+"274","PW_77_026_O86",2,0,0,"no bait","Artificial Lure",3000,1977-03-11,3,10:40:00,11:30:00,3,"O86","Central Sound","Percy_Washington",2.5
+"275","PW_77_027_N86",18.72093,0,0,"no bait","Artificial Lure",7200,1977-03-16,3,10:00:00,12:00:00,3,"N86","Central Sound","Percy_Washington",6
+"276","1_Black_rocks_green_buoy",77.724,2,0,"squid","Hook only",1500,2014-04-09,4,15:21:00,15:46:00,3,"Black_rocks_green_buoy","San Juan Islands","ESA_Genetics",1.25
+"277","1_flattop_island",64.2366,1,0,"squid","Hook only",3960,2014-04-09,4,08:48:00,09:54:00,3,"flattop_island","San Juan Islands","ESA_Genetics",3.3
+"278","1_Parker_reef",60.0456,0,0,"squid","Hook only",1390.71428571429,2014-04-09,4,13:51:00,13:51:00,3,"Parker_reef","San Juan Islands","ESA_Genetics",1.15892857142857
+"279","1_Peapod_rocks",51.054,0,0,"squid","Hook only",1080,2014-04-09,4,14:31:00,14:49:00,3,"Peapod_rocks","San Juan Islands","ESA_Genetics",0.9
+"280","1_Point_Disney",62.484,0,0,"unknown","Hook only",1390.71428571429,2014-04-09,4,11:50:00,11:50:00,3,"Point_Disney","San Juan Islands","ESA_Genetics",1.15892857142857
+"281","1_presidents_channel_south_waldron",76.8096,0,0,"squid","Hook only",1260,2014-04-09,4,10:57:00,11:18:00,3,"presidents_channel_south_waldron","San Juan Islands","ESA_Genetics",1.05
+"282","1_skipjack_island",80.264,0,0,"squid","Hook only",660,2014-04-09,4,12:56:00,13:07:00,3,"skipjack_island","San Juan Islands","ESA_Genetics",0.55
+"283","1_south_of_flattop",73.152,0,0,"squid","Hook only",1390.71428571429,2014-04-09,4,08:11:00,08:11:00,3,"south_of_flattop","San Juan Islands","ESA_Genetics",1.15892857142857
+"284","10_North_of_Wahkitica_Creek",50.292,0,0,"no bait","Artificial Lure",1390.71428571429,2014-07-18,7,11:09:00,11:09:00,6,"North_of_Wahkitica_Creek","Hood Canal","ESA_Genetics",2.31785714285714
+"285","10_Rocky_pinnacle_northeast_of_Triton_Head",62.484,0,0,"herring","Hook only",5040,2014-07-18,7,14:01:00,15:25:00,6,"Rocky_pinnacle_northeast_of_Triton_Head","Hood Canal","ESA_Genetics",8.4
+"286","10_Tekiu_Point",57.912,0,0,"herring","Hook only",1390.71428571429,2014-07-18,7,13:43:00,13:43:00,6,"Tekiu_Point","Hood Canal","ESA_Genetics",2.31785714285714
+"287","10_Triton_Head",29.2608,0,0,"no bait","Artificial Lure",3480,2014-07-18,7,11:29:00,12:27:00,6,"Triton_Head","Hood Canal","ESA_Genetics",5.8
+"288","11_Meadow_Point",91.44,0,0,"herring","Hook only",1390.71428571429,2014-08-04,8,10:52:00,10:52:00,6,"Meadow_Point","Central Sound","ESA_Genetics",2.31785714285714
+"289","11_Point_Monroe",87.7824,0,0,"herring","Hook only",1390.71428571429,2014-08-04,8,11:54:00,11:54:00,6,"Point_Monroe","Central Sound","ESA_Genetics",2.31785714285714
+"290","11_Skiff_Point",57.912,0,0,"herring","Hook only",1390.71428571429,2014-08-04,8,12:35:00,12:35:00,6,"Skiff_Point","Central Sound","ESA_Genetics",2.31785714285714
+"291","11_Spring_Beach",65.7239111111111,0,0,"herring","Hook only",5040,2014-08-04,8,09:02:00,10:26:00,6,"Spring_Beach","Central Sound","ESA_Genetics",8.4
+"292","11_West_Point",65.9511,0,0,"herring","Hook only",5220,2014-08-04,8,13:12:00,14:39:00,6,"West_Point","Central Sound","ESA_Genetics",8.7
+"293","16_Cattle_Pass",25.4846666666667,0,0,"no bait","Artificial Lure",7080,2014-08-26,8,12:03:00,14:01:00,3,"Cattle_Pass","San Juan Islands","ESA_Genetics",5.9
+"294","16_Colville_Island",21.336,0,0,"no bait","Artificial Lure",1390.71428571429,2014-08-26,8,11:22:00,11:22:00,3,"Colville_Island","San Juan Islands","ESA_Genetics",1.15892857142857
+"295","16_Colville_Island_buoy",49.7078,2,0,"no bait","Artificial Lure",4380,2014-08-26,8,09:47:00,11:00:00,3,"Colville_Island_buoy","San Juan Islands","ESA_Genetics",3.65
+"296","16_James_Island",30.48,0,0,"no bait","Artificial Lure",1390.71428571429,2014-08-26,8,07:41:00,07:41:00,3,"James_Island","San Juan Islands","ESA_Genetics",1.15892857142857
+"297","16_Williamson_Rocks_kelp",39.624,0,0,"no bait","Artificial Lure",1440,2014-08-26,8,14:05:00,14:29:00,3,"Williamson_Rocks_kelp","San Juan Islands","ESA_Genetics",1.2
+"298","16_Young_Island",15.24,0,0,"no bait","Artificial Lure",1390.71428571429,2014-08-26,8,07:06:00,07:06:00,3,"Young_Island","San Juan Islands","ESA_Genetics",1.15892857142857
+"299","17_Bell_Rock",40.17264,0,0,"no bait","Artificial Lure",1740,2014-08-28,8,07:18:00,07:47:00,3,"Bell_Rock","San Juan Islands","ESA_Genetics",1.45
+"300","17_Bird_Rocks",35.814,1,0,"no bait","Artificial Lure",1980,2014-08-28,8,08:19:00,08:52:00,3,"Bird_Rocks","San Juan Islands","ESA_Genetics",1.65
+"301","17_Cypress_Reef",31.2928,0,0,"no bait","Artificial Lure",960,2014-08-28,8,11:03:00,11:19:00,3,"Cypress_Reef","San Juan Islands","ESA_Genetics",0.8
+"302","17_Deepwater_Bay",24.384,0,0,"no bait","Artificial Lure",1390.71428571429,2014-08-28,8,10:18:00,10:18:00,3,"Deepwater_Bay","San Juan Islands","ESA_Genetics",1.15892857142857
+"303","17_East_Blakely",48.768,1,0,"no bait","Artificial Lure",1740,2014-08-28,8,13:48:00,14:17:00,3,"East_Blakely","San Juan Islands","ESA_Genetics",1.45
+"304","17_Lawson_Reef",33.8328,0,0,"no bait","Artificial Lure",1390.71428571429,2014-08-28,8,09:20:00,09:20:00,3,"Lawson_Reef","San Juan Islands","ESA_Genetics",1.15892857142857
+"305","17_Strawberry_Island",30.5816,0,0,"no bait","Artificial Lure",4020,2014-08-28,8,12:20:00,13:27:00,3,"Strawberry_Island","San Juan Islands","ESA_Genetics",3.35
+"306","18_Lummi_rocks",49.657,0,0,"no bait","Artificial Lure",1390.71428571429,2014-09-09,9,00:00:00,00:00:00,3,"Lummi_rocks","San Juan Islands","ESA_Genetics",1.15892857142857
+"307","18_Peapod_rocks",27.7803428571429,0,0,"no bait","Artificial Lure",1390.71428571429,2014-09-09,9,00:00:00,00:00:00,3,"Peapod_rocks","San Juan Islands","ESA_Genetics",1.15892857142857
+"308","18_Point_Lawrence",52.6868571428571,0,0,"no bait","Artificial Lure",1390.71428571429,2014-09-09,9,00:00:00,00:00:00,3,"Point_Lawrence","San Juan Islands","ESA_Genetics",1.15892857142857
+"309","19_Broken_Point",30.48,0,0,"no bait","Artificial Lure",1390.71428571429,2014-09-10,9,09:05:00,09:05:00,4,"Broken_Point","San Juan Islands","ESA_Genetics",1.5452380952381
+"310","19_Cactus_Islands",82.7532,0,0,"no bait","Artificial Lure",9000,2014-09-10,9,10:06:00,12:36:00,4,"Cactus_Islands","San Juan Islands","ESA_Genetics",10
+"311","19_flattop_island",46.482,0,0,"no bait","Artificial Lure",1390.71428571429,2014-09-10,9,13:15:00,13:15:00,4,"flattop_island","San Juan Islands","ESA_Genetics",1.5452380952381
+"312","19_Sentinel_Island",76.2,0,0,"no bait","Artificial Lure",1390.71428571429,2014-09-10,9,09:51:00,09:51:00,4,"Sentinel_Island","San Juan Islands","ESA_Genetics",1.5452380952381
+"313","2_Black_rocks_green_buoy",65.2740923076923,1,0,"squid","Hook only",3660,2014-04-10,4,14:33:00,15:34:00,3,"Black_rocks_green_buoy","San Juan Islands","ESA_Genetics",3.05
+"314","2_flattop_island",64.1604,5,0,"squid","Hook only",5880,2014-04-10,4,11:24:00,13:02:00,3,"flattop_island","San Juan Islands","ESA_Genetics",4.9
+"315","2_Point_Caution",90.3224,0,0,"squid","Hook only",1320,2014-04-10,4,10:11:00,10:33:00,3,"Point_Caution","San Juan Islands","ESA_Genetics",1.1
+"316","2_Reid_Rocks",42.2148,0,0,"squid","Hook only",180,2014-04-10,4,09:53:00,09:56:00,3,"Reid_Rocks","San Juan Islands","ESA_Genetics",0.15
+"317","2_Shark_reef,_San_Juan_Channel",54.7285333333333,0,0,"squid","Hook only",2580,2014-04-10,4,07:49:00,08:32:00,3,"Shark_reef,_San_Juan_Channel","San Juan Islands","ESA_Genetics",2.15
+"318","2_Spieden_Island",42.672,0,0,"squid","Hook only",60,2014-04-10,4,11:01:00,11:02:00,3,"Spieden_Island","San Juan Islands","ESA_Genetics",0.05
+"319","2_Turn_Island",63.3222,0,0,"squid","Hook only",120,2014-04-10,4,09:28:00,09:30:00,3,"Turn_Island","San Juan Islands","ESA_Genetics",0.1
+"320","20_Ayres_Creek",74.9808,0,0,"no bait","Artificial Lure",1390.71428571429,2014-09-15,9,09:02:00,09:02:00,8,"Ayres_Creek","Hood Canal","ESA_Genetics",3.09047619047619
+"321","20_Cougar_Point",58.0644,0,0,"herring","Hook only",1860,2014-09-15,9,10:19:00,10:50:00,8,"Cougar_Point","Hood Canal","ESA_Genetics",4.13333333333333
+"322","20_Holiday_Bay",51.816,0,0,"herring","Hook only",240,2014-09-15,9,15:20:00,15:24:00,8,"Holiday_Bay","Hood Canal","ESA_Genetics",0.533333333333333
+"323","20_Hoodsport",35.2044,0,0,"herring","Hook only",540,2014-09-15,9,15:59:00,16:08:00,8,"Hoodsport","Hood Canal","ESA_Genetics",1.2
+"324","20_Lilliwaup",41.148,0,0,"herring","Hook only",60,2014-09-15,9,14:48:00,14:49:00,8,"Lilliwaup","Hood Canal","ESA_Genetics",0.133333333333333
+"325","20_Little_Dewatto",58.58256,5,0,"herring","Hook only",1200,2014-09-15,9,13:40:00,14:00:00,8,"Little_Dewatto","Hood Canal","ESA_Genetics",2.66666666666667
+"326","20_Musqueti_Point",98.4504,0,0,"herring","Hook only",1680,2014-09-15,9,09:29:00,09:57:00,8,"Musqueti_Point","Hood Canal","ESA_Genetics",3.73333333333333
+"327","20_Potlatch",42.672,0,0,"herring","Hook only",120,2014-09-15,9,16:41:00,16:43:00,8,"Potlatch","Hood Canal","ESA_Genetics",0.266666666666667
+"328","20_Red_Bluff",56.95188,4,0,"no bait","Artificial Lure",6180,2014-09-15,9,11:04:00,12:47:00,8,"Red_Bluff","Hood Canal","ESA_Genetics",13.7333333333333
+"329","21_Chinom_Point",51.0955636363636,2,0,"herring","Artificial Lure",4440,2014-09-16,9,10:40:00,11:54:00,8,"Chinom_Point","Hood Canal","ESA_Genetics",9.86666666666667
+"330","21_Northern_rocky_pinnacle_northeast_of_Triton_Head",63.27648,1,0,"herring","Hook only",2460,2014-09-16,9,14:06:00,14:47:00,8,"Northern_rocky_pinnacle_northeast_of_Triton_Head","Hood Canal","ESA_Genetics",5.46666666666667
+"331","21_Quatsop_Point",48.768,0,0,"herring","Hook only",1390.71428571429,2014-09-16,9,16:16:00,16:16:00,8,"Quatsop_Point","Hood Canal","ESA_Genetics",3.09047619047619
+"332","21_Rocky_pinnacle_northeast_of_Triton_Head",43.46448,0,0,"no bait","Artificial Lure",1800,2014-09-16,9,13:22:00,13:52:00,8,"Rocky_pinnacle_northeast_of_Triton_Head","Hood Canal","ESA_Genetics",4
+"333","22_Hazel_Point",44.196,0,0,"herring","Hook only",2400,2014-09-17,9,09:19:00,09:59:00,3,"Hazel_Point","Hood Canal","ESA_Genetics",2
+"334","22_Misery_Point",24.9936,0,0,"herring","Hook only",1620,2014-09-17,9,12:57:00,13:24:00,3,"Misery_Point","Hood Canal","ESA_Genetics",1.35
+"335","22_Pulali_Point",42.7397333333333,0,0,"herring","Hook only",3660,2014-09-17,9,15:05:00,16:06:00,3,"Pulali_Point","Hood Canal","ESA_Genetics",3.05
+"336","22_Southern_pinnacle_off_Seal_Rock",56.007,4,0,"herring","Hook only",1500,2014-09-17,9,13:58:00,14:23:00,3,"Southern_pinnacle_off_Seal_Rock","Hood Canal","ESA_Genetics",1.25
+"337","22_Thorndike",50.292,0,0,"herring","Hook only",1390.71428571429,2014-09-17,9,11:03:00,11:03:00,3,"Thorndike","Hood Canal","ESA_Genetics",1.15892857142857
+"338","23_Neill_Point_outside_Quartermaster_harbor",76.2870857142857,0,0,"herring","Hook only",9600,2014-09-23,9,11:49:00,14:29:00,7,"Neill_Point_outside_Quartermaster_harbor","Central Sound","ESA_Genetics",18.6666666666667
+"339","24_Brace_Point",96.3168,0,0,"herring","Hook only",1390.71428571429,2014-09-24,9,10:37:00,10:37:00,5,"Brace_Point","Central Sound","ESA_Genetics",1.93154761904762
+"340","24_Point_Beale",55.4736,0,0,"herring","Hook only",1390.71428571429,2014-09-24,9,14:08:00,14:08:00,5,"Point_Beale","Central Sound","ESA_Genetics",1.93154761904762
+"341","24_Point_Heyer",59.7408,0,0,"herring","Hook only",1390.71428571429,2014-09-24,9,13:24:00,13:24:00,5,"Point_Heyer","Central Sound","ESA_Genetics",1.93154761904762
+"342","24_Point_Williams",129.9464,0,0,"herring","Hook only",840,2014-09-24,9,15:09:00,15:23:00,5,"Point_Williams","Central Sound","ESA_Genetics",1.16666666666667
+"343","24_Three_Tree_Point",43.4848,0,0,"herring","Hook only",1200,2014-09-24,9,12:00:00,12:20:00,5,"Three_Tree_Point","Central Sound","ESA_Genetics",1.66666666666667
+"344","26_Eagle_Point",64.1942666666667,2,0,"squid","Hook only",21600,2014-10-08,10,08:11:00,14:11:00,3,"Eagle_Point","San Juan Islands","ESA_Genetics",18
+"345","26_Pile_Point",76.2,0,0,"squid","Hook only",5760,2014-10-08,10,09:09:00,10:45:00,3,"Pile_Point","San Juan Islands","ESA_Genetics",4.8
+"346","26_Rockpile_southeast_of_Middle_Bank",65.3415,1,0,"squid","Hook only",2880,2014-10-08,10,11:13:00,12:01:00,3,"Rockpile_southeast_of_Middle_Bank","San Juan Islands","ESA_Genetics",2.4
+"347","27_Blake_Island",45.1104,0,0,"squid","Hook only",4980,2014-10-13,10,08:33:00,09:56:00,3,"Blake_Island","Central Sound","ESA_Genetics",4.15
+"348","27_Restoration_Point",52.6868571428571,0,0,"squid","Hook only",6540,2014-10-13,10,10:55:00,12:44:00,3,"Restoration_Point","Central Sound","ESA_Genetics",5.45
+"349","27_Rolling_Bay",76.2,0,0,"squid","Hook only",1390.71428571429,2014-10-13,10,13:18:00,13:18:00,3,"Rolling_Bay","Central Sound","ESA_Genetics",1.15892857142857
+"350","27_Shilshole_Bay",21.336,0,0,"squid","Hook only",1390.71428571429,2014-10-13,10,13:45:00,13:45:00,3,"Shilshole_Bay","Central Sound","ESA_Genetics",1.15892857142857
+"351","28_Devil's_Head",45.72,0,0,"herring","Hook only",1390.71428571429,2014-10-14,10,11:44:00,11:44:00,3,"Devil's_Head","South Sound","ESA_Genetics",1.15892857142857
+"352","28_Itsami",27.9654,0,0,"herring","Artificial Lure",6540,2014-10-14,10,09:08:00,10:57:00,3,"Itsami","South Sound","ESA_Genetics",5.45
+"353","28_South_Anderson",35.052,0,0,"herring","Artificial Lure",1390.71428571429,2014-10-14,10,13:49:00,13:49:00,3,"South_Anderson","South Sound","ESA_Genetics",1.15892857142857
+"354","28_Southwest_Anderson",59.86272,0,0,"no bait","Artificial Lure",3000,2014-10-14,10,12:40:00,13:30:00,3,"Southwest_Anderson","South Sound","ESA_Genetics",2.5
+"355","29_Allen_Point_-_Carr_Inlet",36.576,0,0,"squid","Hook only",1390.71428571429,2014-10-15,10,09:09:00,09:09:00,3,"Allen_Point_-_Carr_Inlet","South Sound","ESA_Genetics",1.15892857142857
+"356","29_Horsehead_Bay_-_Carr_Inlet",90.8304,0,0,"squid","Hook only",1390.71428571429,2014-10-15,10,10:59:00,10:59:00,3,"Horsehead_Bay_-_Carr_Inlet","South Sound","ESA_Genetics",1.15892857142857
+"357","29_Toliva_Shoal",22.86,0,0,"squid","Hook only",1390.71428571429,2014-10-15,10,14:18:00,14:18:00,3,"Toliva_Shoal","South Sound","ESA_Genetics",1.15892857142857
+"358","3_Area_51",48.6918,0,0,"Live large","Hook only",1920,2014-04-25,4,09:44:00,10:16:00,3,"Area_51","Whidbey Island","ESA_Genetics",1.6
+"359","3_Camano_head",77.8764,0,0,"squid","Artificial Lure",600,2014-04-25,4,08:50:00,09:00:00,3,"Camano_head","Whidbey Island","ESA_Genetics",0.5
+"360","3_Gravel_banks\west_hat_island",13.716,0,0,"unknown","Hook only",1390.71428571429,2014-04-25,4,12:52:00,12:52:00,3,"Gravel_banks\west_hat_island","Whidbey Island","ESA_Genetics",1.15892857142857
+"361","3_Secret_Rock",37.7952,0,0,"unknown","Hook only",1390.71428571429,2014-04-25,4,13:29:00,13:29:00,3,"Secret_Rock","Whidbey Island","ESA_Genetics",1.15892857142857
+"362","3_South_hat_island",16.0528,0,0,"unknown","Hook only",1390.71428571429,2014-04-25,4,12:58:00,12:58:00,3,"South_hat_island","Whidbey Island","ESA_Genetics",1.15892857142857
+"363","30_East_Anderson_Island",44.8056,0,0,"no bait","Artificial Lure",2760,2014-10-16,10,11:07:00,11:53:00,3,"East_Anderson_Island","South Sound","ESA_Genetics",2.3
+"364","30_South_Vashon",61.9990909090909,0,0,"no bait","Artificial Lure",3960,2014-10-16,10,08:12:00,09:18:00,3,"South_Vashon","Central Sound","ESA_Genetics",3.3
+"365","31_East_Possession_-_Jim_and_John's",59.5122,0,0,"squid","Artificial Lure",1680,2014-10-17,10,11:24:00,11:52:00,3,"East_Possession_-_Jim_and_John's","Whidbey Island","ESA_Genetics",1.4
+"366","31_Mid-channel_Scatchet_Head",60.96,0,0,"no bait","Artificial Lure",1390.71428571429,2014-10-17,10,08:52:00,08:52:00,3,"Mid-channel_Scatchet_Head","Central Sound","ESA_Genetics",1.15892857142857
+"367","31_Possession_Point",53.34,0,0,"squid","Artificial Lure",1800,2014-10-17,10,10:09:00,10:39:00,3,"Possession_Point","Central Sound","ESA_Genetics",1.5
+"368","32_Point_Defiance",41.69664,0,0,"no bait","Artificial Lure",2520,2014-10-20,10,13:46:00,14:28:00,3,"Point_Defiance","Central Sound","ESA_Genetics",2.1
+"369","32_Toliva_Shoal",61.14288,0,0,"no bait","Artificial Lure",8160,2014-10-20,10,09:03:00,11:19:00,3,"Toliva_Shoal","South Sound","ESA_Genetics",6.8
+"370","33_Foulweather_Bluff",43.4122285714286,0,0,"squid","Artificial Lure",2460,2014-10-24,10,08:46:00,09:27:00,3.28205128205128,"Foulweather_Bluff","Central Sound","ESA_Genetics",2.24273504273504
+"371","33_Klas_rocks",42.2529,0,0,"squid","Artificial Lure",3600,2014-10-24,10,09:57:00,10:57:00,3.28205128205128,"Klas_rocks","Central Sound","ESA_Genetics",3.28205128205128
+"372","33_Point_No_Point",76.601052631579,0,0,"squid","Artificial Lure",4800,2014-10-24,10,12:35:00,13:55:00,3.28205128205128,"Point_No_Point","Central Sound","ESA_Genetics",4.37606837606838
+"373","34_Boeing_creek",30.6324,0,0,"squid","Artificial Lure",1390.71428571429,2014-10-30,10,11:21:00,11:21:00,3,"Boeing_creek","Central Sound","ESA_Genetics",1.15892857142857
+"374","34_Meadow_Point",78.232,0,0,"squid","Artificial Lure",2880,2014-10-30,10,08:33:00,09:21:00,3,"Meadow_Point","Central Sound","ESA_Genetics",2.4
+"375","34_Pipers_creek",53.848,0,0,"squid","Artificial Lure",2100,2014-10-30,10,09:54:00,10:29:00,3,"Pipers_creek","Central Sound","ESA_Genetics",1.75
+"376","34_Point_Monroe",54.4140571428571,0,0,"squid","Artificial Lure",8760,2014-10-30,10,12:04:00,14:30:00,3,"Point_Monroe","Central Sound","ESA_Genetics",7.3
+"377","35_Edmonds_Oil_Dock",50.8145142857143,0,0,"no bait","Artificial Lure",13200,2014-11-19,11,11:25:00,15:05:00,2.93650793650794,"Edmonds_Oil_Dock","Central Sound","ESA_Genetics",10.7671957671958
+"378","35_Pilot_Point",57.3741176470588,0,0,"no bait","Artificial Lure",2700,2014-11-19,11,08:00:00,08:45:00,2.93650793650794,"Pilot_Point","Central Sound","ESA_Genetics",2.20238095238095
+"379","37_Keystone",49.3776,0,0,"herring","Artificial Lure",6240,2015-04-05,4,07:56:00,09:40:00,4,"Keystone","Central Sound","ESA_Genetics",6.93333333333333
+"380","37_Partridge_Bank",81.3816,0,0,"unknown","unknown",780,2015-04-05,4,14:07:00,14:20:00,4,"Partridge_Bank","Straits of Juan de Fuca","ESA_Genetics",0.866666666666667
+"381","37_Point_Wilson",55.88,0,0,"unknown","unknown",1390.71428571429,2015-04-05,4,15:24:00,15:24:00,4,"Point_Wilson","Central Sound","ESA_Genetics",1.5452380952381
+"382","37_Smith_Island",65.3796,0,0,"herring","Artificial Lure",11940,2015-04-05,4,10:40:00,13:59:00,4,"Smith_Island","Straits of Juan de Fuca","ESA_Genetics",13.2666666666667
+"383","38_Dallas_Bank",48.1584,0,0,"unknown","unknown",2760,2015-04-06,4,09:14:00,10:00:00,4,"Dallas_Bank","Straits of Juan de Fuca","ESA_Genetics",3.06666666666667
+"384","38_Dungeness_spit",NA,0,0,"unknown","unknown",1440,2015-04-06,4,12:06:00,12:30:00,4,"Dungeness_spit","Straits of Juan de Fuca","ESA_Genetics",1.6
+"385","38_Dungeness_spit_side_of_Dallas_Bank",54.864,0,0,"unknown","unknown",780,2015-04-06,4,11:06:00,11:19:00,4,"Dungeness_spit_side_of_Dallas_Bank","Straits of Juan de Fuca","ESA_Genetics",0.866666666666667
+"386","38_Point_Wilson",55.88,0,0,"unknown","unknown",25020,2015-04-06,4,07:37:00,14:34:00,4,"Point_Wilson","Straits of Juan de Fuca","ESA_Genetics",27.8
+"387","38_Protection_Island",NA,0,0,"unknown","unknown",660,2015-04-06,4,13:34:00,13:45:00,4,"Protection_Island","Straits of Juan de Fuca","ESA_Genetics",0.733333333333333
+"388","39_31-36_Bank",76.2,0,0,"unknown","unknown",720,2015-04-07,4,11:18:00,11:30:00,5,"31-36_Bank","Straits of Juan de Fuca","ESA_Genetics",1
+"389","4_Point_No_Point_Pinacle",83.886675,0,0,"herring","Hook only",29760,2014-06-19,6,08:31:00,16:47:00,3,"Point_No_Point_Pinacle","Central Sound","ESA_Genetics",24.8
+"390","4_Whidbey_East?",53.0352,0,0,"herring","Hook only",480,2014-06-19,6,07:33:00,07:41:00,3,"Whidbey_East?","Central Sound","ESA_Genetics",0.4
+"391","40_Camano_Head",69.31152,0,0,"squid","Artificial Lure",6240,2015-04-13,4,07:24:00,09:08:00,3,"Camano_Head","Whidbey Island","ESA_Genetics",5.2
+"392","40_Spee-Bi-Dah",81.153,0,0,"unknown","unknown",960,2015-04-13,4,09:29:00,09:45:00,3,"Spee-Bi-Dah","Whidbey Island","ESA_Genetics",0.8
+"393","41_Pier_on_South_Whidbey",55.1978285714286,0,0,"no bait","Artificial Lure",8940,2015-04-14,4,08:38:00,11:07:00,3,"Pier_on_South_Whidbey","Whidbey Island","ESA_Genetics",7.45
+"394","41_Sandy_Point",37.67328,0,0,"Live large","Hook only",7560,2015-04-14,4,11:37:00,13:43:00,3,"Sandy_Point","Whidbey Island","ESA_Genetics",6.3
+"395","42_Mukilteo_shoreline",100.932342857143,0,0,"squid","Artificial Lure",18600,2015-04-15,4,07:09:00,12:19:00,3,"Mukilteo_shoreline","Whidbey Island","ESA_Genetics",15.5
+"396","42_Ship_wreck_along_Mukilteo_shoreline",55.7784,0,0,"squid","Artificial Lure",4440,2015-04-15,4,12:26:00,13:40:00,3,"Ship_wreck_along_Mukilteo_shoreline","Whidbey Island","ESA_Genetics",3.7
+"397","43_Mukilteo_shoreline",119.1768,0,0,"unknown","unknown",5160,2015-04-16,4,07:06:00,08:32:00,3,"Mukilteo_shoreline","Whidbey Island","ESA_Genetics",4.3
+"398","43_Pier_on_South_Whidbey",48.43272,0,0,"no bait","Artificial Lure",2760,2015-04-16,4,08:44:00,09:30:00,3,"Pier_on_South_Whidbey","Whidbey Island","ESA_Genetics",2.3
+"399","43_South_Gedney",35.3949,0,0,"Live large","Artificial Lure",2460,2015-04-16,4,09:52:00,10:33:00,3,"South_Gedney","Whidbey Island","ESA_Genetics",2.05
+"400","44_Mukilteo_Shoreline",67.818,0,0,"squid","Artificial Lure",12540,2015-04-27,4,07:35:00,11:04:00,3,"Mukilteo_Shoreline","Whidbey Island","ESA_Genetics",10.45
+"401","44_Pilot_Point",55.0856727272727,0,0,"squid","Artificial Lure",10860,2015-04-27,4,11:31:00,14:32:00,3,"Pilot_Point","Central Sound","ESA_Genetics",9.05
+"402","45_East_bar_Possession",92.7735,1,0,"squid","Artificial Lure",7500,2015-04-29,4,13:50:00,15:55:00,3,"East_bar_Possession","Central Sound","ESA_Genetics",6.25
+"403","45_Meadowdale_shipwreck",109.22,0,0,"squid","Artificial Lure",5460,2015-04-29,4,06:46:00,08:17:00,3,"Meadowdale_shipwreck","Whidbey Island","ESA_Genetics",4.55
+"404","45_Mukilteo_boat_launch",101.6,0,0,"squid","Artificial Lure",12120,2015-04-29,4,09:44:00,13:06:00,3,"Mukilteo_boat_launch","Whidbey Island","ESA_Genetics",10.1
+"405","45_Mukilteo_shoreline",91.44,0,0,"unknown","unknown",4620,2015-04-29,4,08:27:00,09:44:00,3,"Mukilteo_shoreline","Whidbey Island","ESA_Genetics",3.85
+"406","46_Matia_Island",30.48,0,0,"no bait","Artificial Lure",2160,2015-05-12,5,10:33:00,11:09:00,4,"Matia_Island","San Juan Islands","ESA_Genetics",2.4
+"407","46_Puffin_Island",29.718,0,0,"no bait","Artificial Lure",780,2015-05-12,5,10:18:00,10:31:00,4,"Puffin_Island","San Juan Islands","ESA_Genetics",0.866666666666667
+"408","46_Sisters_Island",38.19525,1,0,"no bait","Artificial Lure",10980,2015-05-12,5,07:04:00,10:07:00,4,"Sisters_Island","San Juan Islands","ESA_Genetics",12.2
+"409","46_Sucia_Island",26.1257142857143,0,0,"no bait","Artificial Lure",7860,2015-05-12,5,11:22:00,13:33:00,4,"Sucia_Island","San Juan Islands","ESA_Genetics",8.73333333333333
+"410","47_Deception_Island",46.1889230769231,0,0,"no bait","Artificial Lure",22740,2015-05-13,5,07:14:00,13:33:00,4,"Deception_Island","San Juan Islands","ESA_Genetics",25.2666666666667
+"411","48_Narrows",48.8148923076923,0,0,"no bait","Artificial Lure",11760,2015-05-25,5,07:19:00,10:35:00,4,"Narrows","Central Sound","ESA_Genetics",13.0666666666667
+"412","48_South_Vashon",71.12,0,0,"no bait","Artificial Lure",6600,2015-05-25,5,10:46:00,12:36:00,4,"South_Vashon","Central Sound","ESA_Genetics",7.33333333333333
+"413","49_Point_No_Point",74.7697846153846,1,0,"no bait","Artificial Lure",18720,2015-05-26,5,08:04:00,13:16:00,3,"Point_No_Point","Central Sound","ESA_Genetics",15.6
+"414","49_Possession_Bar",79.8576,0,0,"no bait","Artificial Lure",3060,2015-05-26,5,06:51:00,07:42:00,3,"Possession_Bar","Central Sound","ESA_Genetics",2.55
+"415","5_Point_No_Point_Pinacle",78.4721454545455,0,0,"herring","Hook only",22020,2014-06-20,6,09:29:00,15:36:00,3,"Point_No_Point_Pinacle","Central Sound","ESA_Genetics",18.35
+"416","50_Brightwater_pipe",64.4790545454545,0,0,"no bait","Artificial Lure",7140,2015-05-27,5,11:35:00,13:34:00,3,"Brightwater_pipe","Central Sound","ESA_Genetics",5.95
+"417","50_Mukilteo_boat_launch",129.9972,0,0,"unknown","unknown",2340,2015-05-27,5,09:17:00,09:56:00,3,"Mukilteo_boat_launch","Whidbey Island","ESA_Genetics",1.95
+"418","50_Mukilteo_shoreline",66.7512,0,0,"unknown","unknown",1920,2015-05-27,5,08:22:00,08:54:00,3,"Mukilteo_shoreline","Whidbey Island","ESA_Genetics",1.6
+"419","50_Possession_Bar",81.2122666666667,0,0,"no bait","Artificial Lure",3840,2015-05-27,5,06:40:00,07:44:00,3,"Possession_Bar","Central Sound","ESA_Genetics",3.2
+"420","51_Mukilteo_boat_launch",115.903022222222,0,2,"squid","Artificial Lure",15360,2015-06-08,6,10:17:00,14:33:00,3,"Mukilteo_boat_launch","Whidbey Island","ESA_Genetics",12.8
+"421","51_Mukilteo_shoreline",77.4192,0,0,"squid","Artificial Lure",5760,2015-06-08,6,08:27:00,10:03:00,3,"Mukilteo_shoreline","Whidbey Island","ESA_Genetics",4.8
+"422","51_Possession_Bar",102.108,0,0,"unknown","unknown",240,2015-06-08,6,08:06:00,08:10:00,3,"Possession_Bar","Central Sound","ESA_Genetics",0.2
+"423","52_Mukilteo_shoreline",114.97056,1,0,"squid","Artificial Lure",4200,2015-06-09,6,13:20:00,14:30:00,3,"Mukilteo_shoreline","Whidbey Island","ESA_Genetics",3.5
+"424","52_Pilot_Point",60.96,0,0,"squid","Artificial Lure",1390.71428571429,2015-06-09,6,08:17:00,08:17:00,3,"Pilot_Point","Whidbey Island","ESA_Genetics",1.15892857142857
+"425","52_Point_No_Point",90.2208,0,0,"squid","Artificial Lure",8700,2015-06-09,6,09:24:00,11:49:00,3,"Point_No_Point","Central Sound","ESA_Genetics",7.25
+"426","53_Point_No_Point",81.9128228571429,0,0,"squid","Artificial Lure",25140,2015-06-10,6,08:07:00,15:06:00,3,"Point_No_Point","Central Sound","ESA_Genetics",20.95
+"427","54_Point_No_Point",78.4993165048544,0,0,"unknown","unknown",7680,2015-06-22,6,07:20:00,09:28:00,2.75,"Point_No_Point","Central Sound","ESA_Genetics",5.86666666666667
+"428","54_Possession_Bar",45.3214153846154,0,0,"squid","Artificial Lure",12780,2015-06-22,6,09:54:00,13:27:00,3.41935483870968,"Possession_Bar","Central Sound","ESA_Genetics",12.1387096774194
+"429","55_Jim_and_John's_(east_Whidbey_Island)",45.212,0,0,"squid","Artificial Lure",1800,2015-06-23,6,12:13:00,12:43:00,3.63636363636364,"Jim_and_John's_(east_Whidbey_Island)","Whidbey Island","ESA_Genetics",1.81818181818182
+"430","55_Mukilteo_shoreline",118.872,0,0,"squid","Artificial Lure",16080,2015-06-23,6,07:25:00,11:53:00,3,"Mukilteo_shoreline","Whidbey Island","ESA_Genetics",13.4
+"431","56_Mukilteo_shoreline",113.62944,1,0,"squid","Artificial Lure",14220,2015-06-25,6,07:57:00,11:54:00,3,"Mukilteo_shoreline","Whidbey Island","ESA_Genetics",11.85
+"432","56_Point_No_Point",70.5260307692308,1,0,"squid","Artificial Lure",5820,2015-06-25,6,12:27:00,14:04:00,3,"Point_No_Point","Central Sound","ESA_Genetics",4.85
+"433","57_Camp_Sealth",96.80448,0,0,"no bait","Artificial Lure",900,2015-07-07,7,14:14:00,14:29:00,8,"Camp_Sealth","Central Sound","ESA_Genetics",2
+"434","57_Colvos_passage",69.9633230769231,0,0,"herring","Hook only",1980,2015-07-07,7,09:26:00,09:59:00,8,"Colvos_passage","Central Sound","ESA_Genetics",4.4
+"435","57_Dalco_Pinnacle",32.9184,0,0,"unknown","unknown",480,2015-07-07,7,13:55:00,14:03:00,8,"Dalco_Pinnacle","Central Sound","ESA_Genetics",1.06666666666667
+"436","57_Point_Evans",45.974,0,0,"herring","Hook only",1920,2015-07-07,7,10:38:00,11:10:00,8,"Point_Evans","Central Sound","ESA_Genetics",4.26666666666667
+"437","57_South_Vashon",92.0496,0,0,"herring","Hook only",5160,2015-07-07,7,11:54:00,13:20:00,8,"South_Vashon","Central Sound","ESA_Genetics",11.4666666666667
+"438","57_Tacoma_narrows",52.9971,0,0,"herring","Hook only",1140,2015-07-07,7,08:43:00,09:02:00,8,"Tacoma_narrows","Central Sound","ESA_Genetics",2.53333333333333
+"439","58_East_Ketron_Island",52.1208,0,0,"no bait","Artificial Lure",840,2015-07-08,7,09:06:00,09:20:00,5,"East_Ketron_Island","South Sound","ESA_Genetics",1.16666666666667
+"440","58_North_Ketron_Island",56.5404,0,0,"unknown","unknown",660,2015-07-08,7,09:58:00,10:09:00,5,"North_Ketron_Island","South Sound","ESA_Genetics",0.916666666666667
+"441","58_South_Ketron_Island",NA,0,0,"unknown","unknown",180,2015-07-08,7,09:38:00,09:41:00,5,"South_Ketron_Island","South Sound","ESA_Genetics",0.25
+"442","58_Toliva_shoal",50.66792,0,0,"no bait","Artificial Lure",8760,2015-07-08,7,10:39:00,13:05:00,5,"Toliva_shoal","South Sound","ESA_Genetics",12.1666666666667
+"443","58_Wyckoff_shoal",51.0709333333333,0,0,"herring","Hook only",4200,2015-07-08,7,13:44:00,14:54:00,5,"Wyckoff_shoal","South Sound","ESA_Genetics",5.83333333333333
+"444","59_Point_Evans",60.0343111111111,0,0,"herring","Hook only",23580,2015-07-09,7,06:44:00,13:17:00,7,"Point_Evans","Central Sound","ESA_Genetics",45.85
+"445","6_Blake_Island",56.388,0,0,"herring","Artificial Lure",1390.71428571429,2014-07-03,7,12:20:00,12:20:00,6,"Blake_Island","Central Sound","ESA_Genetics",2.31785714285714
+"446","6_Duwamish_Head",35.3568,0,0,"herring","Artificial Lure",1260,2014-07-03,7,15:26:00,15:47:00,6,"Duwamish_Head","Central Sound","ESA_Genetics",2.1
+"447","6_Restoration_Point",52.8658666666667,0,0,"herring","Artificial Lure",6900,2014-07-03,7,08:47:00,10:42:00,6,"Restoration_Point","Central Sound","ESA_Genetics",11.5
+"448","60_Black_rock",33.147,0,0,"squid","Hook only",1200,2015-07-22,7,14:06:00,14:26:00,4,"Black_rock","San Juan Islands","ESA_Genetics",1.33333333333333
+"449","60_flattop_island",59.2836,1,0,"squid","Hook only",5040,2015-07-22,7,10:24:00,11:48:00,4,"flattop_island","San Juan Islands","ESA_Genetics",5.6
+"450","60_Lydia_shoal",NA,0,0,"unknown","unknown",420,2015-07-22,7,12:50:00,12:57:00,4,"Lydia_shoal","San Juan Islands","ESA_Genetics",0.466666666666667
+"451","60_Northeast_Blakely_Island",67.3608,0,0,"squid","Hook only",3300,2015-07-22,7,13:07:00,14:02:00,4,"Northeast_Blakely_Island","San Juan Islands","ESA_Genetics",3.66666666666667
+"452","60_Reid_Rock",59.5532307692308,0,0,"squid","Hook only",4980,2015-07-22,7,07:19:00,08:42:00,4,"Reid_Rock","San Juan Islands","ESA_Genetics",5.53333333333333
+"453","60_Shaw_Island_Reserve",35.052,0,0,"squid","Hook only",3780,2015-07-22,7,08:51:00,09:54:00,4,"Shaw_Island_Reserve","San Juan Islands","ESA_Genetics",4.2
+"454","61_Cypress_Reef",56.6096727272727,0,0,"squid","Hook only",22860,2015-07-23,7,06:38:00,12:59:00,3,"Cypress_Reef","San Juan Islands","ESA_Genetics",19.05
+"455","62_Blake_Island",81.5993142857143,0,0,"herring","Hook only",12480,2015-08-20,8,09:32:00,13:00:00,4,"Blake_Island","Central Sound","ESA_Genetics",13.8666666666667
+"456","62_Yeomalt_Point",NA,0,0,"unknown","unknown",660,2015-08-20,8,13:46:00,13:57:00,4,"Yeomalt_Point","Central Sound","ESA_Genetics",0.733333333333333
+"457","63_Carkeek",55.8104842105263,0,0,"no bait","Artificial Lure",7080,2015-08-21,8,09:03:00,11:01:00,3,"Carkeek","Central Sound","ESA_Genetics",5.9
+"458","63_Port_Madison",71.9763428571429,0,0,"no bait","Artificial Lure",5160,2015-08-21,8,12:42:00,14:08:00,3,"Port_Madison","Central Sound","ESA_Genetics",4.3
+"459","63_Richmond_Beach",98.1891428571429,0,0,"no bait","Artificial Lure",3240,2015-08-21,8,11:17:00,12:11:00,3,"Richmond_Beach","Central Sound","ESA_Genetics",2.7
+"460","63_Rolling_Bay",73.27392,0,0,"no bait","Artificial Lure",1740,2015-08-21,8,14:31:00,15:00:00,3,"Rolling_Bay","Central Sound","ESA_Genetics",1.45
+"461","64_Dennis_Shoal",38.1508,0,0,"squid","Hook only",7800,2015-09-03,9,12:01:00,14:11:00,4,"Dennis_Shoal","San Juan Islands","ESA_Genetics",8.66666666666667
+"462","64_Keystone",43.7896,0,0,"unknown","unknown",7080,2015-09-03,9,08:46:00,10:44:00,4,"Keystone","Central Sound","ESA_Genetics",7.86666666666667
+"463","65_East_Blakely",50.1396,0,0,"unknown","unknown",1140,2015-09-04,9,14:11:00,14:30:00,4,"East_Blakely","San Juan Islands","ESA_Genetics",1.26666666666667
+"464","65_Stuart_Island",41.5717463414634,1,0,"squid","Hook only",16320,2015-09-04,9,08:34:00,13:06:00,4,"Stuart_Island","San Juan Islands","ESA_Genetics",18.1333333333333
+"465","66_2_Humps_south_of_Middle_Bank",64.67856,0,0,"squid","Hook only",3060,2015-09-05,9,09:48:00,10:39:00,4,"2_Humps_south_of_Middle_Bank","San Juan Islands","ESA_Genetics",3.4
+"466","66_McArthur_Bank",54.1109647058824,0,0,"squid","Hook only",6420,2015-09-05,9,07:37:00,09:24:00,4,"McArthur_Bank","Straits of Juan de Fuca","ESA_Genetics",7.13333333333333
+"467","66_Middle_Bank",71.4756,0,0,"unknown","unknown",720,2015-09-05,9,10:54:00,11:06:00,4,"Middle_Bank","San Juan Islands","ESA_Genetics",0.8
+"468","66_Pile_Point",46.863,0,0,"squid","Hook only",10200,2015-09-05,9,11:19:00,14:09:00,4,"Pile_Point","San Juan Islands","ESA_Genetics",11.3333333333333
+"469","67_Blake_Island",61.3373714285714,0,0,"octopus","Artificial Lure",6060,2015-09-16,9,14:09:00,15:50:00,3,"Blake_Island","Central Sound","ESA_Genetics",5.05
+"470","67_North_Vashon_channel",123.305454545455,0,0,"octopus","Artificial Lure",23340,2015-09-16,9,07:19:00,13:48:00,2.9,"North_Vashon_channel","Central Sound","ESA_Genetics",18.8016666666667
+"471","68_Keystone",46.4462191304348,0,0,"octopus","Artificial Lure",30900,2015-09-17,9,07:39:00,16:14:00,2.59375,"Keystone","Central Sound","ESA_Genetics",22.2630208333333
+"472","69_Jones_Island",65.0748,0,0,"unknown","unknown",4080,2015-09-21,9,12:24:00,13:32:00,3,"Jones_Island","San Juan Islands","ESA_Genetics",3.4
+"473","69_Point_George",56.1678666666667,0,0,"no bait","Artificial Lure",5460,2015-09-21,9,10:03:00,11:34:00,3,"Point_George","San Juan Islands","ESA_Genetics",4.55
+"474","69_Reid_Rock",49.19472,0,0,"no bait","Artificial Lure",900,2015-09-21,9,09:44:00,09:59:00,3,"Reid_Rock","San Juan Islands","ESA_Genetics",0.75
+"475","69_Rocky_Bay",50.546,0,0,"unknown","unknown",2100,2015-09-21,9,13:37:00,14:12:00,3,"Rocky_Bay","San Juan Islands","ESA_Genetics",1.75
+"476","69_South_Shaw_Island",63.6161142857143,0,0,"no bait","Artificial Lure",5400,2015-09-21,9,08:10:00,09:40:00,3,"South_Shaw_Island","San Juan Islands","ESA_Genetics",4.5
+"477","69_Yellow_Island",79.8237333333333,0,0,"no bait","Artificial Lure",2100,2015-09-21,9,11:42:00,12:17:00,3,"Yellow_Island","San Juan Islands","ESA_Genetics",1.75
+"478","7_SW_San_Juan_Island",74.676,5,0,"squid","Hook only",14880,2014-07-07,7,07:44:00,11:52:00,4,"SW_San_Juan_Island","San Juan Islands","ESA_Genetics",16.5333333333333
+"479","7_SW_San_Juan_Island_offshore",82.4865,0,0,"squid","Hook only",6240,2014-07-07,7,09:45:00,11:29:00,4,"SW_San_Juan_Island_offshore","San Juan Islands","ESA_Genetics",6.93333333333333
+"480","7_W_San_Juan_Island/Andrews_Bay",64.516,1,0,"squid","Hook only",2280,2014-07-07,7,12:29:00,13:07:00,4,"W_San_Juan_Island/Andrews_Bay","San Juan Islands","ESA_Genetics",2.53333333333333
+"481","70_Haro_Strait_pinnacle",63.627,1,0,"no bait","Artificial Lure",5560,2015-09-22,9,12:15:30,13:48:10,3,"Haro_Strait_pinnacle","San Juan Islands","ESA_Genetics",4.63333333333333
+"482","70_Henry_Island",57.15,0,0,"unknown","unknown",1275,2015-09-22,9,11:45:12,12:06:27,3,"Henry_Island","San Juan Islands","ESA_Genetics",1.0625
+"483","70_Kellets_Bluff",60.0891428571429,0,0,"no bait","Artificial Lure",1140,2015-09-22,9,10:56:00,11:15:00,3,"Kellets_Bluff","San Juan Islands","ESA_Genetics",0.95
+"484","70_Lime_Kiln",45.72,0,0,"no bait","Artificial Lure",1260,2015-09-22,9,09:45:00,10:06:00,3,"Lime_Kiln","San Juan Islands","ESA_Genetics",1.05
+"485","70_Pile_Point",59.436,0,0,"no bait","Artificial Lure",4800,2015-09-22,9,08:11:00,09:31:00,3,"Pile_Point","San Juan Islands","ESA_Genetics",4
+"486","70_Smallpox_Bay",54.102,0,0,"no bait","Artificial Lure",1440,2015-09-22,9,10:17:00,10:41:00,3,"Smallpox_Bay","San Juan Islands","ESA_Genetics",1.2
+"487","71_East_San_Juan_Island",44.03344,0,0,"squid","Hook only",10560,2015-10-05,10,08:41:00,11:37:00,2.2,"East_San_Juan_Island","San Juan Islands","ESA_Genetics",6.45333333333333
+"488","71_Open_Bay",165.63975,0,0,"squid","Hook only",8460,2015-10-05,10,12:14:00,14:35:00,2,"Open_Bay","San Juan Islands","ESA_Genetics",4.7
+"489","71_Turn_Island",48.3108,0,0,"squid","Hook only",2040,2015-10-05,10,07:57:00,08:31:00,2.125,"Turn_Island","San Juan Islands","ESA_Genetics",1.20416666666667
+"490","71_Wasp_passage",54.9656,0,0,"squid","Hook only",5460,2015-10-05,10,09:36:00,11:07:00,2.86666666666667,"Wasp_passage","San Juan Islands","ESA_Genetics",4.34777777777778
+"491","72_Eagle_Point",63.4746,0,0,"squid","Hook only",4500,2015-10-06,10,13:06:00,14:21:00,3,"Eagle_Point","San Juan Islands","ESA_Genetics",3.75
+"492","72_Point_Disney",48.1076,0,0,"squid","Hook only",13980,2015-10-06,10,08:04:00,11:57:00,3,"Point_Disney","San Juan Islands","ESA_Genetics",11.65
+"493","73_Blake_Island",60.96,0,0,"no bait","Artificial Lure",9420,2015-10-15,10,09:21:00,11:58:00,6,"Blake_Island","Central Sound","ESA_Genetics",15.7
+"494","73_Blakely_rock",NA,0,0,"unknown","unknown",2280,2015-10-15,10,13:09:00,13:47:00,6,"Blakely_rock","Central Sound","ESA_Genetics",3.8
+"495","73_South_Bainbridge",70.104,0,0,"no bait","Artificial Lure",1260,2015-10-15,10,12:23:00,12:44:00,6,"South_Bainbridge","Central Sound","ESA_Genetics",2.1
+"496","74_Mukilteo_shoreline",107.2896,0,0,"no bait","Artificial Lure",4080,2015-10-16,10,08:08:00,09:16:00,2.66666666666667,"Mukilteo_shoreline","Whidbey Island","ESA_Genetics",3.02222222222222
+"497","74_Port_Susan",81.28,0,1,"no bait","Artificial Lure",17040,2015-10-16,10,10:05:00,14:49:00,3,"Port_Susan","Whidbey Island","ESA_Genetics",14.2
+"498","8_Cactus_Islands",54.864,0,0,"squid","Hook only",1390.71428571429,2014-07-08,7,10:43:00,10:43:00,4,"Cactus_Islands","San Juan Islands","ESA_Genetics",1.5452380952381
+"499","8_Spieden_Channel",73.152,0,0,"squid","Hook only",1390.71428571429,2014-07-08,7,10:11:00,10:11:00,4,"Spieden_Channel","San Juan Islands","ESA_Genetics",1.5452380952381
+"500","8_SW_San_Juan_Island",75.946,0,0,"squid","Hook only",4620,2014-07-08,7,07:37:00,08:54:00,4,"SW_San_Juan_Island","San Juan Islands","ESA_Genetics",5.13333333333333
+"501","8_W_Orcas",45.72,0,0,"squid","Hook only",1390.71428571429,2014-07-08,7,11:17:00,11:17:00,4,"W_Orcas","San Juan Islands","ESA_Genetics",1.5452380952381
+"502","8_W_San_Juan_Island/Andrews_Bay",75.6774857142857,2,0,"squid","Hook only",1390.71428571429,2014-07-08,7,07:02:00,07:02:00,4,"W_San_Juan_Island/Andrews_Bay","San Juan Islands","ESA_Genetics",1.5452380952381
+"503","9_Black's_Point",56.896,0,0,"no bait","Artificial Lure",120,2014-07-17,7,16:43:00,16:45:00,4,"Black's_Point","Hood Canal","ESA_Genetics",0.133333333333333
+"504","9_Dive_buoys_north_of_Seal_Rock",22.15896,0,0,"no bait","Artificial Lure",2520,2014-07-17,7,10:13:00,10:55:00,4,"Dive_buoys_north_of_Seal_Rock","Hood Canal","ESA_Genetics",2.8
+"505","9_Mid-channel_Dabob_Bay",67.056,0,0,"no bait","Artificial Lure",1390.71428571429,2014-07-17,7,15:03:00,15:03:00,4,"Mid-channel_Dabob_Bay","Hood Canal","ESA_Genetics",1.5452380952381
+"506","9_Pulali_Point",36.5222117647059,0,0,"no bait","Artificial Lure",8640,2014-07-17,7,11:18:00,13:42:00,4,"Pulali_Point","Hood Canal","ESA_Genetics",9.6
+"507","9_Seal_Rock",30.7848,0,0,"no bait","Artificial Lure",300,2014-07-17,7,14:17:00,14:22:00,4,"Seal_Rock","Hood Canal","ESA_Genetics",0.333333333333333
+"508","9_South_Misery_Point",54.102,0,0,"no bait","Artificial Lure",360,2014-07-17,7,16:07:00,16:13:00,4,"South_Misery_Point","Hood Canal","ESA_Genetics",0.4
+"509","byc_1_4_mile_rock",28.3464,0,0,"Live large","Hook only",8160,2017-03-31,3,08:39:00,10:55:00,4,"4_mile_rock","Central Sound","lingcod_bycatch",9.06666666666667
+"510","byc_1_Blakely_Rocks/Pt._Glover/Boeing_Creek",24.20112,0,0,"no bait","Artificial Lure",8160,2017-03-31,3,13:25:00,15:41:00,4,"Blakely_Rocks/Pt._Glover/Boeing_Creek","Central Sound","lingcod_bycatch",9.06666666666667
+"511","byc_1_South_Blake",15.0876,0,0,"Herring","Hook only",4200,2017-03-31,3,11:38:00,12:48:00,3.71428571428571,"South_Blake","Central Sound","lingcod_bycatch",4.33333333333333
+"512","byc_10_4_mile_rock",27.03576,0,0,"Herring","Hook only",5880,2017-06-14,6,09:45:00,11:23:00,4,"4_mile_rock","Central Sound","lingcod_bycatch",6.53333333333333
+"513","byc_10_Point_No_Point",86.868,0,0,"Live large","Hook only",6420,2017-06-13,6,14:29:00,16:16:00,3,"Point_No_Point","Central Sound","lingcod_bycatch",5.35
+"514","byc_10_South_Blake",56.0832,0,0,"no bait","Artificial Lure",5760,2017-06-14,6,07:19:00,08:55:00,4,"South_Blake","Central Sound","lingcod_bycatch",6.4
+"515","byc_11_Pile_Point",30.84576,0,0,"Herring","Hook only",5340,2017-09-11,9,14:27:00,15:56:00,4,"Pile_Point","San Juan Islands","lingcod_bycatch",5.93333333333333
+"516","byc_11_Reid_rocks/Turn_Island",51.8329333333333,0,0,"no bait","Artificial Lure",6960,2017-09-11,9,09:33:00,11:29:00,3.5,"Reid_rocks/Turn_Island","San Juan Islands","lingcod_bycatch",6.76666666666667
+"517","byc_11_Waldron_Island",NA,0,0,"Live large","Hook only",8100,2017-09-11,9,11:29:00,13:44:00,3.66666666666667,"Waldron_Island","San Juan Islands","lingcod_bycatch",8.25
+"518","byc_12_Belle_Rock",42.672,0,0,"no bait","Artificial Lure",1620,2017-09-12,9,14:56:00,15:23:00,2,"Belle_Rock","San Juan Islands","lingcod_bycatch",0.9
+"519","byc_12_Black_Rock/Strawberry_Island",32.24784,0,0,"no bait","Artificial Lure",1620,2017-09-12,9,14:00:00,14:27:00,3,"Black_Rock/Strawberry_Island","San Juan Islands","lingcod_bycatch",1.35
+"520","byc_12_Matia_Island",44.0020363636364,0,0,"Herring","Hook only",3540,2017-09-12,9,10:35:00,11:34:00,3,"Matia_Island","San Juan Islands","lingcod_bycatch",2.95
+"521","byc_12_Point_Lawrence",60.96,0,0,"Herring","Hook only",2700,2017-09-12,9,12:15:00,13:00:00,3,"Point_Lawrence","San Juan Islands","lingcod_bycatch",2.25
+"522","byc_12_South_Blakely",36.576,0,0,"no bait","Artificial Lure",4680,2017-09-12,9,13:23:00,14:41:00,2.8,"South_Blakely","San Juan Islands","lingcod_bycatch",3.64
+"523","byc_12_Sucia_Island",27.8257,0,0,"Live large","Hook only",6480,2017-09-12,9,08:27:00,10:15:00,2.66666666666667,"Sucia_Island","San Juan Islands","lingcod_bycatch",4.8
+"524","byc_13_Black_Rock/Strawberry_Island",40.386,0,0,"Live large","Hook only",5520,2017-09-24,9,13:21:00,14:53:00,3,"Black_Rock/Strawberry_Island","San Juan Islands","lingcod_bycatch",4.6
+"525","byc_13_Matia_Island",44.6772631578947,0,0,"no bait","Artificial Lure",5340,2017-09-24,9,10:38:00,12:07:00,3,"Matia_Island","San Juan Islands","lingcod_bycatch",4.45
+"526","byc_13_Sucia_Island",28.956,0,0,"Herring","Hook only",6900,2017-09-24,9,08:19:00,10:14:00,3.85714285714286,"Sucia_Island","San Juan Islands","lingcod_bycatch",7.39285714285714
+"527","byc_14_Eagle_Point",45.1104,0,0,"Live large","Hook only",4140,2017-09-25,9,09:48:00,10:57:00,4,"Eagle_Point","San Juan Islands","lingcod_bycatch",4.6
+"528","byc_14_Pile_Point",27.8972210526316,0,0,"no bait","Artificial Lure",7620,2017-09-25,9,11:27:00,13:34:00,4,"Pile_Point","San Juan Islands","lingcod_bycatch",8.46666666666667
+"529","byc_14_South_Lopez",45.72,0,0,"Herring","Hook only",5040,2017-09-25,9,14:14:00,15:38:00,4,"South_Lopez","San Juan Islands","lingcod_bycatch",5.6
+"530","byc_15_Belle_Rock",40.7877818181818,0,0,"Herring","Hook only",4080,2017-09-26,9,13:56:00,15:04:00,3.42857142857143,"Belle_Rock","San Juan Islands","lingcod_bycatch",3.88571428571429
+"531","byc_15_Matia_Island",39.7256,0,0,"Live large","Hook only",6060,2017-09-26,9,10:20:00,12:01:00,3.11111111111111,"Matia_Island","San Juan Islands","lingcod_bycatch",5.23703703703704
+"532","byc_15_South_Blakely",46.101,0,0,"Herring","Hook only",1980,2017-09-26,9,13:08:00,13:41:00,4,"South_Blakely","San Juan Islands","lingcod_bycatch",2.2
+"533","byc_15_Sucia_Island",26.5611428571429,0,0,"no bait","Artificial Lure",5880,2017-09-26,9,08:25:00,10:03:00,3,"Sucia_Island","San Juan Islands","lingcod_bycatch",4.9
+"534","byc_16_Eagle_Point",27.79776,0,0,"Herring","Hook only",4380,2017-10-09,10,10:25:00,11:38:00,4,"Eagle_Point","San Juan Islands","lingcod_bycatch",4.86666666666667
+"535","byc_16_Pile_Point",30.9753,0,0,"no bait","Artificial Lure",5640,2017-10-09,10,12:10:00,13:44:00,4,"Pile_Point","San Juan Islands","lingcod_bycatch",6.26666666666667
+"536","byc_16_Reid_rocks/Turn_Island",17.272,0,0,"Herring","Hook only",720,2017-10-09,10,09:39:00,09:51:00,3,"Reid_rocks/Turn_Island","San Juan Islands","lingcod_bycatch",0.6
+"537","byc_16_South_Lopez",31.75,0,0,"Live large","Hook only",4680,2017-10-09,10,14:17:00,15:35:00,3,"South_Lopez","San Juan Islands","lingcod_bycatch",3.9
+"538","byc_17_Keystone_west",56.4295636363636,0,0,"no bait","Artificial Lure",5160,2018-03-12,3,10:43:00,12:09:00,3.83333333333333,"Keystone_west","Central Sound","lingcod_bycatch",5.49444444444444
+"539","byc_17_Possession_inshore",19.7104,0,0,"Herring","Hook only",2700,2018-03-12,3,13:13:00,13:58:00,4,"Possession_inshore","Central Sound","lingcod_bycatch",3
+"540","byc_17_Possession_offshore",19.3548,0,0,"Live large","Hook only",24480,2018-03-12,3,07:59:00,14:47:00,3.73076923076923,"Possession_offshore","Central Sound","lingcod_bycatch",25.3692307692308
+"541","byc_18_Keystone_east",50.5097142857143,0,0,"Herring","Hook only",4860,2018-03-15,3,12:00:00,13:21:00,4,"Keystone_east","Central Sound","lingcod_bycatch",5.4
+"542","byc_18_Keystone_west",40.66032,0,0,"Live large","Hook only",5640,2018-03-15,3,10:13:00,11:47:00,4,"Keystone_west","Central Sound","lingcod_bycatch",6.26666666666667
+"543","byc_18_Possession_offshore",18.288,0,0,"no bait","Artificial Lure",5160,2018-03-15,3,14:32:00,15:58:00,4,"Possession_offshore","Central Sound","lingcod_bycatch",5.73333333333333
+"544","byc_19_4_mile_rock",26.416,0,0,"no bait","Artificial Lure",5340,2018-03-16,3,08:13:00,09:42:00,3.875,"4_mile_rock","Central Sound","lingcod_bycatch",5.74791666666667
+"545","byc_19_Blakely_Rocks/Pt._Glover/Boeing_Creek",22.0218,0,0,"Live large","Hook only",7320,2018-03-16,3,10:23:00,12:25:00,4,"Blakely_Rocks/Pt._Glover/Boeing_Creek","Central Sound","lingcod_bycatch",8.13333333333333
+"546","byc_19_South_Blake",48.70704,0,0,"Herring","Hook only",5760,2018-03-16,3,12:51:00,14:27:00,3.875,"South_Blake","Central Sound","lingcod_bycatch",6.2
+"547","byc_2_Keystone",39.4885333333333,0,0,"Live large","Hook only",4380,2017-04-11,4,12:11:00,13:24:00,2.66666666666667,"Keystone","Central Sound","lingcod_bycatch",3.24444444444444
+"548","byc_2_Klas_rock",21.9891428571429,0,0,"no bait","Artificial Lure",7320,2017-04-11,4,09:19:00,11:21:00,3.7,"Klas_rock","Central Sound","lingcod_bycatch",7.52333333333333
+"549","byc_2_Possession_offshore",16.4592,0,0,"Herring","Hook only",5340,2017-04-11,4,14:38:00,16:07:00,4,"Possession_offshore","Central Sound","lingcod_bycatch",5.93333333333333
+"550","byc_20_Keystone_east",59.3852,1,0,"no bait","Artificial Lure",9720,2018-03-29,3,11:11:00,13:53:00,3,"Keystone_east","Central Sound","lingcod_bycatch",8.1
+"551","byc_20_Keystone_west",44.1282666666667,0,0,"Herring","Hook only",6000,2018-03-29,3,09:31:00,11:11:00,2.25,"Keystone_west","Central Sound","lingcod_bycatch",3.75
+"552","byc_20_Possession_offshore",18.2118,0,0,"Live large","Hook only",5460,2018-03-29,3,13:53:00,15:24:00,3,"Possession_offshore","Central Sound","lingcod_bycatch",4.55
+"553","byc_21_Keystone_east",53.27904,0,0,"Live large","Hook only",5400,2018-03-30,3,11:37:00,13:07:00,3,"Keystone_east","Central Sound","lingcod_bycatch",4.5
+"554","byc_21_Keystone_west",47.6504,0,0,"no bait","Artificial Lure",4920,2018-03-30,3,09:55:00,11:17:00,3,"Keystone_west","Central Sound","lingcod_bycatch",4.1
+"555","byc_21_Possession_inshore",17.7165,0,0,"Herring","Hook only",6420,2018-03-30,3,14:23:00,16:10:00,3,"Possession_inshore","Central Sound","lingcod_bycatch",5.35
+"556","byc_22_Eagle_Point",40.6908,0,0,"no bait","Artificial Lure",5520,2018-04-23,4,12:41:00,14:13:00,4,"Eagle_Point","San Juan Islands","lingcod_bycatch",6.13333333333333
+"557","byc_22_Pile_Point",39.4814322580645,0,0,"Live large","Hook only",6000,2018-04-23,4,10:38:00,12:18:00,3.42857142857143,"Pile_Point","San Juan Islands","lingcod_bycatch",5.71428571428571
+"558","byc_22_South_Lopez",49.0259076923077,0,0,"Herring","Hook only",5100,2018-04-23,4,08:08:00,09:33:00,3.375,"South_Lopez","San Juan Islands","lingcod_bycatch",4.78125
+"559","byc_23_Bird_rocks",44.196,0,0,"no bait","Artificial Lure",3840,2018-04-24,4,07:21:00,08:25:00,3.9,"Bird_rocks","San Juan Islands","lingcod_bycatch",4.16
+"560","byc_23_Black_rock",56.02224,0,0,"no bait","Artificial Lure",2400,2018-04-24,4,08:41:00,09:21:00,4,"Black_rock","San Juan Islands","lingcod_bycatch",2.66666666666667
+"561","byc_23_Point_Lawrence",64.3128,0,0,"Live large","Hook only",5520,2018-04-24,4,10:08:00,11:40:00,4,"Point_Lawrence","San Juan Islands","lingcod_bycatch",6.13333333333333
+"562","byc_23_Sucia_Island",32.3088,0,0,"Herring","Hook only",5460,2018-04-24,4,12:25:00,13:56:00,4,"Sucia_Island","San Juan Islands","lingcod_bycatch",6.06666666666667
+"563","byc_24_Eagle_Point",77.4954,1,0,"Live large","Hook only",5460,2018-04-25,4,10:14:00,11:45:00,3,"Eagle_Point","San Juan Islands","lingcod_bycatch",4.55
+"564","byc_24_Pile_Point",55.2704,1,0,"Herring","Hook only",5400,2018-04-25,4,12:07:00,13:37:00,2.71428571428571,"Pile_Point","San Juan Islands","lingcod_bycatch",4.07142857142857
+"565","byc_24_South_Lopez",51.4434666666667,3,0,"no bait","Artificial Lure",5640,2018-04-25,4,07:52:00,09:26:00,2.66666666666667,"South_Lopez","San Juan Islands","lingcod_bycatch",4.17777777777778
+"566","byc_25_Bird_rocks",44.196,0,0,"Live large","Hook only",2100,2018-04-26,4,14:26:00,15:01:00,3,"Bird_rocks","San Juan Islands","lingcod_bycatch",1.75
+"567","byc_25_Black_rock",62.6872,0,0,"Live large","Hook only",3420,2018-04-26,4,13:05:00,14:02:00,3,"Black_rock","San Juan Islands","lingcod_bycatch",2.85
+"568","byc_25_Point_Lawrence",51.41976,0,0,"Herring","Hook only",5640,2018-04-26,4,10:47:00,12:21:00,3,"Point_Lawrence","San Juan Islands","lingcod_bycatch",4.7
+"569","byc_25_Sucia_Island",23.7744,0,0,"no bait","Artificial Lure",5520,2018-04-26,4,08:33:00,10:05:00,3,"Sucia_Island","San Juan Islands","lingcod_bycatch",4.6
+"570","byc_26_Keystone_east",56.8452,0,0,"Herring","Hook only",5280,2018-05-21,5,15:19:00,16:47:00,3,"Keystone_east","Central Sound","lingcod_bycatch",4.4
+"571","byc_26_Keystone_west",35.56,0,0,"Live large","Hook only",5580,2018-05-21,5,17:02:00,18:35:00,2.83333333333333,"Keystone_west","Central Sound","lingcod_bycatch",4.39166666666667
+"572","byc_26_Possession_offshore",19.431,0,0,"no bait","Artificial Lure",5460,2018-05-21,5,19:51:00,21:22:00,3,"Possession_offshore","Central Sound","lingcod_bycatch",4.55
+"573","byc_27_Double_Bluff",25.7937,0,0,"Live large","Hook only",5760,2018-06-07,6,15:58:00,17:34:00,3.75,"Double_Bluff","Central Sound","lingcod_bycatch",6
+"574","byc_27_Keystone_east",42.5631428571429,0,0,"no bait","Artificial Lure",6000,2018-06-07,6,20:01:00,21:41:00,4,"Keystone_east","Central Sound","lingcod_bycatch",6.66666666666667
+"575","byc_27_Keystone_west",49.149,0,0,"Herring","Hook only",4920,2018-06-07,6,18:29:00,19:51:00,4,"Keystone_west","Central Sound","lingcod_bycatch",5.46666666666667
+"576","byc_28_Double_Bluff",23.2544470588235,0,0,"Herring","Hook only",4620,2018-09-13,9,15:30:00,16:47:00,3.6,"Double_Bluff","Central Sound","lingcod_bycatch",4.62
+"577","byc_28_Keystone_east",33.8709,0,0,"Live large","Hook only",8520,2018-09-13,9,16:52:00,19:14:00,4,"Keystone_east","Central Sound","lingcod_bycatch",9.46666666666667
+"578","byc_28_Keystone_west",35.9156,0,0,"no bait","Artificial Lure",5700,2018-09-13,9,19:21:00,20:56:00,4,"Keystone_west","Central Sound","lingcod_bycatch",6.33333333333333
+"579","byc_29_Gedney_Island",13.716,0,0,"Herring","Hook only",4200,2018-09-14,9,18:29:00,19:39:00,3.71428571428571,"Gedney_Island","Whidbey Island","lingcod_bycatch",4.33333333333333
+"580","byc_29_Possession_east",19.99488,0,0,"Live large","Hook only",5940,2018-09-14,9,16:40:00,18:19:00,4,"Possession_east","Central Sound","lingcod_bycatch",6.6
+"581","byc_29_Possession_west",19.7011636363636,0,0,"no bait","Artificial Lure",5760,2018-09-14,9,15:00:00,16:36:00,4,"Possession_west","Central Sound","lingcod_bycatch",6.4
+"582","byc_3_Black_Rock/Strawberry_Island",51.2499428571429,0,0,"Herring","Hook only",4920,2017-04-17,4,12:33:00,13:55:00,3.875,"Black_Rock/Strawberry_Island","San Juan Islands","lingcod_bycatch",5.29583333333333
+"583","byc_3_Peapod/Buckeye/Sisters",30.48,0,0,"Live large","Hook only",6960,2017-04-17,4,08:01:00,09:57:00,3,"Peapod/Buckeye/Sisters","San Juan Islands","lingcod_bycatch",5.8
+"584","byc_3_Point_Lawrence",59.944,0,0,"no bait","Artificial Lure",4560,2017-04-17,4,10:20:00,11:36:00,3.5,"Point_Lawrence","San Juan Islands","lingcod_bycatch",4.43333333333333
+"585","byc_30_Double_Bluff",21.9456,0,0,"no bait","Artificial Lure",2880,2018-09-28,9,17:30:00,18:18:00,4,"Double_Bluff","Central Sound","lingcod_bycatch",3.2
+"586","byc_30_Keystone_north",41.656,0,0,"Live large","Hook only",4140,2018-09-28,9,20:30:00,21:39:00,4,"Keystone_north","Central Sound","lingcod_bycatch",4.6
+"587","byc_30_Keystone_south",34.3069333333333,0,0,"Herring","Hook only",6120,2018-09-28,9,18:30:00,20:12:00,4,"Keystone_south","Central Sound","lingcod_bycatch",6.8
+"588","byc_31_Gedney_Island",16.6116,0,0,"Live large","Hook only",6660,2019-03-04,3,20:14:00,22:05:00,4,"Gedney_Island","Whidbey Island","lingcod_bycatch",7.4
+"589","byc_31_Possession_east",17.78,0,0,"no bait","Artificial Lure",5100,2019-03-04,3,16:34:00,17:59:00,4.77777777777778,"Possession_east","Central Sound","lingcod_bycatch",6.76851851851852
+"590","byc_31_Possession_west",16.3903741935484,0,0,"Herring","Hook only",6060,2019-03-04,3,18:03:00,19:44:00,4,"Possession_west","Central Sound","lingcod_bycatch",6.73333333333333
+"591","byc_32_Gedney_Island",15.24,0,0,"no bait","Artificial Lure",5340,2019-03-05,3,20:07:00,21:36:00,4,"Gedney_Island","Whidbey Island","lingcod_bycatch",5.93333333333333
+"592","byc_32_Possession_east",16.8510857142857,0,0,"Herring","Hook only",4500,2019-03-05,3,16:51:00,18:06:00,4,"Possession_east","Central Sound","lingcod_bycatch",5
+"593","byc_32_Possession_west",13.7541,0,0,"Live large","Hook only",5340,2019-03-05,3,18:20:00,19:49:00,4,"Possession_west","Central Sound","lingcod_bycatch",5.93333333333333
+"594","byc_33_Gedney_Island",13.4470588235294,0,0,"Herring","Hook only",6840,2019-03-14,3,18:20:00,20:14:00,4,"Gedney_Island","Whidbey Island","lingcod_bycatch",7.6
+"595","byc_33_Possession_east",20.7264,0,0,"Live large","Hook only",5400,2019-03-14,3,16:38:00,18:08:00,4,"Possession_east","Central Sound","lingcod_bycatch",6
+"596","byc_33_Possession_west",18.4658,0,0,"no bait","Artificial Lure",6660,2019-03-14,3,14:26:00,16:17:00,4,"Possession_west","Central Sound","lingcod_bycatch",7.4
+"597","byc_34_Double_Bluff",23.9485714285714,0,0,"Herring","Hook only",7680,2019-03-15,3,18:52:00,21:00:00,4,"Double_Bluff","Central Sound","lingcod_bycatch",8.53333333333333
+"598","byc_34_Keystone_north",39.0652,0,0,"no bait","Artificial Lure",10860,2019-03-15,3,14:26:00,17:27:00,4,"Keystone_north","Central Sound","lingcod_bycatch",12.0666666666667
+"599","byc_34_Keystone_south",45.8216,0,0,"Live large","Hook only",4800,2019-03-15,3,17:29:00,18:49:00,4,"Keystone_south","Central Sound","lingcod_bycatch",5.33333333333333
+"600","byc_35_Double_Bluff",18.4912,0,0,"Live large","Hook only",7320,2019-03-28,3,18:44:00,20:46:00,4,"Double_Bluff","Central Sound","lingcod_bycatch",8.13333333333333
+"601","byc_35_Keystone_north",45.8978,0,0,"Herring","Hook only",5520,2019-03-28,3,17:08:00,18:40:00,4,"Keystone_north","Central Sound","lingcod_bycatch",6.13333333333333
+"602","byc_35_Keystone_south",52.9481142857143,0,0,"no bait","Artificial Lure",4800,2019-03-28,3,15:42:00,17:02:00,3.8,"Keystone_south","Central Sound","lingcod_bycatch",5.06666666666667
+"603","byc_36_Belle_Rock",68.9102,0,0,"Herring","Hook only",3660,2019-06-10,6,07:38:00,08:39:00,3.5,"Belle_Rock","San Juan Islands","lingcod_bycatch",3.55833333333333
+"604","byc_36_Black_rock",67.4478857142857,1,0,"Herring","Hook only",2160,2019-06-10,6,09:11:00,09:47:00,3.66666666666667,"Black_rock","San Juan Islands","lingcod_bycatch",2.2
+"605","byc_36_Point_Lawrence",59.3251636363636,0,0,"no bait","Artificial Lure",5280,2019-06-10,6,10:32:00,12:00:00,4,"Point_Lawrence","San Juan Islands","lingcod_bycatch",5.86666666666667
+"606","byc_36_Sucia_Island",30.72384,0,0,"Live large","Hook only",6540,2019-06-10,6,12:53:00,14:42:00,4,"Sucia_Island","San Juan Islands","lingcod_bycatch",7.26666666666667
+"607","byc_37_Eagle_Point",38.0746,0,0,"Herring","Hook only",5460,2019-06-11,6,09:58:00,11:29:00,4,"Eagle_Point","San Juan Islands","lingcod_bycatch",6.06666666666667
+"608","byc_37_Pile_Point",63.8556,0,0,"no bait","Artificial Lure",5460,2019-06-11,6,11:49:00,13:20:00,4,"Pile_Point","San Juan Islands","lingcod_bycatch",6.06666666666667
+"609","byc_37_South_Lopez",57.912,0,0,"Live large","Hook only",5820,2019-06-11,6,07:44:00,09:21:00,3.66666666666667,"South_Lopez","San Juan Islands","lingcod_bycatch",5.92777777777778
+"610","byc_4_Eagle_Point",49.0389333333333,0,0,"no bait","Artificial Lure",5280,2017-04-18,4,11:48:00,13:16:00,4,"Eagle_Point","San Juan Islands","lingcod_bycatch",5.86666666666667
+"611","byc_4_Pile_Point",44.0020363636364,1,0,"Herring","Hook only",4380,2017-04-18,4,13:36:00,14:49:00,3,"Pile_Point","San Juan Islands","lingcod_bycatch",3.65
+"612","byc_4_San_Juan_Channel",59.7408,0,0,"Live large","Hook only",8280,2017-04-18,4,08:32:00,10:50:00,3,"San_Juan_Channel","San Juan Islands","lingcod_bycatch",6.9
+"613","byc_5_Eagle_Point",35.3568,0,0,"Herring","Hook only",3360,2017-04-20,4,13:34:00,14:30:00,3.6,"Eagle_Point","San Juan Islands","lingcod_bycatch",3.36
+"614","byc_5_Pile_Point",37.7952,0,0,"Live large","Hook only",5280,2017-04-20,4,11:54:00,13:22:00,2.16666666666667,"Pile_Point","San Juan Islands","lingcod_bycatch",3.17777777777778
+"615","byc_5_South_Lopez",45.8893333333333,2,0,"no bait","Artificial Lure",6780,2017-04-20,4,09:21:00,11:14:00,3.1,"South_Lopez","San Juan Islands","lingcod_bycatch",5.83833333333333
+"616","byc_6_Black_Rock/Strawberry_Island",55.4953714285714,0,0,"Herring","Hook only",5460,2017-04-21,4,09:10:00,10:41:00,4,"Black_Rock/Strawberry_Island","San Juan Islands","lingcod_bycatch",6.06666666666667
+"617","byc_6_Peapod/Buckeye/Sisters",53.34,0,0,"no bait","Artificial Lure",6000,2017-04-21,4,13:07:00,14:47:00,4,"Peapod/Buckeye/Sisters","San Juan Islands","lingcod_bycatch",6.66666666666667
+"618","byc_6_Point_Lawrence",72.2376,0,0,"Live large","Hook only",5220,2017-04-21,4,11:18:00,12:45:00,2,"Point_Lawrence","San Juan Islands","lingcod_bycatch",2.9
+"619","byc_7_4_mile_rock",25.2984,0,0,"Herring","Hook only",4560,2017-04-24,4,14:27:00,15:43:00,3.8,"4_mile_rock","Central Sound","lingcod_bycatch",4.81333333333333
+"620","byc_7_Blakely_Rocks/Pt._Glover/Boeing_Creek",18.3896,0,0,"no bait","Artificial Lure",5220,2017-04-24,4,09:58:00,11:25:00,3.88888888888889,"Blakely_Rocks/Pt._Glover/Boeing_Creek","Central Sound","lingcod_bycatch",5.63888888888889
+"621","byc_7_South_Blake",17.9832,0,0,"Live large","Hook only",5760,2017-04-24,4,12:11:00,13:47:00,4,"South_Blake","Central Sound","lingcod_bycatch",6.4
+"622","byc_8_Keystone",47.1267692307692,0,0,"no bait","Artificial Lure",6900,2017-04-27,4,11:42:00,13:37:00,3.55555555555556,"Keystone","Central Sound","lingcod_bycatch",6.81481481481481
+"623","byc_8_Klas_rock",21.9891428571429,0,0,"Herring","Hook only",5340,2017-04-27,4,14:30:00,15:59:00,3.66666666666667,"Klas_rock","Central Sound","lingcod_bycatch",5.43888888888889
+"624","byc_8_Possession_inshore",13.716,0,0,"Live large","Hook only",1140,2017-04-27,4,10:10:00,10:29:00,3,"Possession_inshore","Central Sound","lingcod_bycatch",0.95
+"625","byc_8_Possession_offshore",16.1544,0,0,"Live large","Hook only",6000,2017-04-27,4,08:21:00,10:01:00,3.16666666666667,"Possession_offshore","Central Sound","lingcod_bycatch",5.27777777777778
+"626","byc_9_Keystone",43.95216,1,0,"Herring","Hook only",10260,2017-04-28,4,11:54:00,14:45:00,3,"Keystone","Central Sound","lingcod_bycatch",8.55
+"627","byc_9_Klas_rock",21.9891428571429,0,0,"Live large","Hook only",4140,2017-04-28,4,09:48:00,10:57:00,3.5,"Klas_rock","Central Sound","lingcod_bycatch",4.025
+"628","byc_9_Possession_inshore",19.5072,0,0,"no bait","Artificial Lure",5040,2017-04-28,4,07:45:00,09:09:00,3.2,"Possession_inshore","Central Sound","lingcod_bycatch",4.48

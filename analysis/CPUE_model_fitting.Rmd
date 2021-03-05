@@ -1,0 +1,561 @@
+---
+title: "CPUE_modeling"
+author: "Markus Min"
+date: "`r format(Sys.time(), '%B %d %Y')`"
+output: pdf_document
+geometry:
+- top=1.5in
+- bottom=1.5in
+- left=1in
+- right=1in
+---
+
+### Description
+
+This R markdown file will go through fitting a model to our CPUE data to isolate the effect of survey (year) on CPUE of ESA-listed rockfishes.
+
+#### Load libraries
+```{r load_libraries, message = FALSE, warning = FALSE}
+library(here)
+library(tidyverse)
+library(pscl)
+```
+
+
+### Import data
+```{r}
+dat <- read.csv(here("hook_and_line_data", "CPUE_data_for_model.csv"), row.names = 1)
+dat$month <- as.character(dat$month)
+```
+
+### Plot data distributions
+
+#### Catch
+```{r catch_histograms, message = FALSE, warning = FALSE}
+YE_depth_histogram <- ggplot(dat, aes(x = yelloweye_catch, fill = survey)) +
+  geom_histogram()+
+  scale_x_continuous(breaks = seq(1,10,2))
+
+YE_depth_histogram
+table(dat$yelloweye_catch)
+
+boc_depth_histogram <- ggplot(dat, aes(x = bocaccio_catch, fill = survey)) +
+  geom_histogram()+
+  scale_x_continuous(breaks = seq(1,10,2))
+
+boc_depth_histogram
+table(dat$bocaccio_catch)
+```
+
+#### Depth
+```{r depth_histograms, message = FALSE, warning = FALSE}
+depth_histogram <- ggplot(dat, aes(x = mean_depth, fill = survey)) +
+  geom_histogram()
+
+depth_histogram
+```
+
+
+#### Effort
+
+```{r effort_histograms, message = FALSE, warning = FALSE}
+effort_histogram <- ggplot(dat, aes(x = angler_hours, fill = survey)) +
+  geom_histogram()
+
+effort_histogram
+```
+
+
+#### Basin
+
+```{r basin_histogram, message = FALSE, warning = FALSE}
+basin_histogram <- ggplot(dat, aes(x = basin, fill = survey)) +
+  geom_histogram(stat = "count")+
+  theme(axis.text.x = element_text(angle = 90))
+
+basin_histogram
+```
+
+#### Month
+```{r month_histogram, message = FALSE, warning = FALSE}
+month_histogram <- ggplot(dat, aes(x = as.factor(month), fill = survey)) +
+  geom_histogram(stat = "count")+
+  theme(axis.text.x = element_text(angle = 90))
+
+month_histogram
+```
+
+
+
+
+#### Bait
+
+
+```{r bait_histogram, message = FALSE, warning = FALSE}
+bait_histogram <- ggplot(dat, aes(x = bait, fill = survey)) +
+  geom_histogram(stat = "count")+
+  theme(axis.text.x = element_text(angle = 90))
+
+bait_histogram 
+```
+
+#### Lure
+
+
+```{r lure_histogram, message = FALSE, warning = FALSE}
+lure_histogram <- ggplot(dat, aes(x = lure, fill = survey)) +
+  geom_histogram(stat = "count")+
+  theme(axis.text.x = element_text(angle = 90))
+
+lure_histogram 
+```
+
+# Fit models for yelloweye
+
+### Fit model for yelloweye, all data
+We will fit a GLM with ZIP distribution of catch, with fixed effects for depth, bait, lure, effort (angler_hours), month (seasonality), basin, and SURVEY.
+
+For all models, bait, lure, and month don't work (`fitted probabilities numerically 0 or 1 occurredsystem is computationally singular`)
+```{r}
+yelloweye_zip <- zeroinfl(yelloweye_catch ~ 
+                            # Predictors of counts
+                            mean_depth + bait + lure + month + basin + survey + angler_hours | 
+                            # Predictors of detection
+                            mean_depth + bait + lure + month + basin + survey + angler_hours, data = dat)
+
+
+
+summary(yelloweye_zip)
+AIC(yelloweye_zip)
+
+# Remove bait/lure
+yelloweye_zip <- zeroinfl(yelloweye_catch ~ 
+                            # Predictors of counts
+                            mean_depth + month + basin + survey + angler_hours | 
+                            # Predictors of detection
+                            mean_depth + month + basin + survey + angler_hours, data = dat)
+
+summary(yelloweye_zip)
+AIC(yelloweye_zip)
+
+# Keep only survey, depth, and angler hours
+yelloweye_zip <- zeroinfl(yelloweye_catch ~ 
+                            # Predictors of counts
+                            mean_depth + survey + angler_hours | 
+                            # Predictors of detection
+                            mean_depth + survey + angler_hours, data = dat)
+
+summary(yelloweye_zip)
+AIC(yelloweye_zip)
+
+# Keep only survey, depth, basin, and angler hours
+yelloweye_zip <- zeroinfl(yelloweye_catch ~ 
+                            # Predictors of counts
+                            mean_depth + basin + survey + angler_hours | 
+                            # Predictors of detection
+                            mean_depth  + basin + survey + angler_hours, data = dat)
+
+summary(yelloweye_zip) 
+AIC(yelloweye_zip)
+```
+
+So with ZIP models (or other zero-inflated models), there are two processes being modeled: the probability of detection (binomial) and the count process (Poisson). As we see from the model outputs, each of these has its own significance values and estimates of effect size etc.
+
+For the best model (`zeroinfl(formula = yelloweye_catch ~ mean_depth + basin + survey + angler_hours | mean_depth + basin + survey + angler_hours, data = dat)`), angler_hours is the only significant variable for counts, whereas mean depth and basin (Hood Canal or San Juan Islands) are significant in the detection process.
+
+
+
+#### Diagnostic plots for best model
+
+##### QQ plot of residuals
+```{r}
+## qq resids
+qqnorm(residuals(yelloweye_zip), main = "QQ plot (residuals)", las = 1, pch = 16)
+qqline(residuals(yelloweye_zip))
+```
+Not great!
+
+##### Residuals vs. fitted
+```{r}
+plot(fitted(yelloweye_zip), residuals(yelloweye_zip), las = 1, pch = 16,
+     xlab = "Fitted", ylab = "Residuals",
+     main = "Residuals vs fitted")
+abline(h=0, lty = "dashed")
+```
+Again, not great!
+
+##### ACF
+```{r}
+## Type-I error
+alpha_crit <- 0.05
+
+nsamples <- length(residuals(yelloweye_zip))
+nvariables <- 3
+## threshold value for rho (correlation)
+(rho_crit <- qnorm(1 - alpha_crit/2) / sqrt(nsamples))
+
+## rearrange residuals into matrix
+rr <- matrix(residuals(yelloweye_zip), nsamples, nvariables)
+
+## get ACF
+ACF <- apply(rr, 2, acf, lag.max = 5, plot = FALSE)
+ACF <- lapply(ACF, function(x) x$acf)
+## convert list to matrix; don't need row 1 b/c rho_0 = 1
+ACF <- do.call(cbind, ACF)[-1,]
+
+## check if any |values| > rho_crit
+any(abs(ACF) > rho_crit)
+```
+
+I'm not sure I did this right, but looks like no autocorrelation.
+
+### Fit model for yelloweye, only PSP
+We will fit a GLM with ZIP distribution of catch, with fixed effects for depth, bait, lure, effort (angler_hours), month (seasonality), basin, and SURVEY.
+```{r}
+unique(dat$basin)
+PSP_dat <- subset(dat, basin %in% c("Central Sound",  "Whidbey Island", "South Sound"))
+# yelloweye_zip <- zeroinfl(yelloweye_catch ~ 
+#                             # Predictors of counts
+#                             mean_depth + bait + lure + month + basin + survey + angler_hours | 
+#                             # Predictors of detection
+#                             mean_depth + bait + lure + month + basin + survey + angler_hours, data = PSP_dat)
+# 
+# 
+# 
+# summary(yelloweye_zip)
+# AIC(yelloweye_zip)
+
+# Remove bait/lure
+yelloweye_zip <- zeroinfl(yelloweye_catch ~ 
+                            # Predictors of counts
+                            mean_depth + month + basin + survey + angler_hours | 
+                            # Predictors of detection
+                            mean_depth + month + basin + survey + angler_hours, data = PSP_dat)
+
+summary(yelloweye_zip)
+AIC(yelloweye_zip)
+
+# Keep only survey, depth, basin, and angler hours
+yelloweye_zip <- zeroinfl(yelloweye_catch ~ 
+                            # Predictors of counts
+                            mean_depth + basin + survey + angler_hours | 
+                            # Predictors of detection
+                            mean_depth  + basin + survey + angler_hours, data = PSP_dat)
+
+summary(yelloweye_zip)
+AIC(yelloweye_zip)
+
+# Keep only survey, depth, and angler hours
+yelloweye_zip <- zeroinfl(yelloweye_catch ~ 
+                            # Predictors of counts
+                            mean_depth + survey + angler_hours | 
+                            # Predictors of detection
+                            mean_depth + survey + angler_hours, data = PSP_dat)
+
+summary(yelloweye_zip)
+AIC(yelloweye_zip)
+```
+
+Here, the best model by AIC is `zeroinfl(formula = yelloweye_catch ~ mean_depth + survey + angler_hours | mean_depth + survey + angler_hours, data = PSP_dat)`.
+
+In this model, mean depth is the only significant predictor of presence, whereas angler hours and survey (Percy Washington) are significant for counts.
+
+
+#### Diagnostic plots for best model
+
+##### QQ plot of residuals
+```{r}
+## qq resids
+qqnorm(residuals(yelloweye_zip), main = "QQ plot (residuals)", las = 1, pch = 16)
+qqline(residuals(yelloweye_zip))
+```
+Not great!
+
+##### Residuals vs. fitted
+```{r}
+plot(fitted(yelloweye_zip), residuals(yelloweye_zip), las = 1, pch = 16,
+     xlab = "Fitted", ylab = "Residuals",
+     main = "Residuals vs fitted")
+abline(h=0, lty = "dashed")
+```
+Again, not great!
+
+##### ACF
+```{r}
+## Type-I error
+alpha_crit <- 0.05
+
+nsamples <- length(residuals(yelloweye_zip))
+nvariables <- 3
+## threshold value for rho (correlation)
+(rho_crit <- qnorm(1 - alpha_crit/2) / sqrt(nsamples))
+
+## rearrange residuals into matrix
+rr <- matrix(residuals(yelloweye_zip), nsamples, nvariables)
+
+## get ACF
+ACF <- apply(rr, 2, acf, lag.max = 5, plot = FALSE)
+ACF <- lapply(ACF, function(x) x$acf)
+## convert list to matrix; don't need row 1 b/c rho_0 = 1
+ACF <- do.call(cbind, ACF)[-1,]
+
+## check if any |values| > rho_crit
+any(abs(ACF) > rho_crit)
+```
+
+#### Plot estimated probability of non-detection and expected count as a function of explanatory variables
+
+How do we modify this code for multiple explanatory variables? I guess we could model each separately?
+
+
+##### As function of mean depth
+Well, I couldn't quite get this to run. Complicated to select only the relevant elements for a single explanatory variable...
+```{r eval = FALSE}
+# Remove NAs from dat
+dat_noNA <- subset(dat, !is.na(mean_depth) & !is.na(basin))
+
+# Sample size
+nn <- dim(dat_noNA)[1]
+
+## fitted for detection prob (pi)
+mean_depth <- sort(dat$mean_depth)
+gamma_hat_0 <- coef(yelloweye_zip)[2]
+gamma_hat_1 <- coef(yelloweye_zip)[12]
+pi_hat <- 1/(1+exp(-(gamma_hat_0 + gamma_hat_1 * mean_depth)))
+
+## matrix of derivatives
+derivs <- matrix(NA, nrow = nn, ncol = 4)
+derivs[,1] <- derivs[,2] <- 0
+derivs[,3] <- (exp(gamma_hat_0 + gamma_hat_1*mean_depth))/((exp(gamma_hat_0 + gamma_hat_1*mean_depth)+1)^2)
+derivs[,4] <- (mean_depth*exp(gamma_hat_0 + gamma_hat_1*mean_depth))/((exp(gamma_hat_0 + gamma_hat_1*mean_depth)+1)^2) 
+se <- sqrt( diag ( derivs %*% vcov(yelloweye_zip) %*% t(derivs) ))
+lower <- pi_hat - se * qt(0.025, nn-2, lower.tail = FALSE)
+upper <- pi_hat + se * qt(0.025, nn-2, lower.tail = FALSE)
+
+## fitted for mean & var (lambda)
+beta_hat_0 <- coef(yelloweye_zip)[1]
+beta_hat_1 <- coef(yelloweye_zip)[2]
+lambda_hat <- exp(beta_hat_0 + beta_hat_1*mean_depth)
+
+## matrix of derivatives
+derivs_2 <- matrix(NA, nrow = nn, ncol = 4)
+derivs_2[,1] <- exp(beta_hat_0+beta_hat_1*mean_depth)
+derivs_2[,2] <- mean_depth*exp(beta_hat_0+beta_hat_1*mean_depth) 
+derivs_2[,3] <- derivs_2[,4] <- 0
+se_2 <- sqrt( diag ( derivs_2 %*% vcov(yelloweye_zip) %*% t(derivs_2) ))
+lower_2 <- lambda_hat - se_2 * qt(0.025, nn-2, lower.tail = FALSE)
+upper_2 <- lambda_hat + se_2 * qt(0.025, nn-2, lower.tail = FALSE)
+
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+## detections
+plot(mean_depth, pi_hat, type = "l", las = 1, ylim = c(0, 1), lwd = 2, col = "darkgreen",
+     xlab = "Tree density", ylab = expression(pi), main = "Missed detection")
+lines(mean_depth, lower, lty = 2,  col = "darkgreen", lwd = 2)
+lines(mean_depth, upper, lty = 2,  col = "darkgreen", lwd = 2)
+## counts
+plot(mean_depth, lambda_hat, type = "l", las = 1, ylim = c(0, 20), lwd = 2, col = "darkgreen",
+     xlab = "Tree density", ylab = expression(lambda), main = "Counts")
+lines(mean_depth, lower_2, lty = 2, col = "darkgreen", lwd = 2)
+lines(mean_depth, upper_2, lty = 2, col = "darkgreen", lwd = 2)
+```
+
+
+# Fit models for bocaccio
+
+I think the bocaccio models are having fits with the fact that there were no bocaccio caught during the lingcod bycatch survey... maybe?
+
+### Fit model for bocaccio, all data
+We will fit a GLM with ZIP distribution of catch, with fixed effects for depth, bait, lure, effort (angler_hours), month (seasonality), basin, and SURVEY.
+```{r}
+# Can't include bait/lure
+# bocaccio_zip <- zeroinfl(bocaccio_catch ~ 
+#                             # Predictors of counts
+#                             mean_depth + bait + lure + month + basin + survey + angler_hours | 
+#                             # Predictors of detection
+#                             mean_depth + bait + lure + month + basin + survey + angler_hours, data = dat)
+# 
+# 
+# 
+# summary(bocaccio_zip)
+# AIC(bocaccio_zip)
+
+# Remove bait/lure
+# bocaccio_zip <- zeroinfl(bocaccio_catch ~ 
+#                             # Predictors of counts
+#                             mean_depth + month + basin + survey + angler_hours | 
+#                             # Predictors of detection
+#                             mean_depth + month + basin + survey + angler_hours, data = dat)
+# 
+# summary(bocaccio_zip)
+# AIC(bocaccio_zip)
+
+# Keep only survey, depth, and angler hours
+bocaccio_zip <- zeroinfl(bocaccio_catch ~ 
+                            # Predictors of counts
+                            mean_depth + survey + angler_hours | 
+                            # Predictors of detection
+                            mean_depth + survey + angler_hours, data = dat)
+
+summary(bocaccio_zip)
+AIC(bocaccio_zip)
+
+# Keep only survey, depth, basin, and angler hours
+bocaccio_zip <- zeroinfl(bocaccio_catch ~ 
+                            # Predictors of counts
+                            mean_depth + basin + survey + angler_hours | 
+                            # Predictors of detection
+                            mean_depth  + basin + survey + angler_hours, data = dat)
+
+summary(bocaccio_zip) 
+AIC(bocaccio_zip)
+```
+
+
+For the best model (`zeroinfl(formula = bocaccio_catch ~ mean_depth + basin + survey + angler_hours | mean_depth + basin + survey + angler_hours, data = dat)`), depth, South Sound, Whidbey Island, Percy Washington Survey, and angler hours are all significant for counts. Interestingly, the effect is only positive for depth and PW survey, and negative for all others. There are no significant variables for the detection process.
+
+
+#### Diagnostic plots for best model
+
+##### QQ plot of residuals
+```{r}
+## qq resids
+qqnorm(residuals(bocaccio_zip), main = "QQ plot (residuals)", las = 1, pch = 16)
+qqline(residuals(bocaccio_zip))
+```
+Not great!
+  
+##### Residuals vs. fitted
+```{r}
+plot(fitted(bocaccio_zip), residuals(bocaccio_zip), las = 1, pch = 16,
+     xlab = "Fitted", ylab = "Residuals",
+     main = "Residuals vs fitted")
+abline(h=0, lty = "dashed")
+```
+Much better than the same plots for yelloweye... but still not great?
+  
+##### ACF
+```{r}
+## Type-I error
+alpha_crit <- 0.05
+
+nsamples <- length(residuals(bocaccio_zip))
+nvariables <- 3
+## threshold value for rho (correlation)
+(rho_crit <- qnorm(1 - alpha_crit/2) / sqrt(nsamples))
+
+## rearrange residuals into matrix
+rr <- matrix(residuals(bocaccio_zip), nsamples, nvariables)
+
+## get ACF
+ACF <- apply(rr, 2, acf, lag.max = 5, plot = FALSE)
+ACF <- lapply(ACF, function(x) x$acf)
+## convert list to matrix; don't need row 1 b/c rho_0 = 1
+ACF <- do.call(cbind, ACF)[-1,]
+
+## check if any |values| > rho_crit
+any(abs(ACF) > rho_crit)
+```
+
+I'm not sure I did this right, but looks like no autocorrelation.
+
+### Fit model for bocaccio, only PSP
+We will fit a GLM with ZIP distribution of catch, with fixed effects for depth, bait, lure, effort (angler_hours), month (seasonality), basin, and SURVEY.
+```{r}
+unique(dat$basin)
+PSP_dat <- subset(dat, basin %in% c("Central Sound",  "Whidbey Island", "South Sound"))
+
+# Bait and lure break the model
+# bocaccio_zip <- zeroinfl(bocaccio_catch ~ 
+#                             # Predictors of counts
+#                             mean_depth + bait + lure + month + basin + survey + angler_hours | 
+#                             # Predictors of detection
+#                             mean_depth + bait + lure + month + basin + survey + angler_hours, data = PSP_dat)
+# 
+# 
+# 
+# summary(bocaccio_zip)
+# AIC(bocaccio_zip)
+
+# Remove bait/lure
+# this doesn't work though
+# bocaccio_zip <- zeroinfl(bocaccio_catch ~
+#                             # Predictors of counts
+#                             mean_depth + month + basin + survey + angler_hours |
+#                             # Predictors of detection
+#                             mean_depth + month + basin + survey + angler_hours, data = PSP_dat)
+# 
+# summary(bocaccio_zip)
+# AIC(bocaccio_zip)
+
+# Keep only survey, depth, and angler hours
+bocaccio_zip <- zeroinfl(bocaccio_catch ~ 
+                            # Predictors of counts
+                            mean_depth + survey + angler_hours | 
+                            # Predictors of detection
+                            mean_depth + survey + angler_hours, data = PSP_dat)
+
+summary(bocaccio_zip)
+AIC(bocaccio_zip)
+
+# Keep only survey, depth, basin, and angler hours
+bocaccio_zip <- zeroinfl(bocaccio_catch ~ 
+                            # Predictors of counts
+                            mean_depth + basin + survey + angler_hours | 
+                            # Predictors of detection
+                            mean_depth  + basin + survey + angler_hours, data = PSP_dat)
+
+summary(bocaccio_zip)
+AIC(bocaccio_zip)
+
+```
+
+Here, the best model by AIC is `zeroinfl(formula = bocaccio_catch ~ mean_depth + basin + survey + angler_hours | mean_depth + basin + survey + angler_hours, data = PSP_dat)`.
+
+In this model, there are no significant predictors of presence. However, PW survey and depth are significant positive predictors of counts, whereas South Sound, Whidbey Island, and angler hours (???) are negative predictors of counts.
+
+
+#### Diagnostic plots for best model
+
+##### QQ plot of residuals
+```{r}
+## qq resids
+qqnorm(residuals(bocaccio_zip), main = "QQ plot (residuals)", las = 1, pch = 16)
+qqline(residuals(bocaccio_zip))
+```
+Not great!
+
+##### Residuals vs. fitted
+```{r}
+plot(fitted(bocaccio_zip), residuals(bocaccio_zip), las = 1, pch = 16,
+     xlab = "Fitted", ylab = "Residuals",
+     main = "Residuals vs fitted")
+abline(h=0, lty = "dashed")
+```
+Again, not great but better than yelloweye.
+
+##### ACF
+```{r}
+## Type-I error
+alpha_crit <- 0.05
+
+nsamples <- length(residuals(bocaccio_zip))
+nvariables <- 3
+## threshold value for rho (correlation)
+(rho_crit <- qnorm(1 - alpha_crit/2) / sqrt(nsamples))
+
+## rearrange residuals into matrix
+rr <- matrix(residuals(bocaccio_zip), nsamples, nvariables)
+
+## get ACF
+ACF <- apply(rr, 2, acf, lag.max = 5, plot = FALSE)
+ACF <- lapply(ACF, function(x) x$acf)
+## convert list to matrix; don't need row 1 b/c rho_0 = 1
+ACF <- do.call(cbind, ACF)[-1,]
+
+## check if any |values| > rho_crit
+any(abs(ACF) > rho_crit)
+```

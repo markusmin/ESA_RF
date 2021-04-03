@@ -32,19 +32,27 @@ dat$month <- as.character(dat$month)
 
 #### Catch
 ```{r catch_histograms, message = FALSE, warning = FALSE}
-YE_depth_histogram <- ggplot(dat, aes(x = yelloweye_catch, fill = survey)) +
-  geom_histogram()+
-  scale_x_continuous(breaks = seq(1,10,2))
+fig_dir <- here("figures", "CPUE_data_distributions")
 
-YE_depth_histogram
+YE_catch_histogram <- ggplot(dat, aes(x = yelloweye_catch, fill = survey)) +
+  geom_histogram()+
+  scale_x_continuous(breaks = seq(1,10,2))+
+  ggtitle("Yelloweye")
+
+YE_catch_histogram
 table(dat$yelloweye_catch)
 
-boc_depth_histogram <- ggplot(dat, aes(x = bocaccio_catch, fill = survey)) +
-  geom_histogram()+
-  scale_x_continuous(breaks = seq(1,10,2))
+ggsave(paste0(fig_dir, "/yelloweye_catch_hist.png"), width = 5, height = 5, YE_catch_histogram)
 
-boc_depth_histogram
+boc_catch_histogram <- ggplot(dat, aes(x = bocaccio_catch, fill = survey)) +
+  geom_histogram()+
+  scale_x_continuous(breaks = seq(1,10,2))+
+  ggtitle("Bocaccio")
+
+boc_catch_histogram
 table(dat$bocaccio_catch)
+
+ggsave(paste0(fig_dir, "/bocaccio_catch_hist.png"), width = 5, height = 5, boc_catch_histogram)
 ```
 
 #### Depth
@@ -53,6 +61,8 @@ depth_histogram <- ggplot(dat, aes(x = mean_depth, fill = survey)) +
   geom_histogram()
 
 depth_histogram
+
+ggsave(paste0(fig_dir, "/effort_depth_hist.png"), width = 5, height = 5, depth_histogram)
 ```
 
 
@@ -63,6 +73,8 @@ effort_histogram <- ggplot(dat, aes(x = angler_hours, fill = survey)) +
   geom_histogram()
 
 effort_histogram
+
+ggsave(paste0(fig_dir, "/effort_time_hours.png"), width = 5, height = 5, effort_histogram)
 ```
 
 
@@ -74,15 +86,19 @@ basin_histogram <- ggplot(dat, aes(x = basin, fill = survey)) +
   theme(axis.text.x = element_text(angle = 90))
 
 basin_histogram
+
+ggsave(paste0(fig_dir, "/basin_histogram.png"), width = 5, height = 5, basin_histogram)
 ```
 
 #### Month
 ```{r month_histogram, message = FALSE, warning = FALSE}
-month_histogram <- ggplot(dat, aes(x = as.factor(month), fill = survey)) +
+month_histogram <- ggplot(dat, aes(x = as.factor(as.numeric(month)), fill = survey)) +
   geom_histogram(stat = "count")+
-  theme(axis.text.x = element_text(angle = 90))
+  xlab("Month")
 
 month_histogram
+
+ggsave(paste0(fig_dir, "/month_histogram.png"), width = 5, height = 5, month_histogram)
 ```
 
 
@@ -97,6 +113,8 @@ bait_histogram <- ggplot(dat, aes(x = bait, fill = survey)) +
   theme(axis.text.x = element_text(angle = 90))
 
 bait_histogram 
+
+ggsave(paste0(fig_dir, "/bait_histogram.png"), width = 5, height = 5, bait_histogram)
 ```
 
 #### Lure
@@ -108,12 +126,162 @@ lure_histogram <- ggplot(dat, aes(x = lure, fill = survey)) +
   theme(axis.text.x = element_text(angle = 90))
 
 lure_histogram 
+ggsave(paste0(fig_dir, "/lure_histogram.png"), width = 5, height = 5, lure_histogram)
+
+table(dat$lure)
 ```
+
+#### Lure and bait
+
+
+```{r lure_histogram, message = FALSE, warning = FALSE}
+lure_bait_histogram <- ggplot(dat, aes(x = lure_bait, fill = survey)) +
+  geom_histogram(stat = "count")+
+  theme(axis.text.x = element_text(angle = 90))
+
+lure_bait_histogram 
+ggsave(paste0(fig_dir, "/lure_bait_histogram.png"), width = 5, height = 5, lure_bait_histogram)
+```
+
 
 # Fit models for yelloweye
 
 ### Fit model for yelloweye, all data
 We will fit a GLM with ZIP distribution of catch, with fixed effects for depth, bait, lure, effort (angler_hours), month (seasonality), basin, and SURVEY.
+
+```{r}
+yelloweye_zip_effort_depth <- zeroinfl(yelloweye_catch ~ 
+                            offset(angler_hours) | 
+                            # Predictors of detection
+                            mean_depth, data = dat)
+
+yelloweye_zip_effort_depth <- zeroinfl(yelloweye_catch ~ 
+                              # Predictors of counts
+                              offset(angler_hours) | 
+                              # Predictors of detection
+                              mean_depth, data = dat)
+
+
+summary(yelloweye_zip_effort_depth)
+AIC(yelloweye_zip_effort_depth)
+
+# Angler hours not as offset
+yelloweye_zip_effort_depth <- zeroinfl(yelloweye_catch ~ 
+                            angler_hours| 
+                            # Predictors of detection
+                            mean_depth, data = dat)
+summary(yelloweye_zip_effort_depth)
+AIC(yelloweye_zip_effort_depth)
+mm <- model.matrix(yelloweye_zip_effort_depth)
+
+# Plot predicted
+newdata <- data.frame(cbind(rep(mean(dat$angler_hours), 200), c(1:200)))
+colnames(newdata) <- c("angler_hours", "mean_depth")
+yelloweye_predicts <- data.frame(c(1:200), predict(yelloweye_zip_effort_depth, newdata = newdata))
+colnames(yelloweye_predicts) <- c("mean_depth", "predicted_yelloweye")
+ggplot(yelloweye_predicts, aes(x = mean_depth, y = predicted_yelloweye)) + 
+  geom_point()
+
+# Angler hours not as offset, remove intercept
+yelloweye_zip_effort_depth <- zeroinfl(yelloweye_catch ~ 
+                            angler_hours -1 | 
+                            # Predictors of detection
+                            mean_depth -1, data = dat)
+
+summary(yelloweye_zip_effort_depth)
+AIC(yelloweye_zip_effort_depth)
+```
+
+#### Add survey and basin
+Plot predicted for mean angler hours, in Central Sound, at mean depth
+```{r}
+# change surveys to factor levels
+dat$survey <- factor(dat$survey, levels = c("Percy_Washington", "ESA_Genetics", "lingcod_bycatch" ))
+yelloweye_zip_effort_depth_basin_survey <- zeroinfl(yelloweye_catch ~ 
+                            offset(angler_hours)| 
+                            # Predictors of detection
+                            mean_depth + basin + survey, data = dat)
+summary(yelloweye_zip_effort_depth_basin_survey)
+AIC(yelloweye_zip_effort_depth_basin_survey)
+mm <- model.matrix(yelloweye_zip_effort_depth_basin_survey)
+# The output is relative to the PW survey now
+
+# Try a new model with survey on the count side
+yelloweye_zip_effort_depth_basin_survey <- zeroinfl(yelloweye_catch ~ 
+                            offset(angler_hours) + survey | 
+                            # Predictors of detection
+                            mean_depth + basin, data = dat)
+
+
+unique(dat$basin)
+# Plot predicted
+
+# Create df for predicted values
+angler_hours = rep(mean(dat$angler_hours), 3)
+mean_depth = rep(mean(dat$mean_depth, na.rm = TRUE), 3)
+basin = factor(rep("Central Sound", 3), levels = c("Central Sound", "Whidbey Island", "South Sound", "Straits of Juan de Fuca", "Hood Canal", "San Juan Islands"))
+survey = factor(c("Percy_Washington", "ESA_Genetics", "lingcod_bycatch"), levels = c("Percy_Washington", "ESA_Genetics", "lingcod_bycatch" ))
+newdata <- data.frame(angler_hours, mean_depth, basin, survey)
+
+
+# Get predicted values
+newdata$phat <- predict(yelloweye_zip_effort_depth_basin_survey, newdata = newdata)
+newdata$exp_phat <- exp(newdata$phat)
+
+ggplot(newdata, aes(x = survey, y = exp_phat)) + 
+  geom_point()
+```
+
+
+### Fit simple model for PSP only
+```{r}
+PSP_dat <- subset(dat, basin %in% c("Central Sound",  "Whidbey Island", "South Sound"))
+table(subset(PSP_dat, survey == "Percy_Washington")$yelloweye_catch)
+table(subset(PSP_dat, survey == "ESA_Genetics")$yelloweye_catch)
+table(subset(PSP_dat, survey == "lingcod_bycatch")$yelloweye_catch)
+
+# change surveys to factor levels
+PSP_dat$survey <- factor(PSP_dat$survey, levels = c("Percy_Washington", "ESA_Genetics", "lingcod_bycatch" ))
+
+# Survey on detection side
+yelloweye_zip_effort_depth_survey <- zeroinfl(yelloweye_catch ~ 
+                            offset(angler_hours)| 
+                            # Predictors of detection
+                            mean_depth + survey -1, data = PSP_dat)
+summary(yelloweye_zip_effort_depth_survey)
+AIC(yelloweye_zip_effort_depth_survey)
+mm <- model.matrix(yelloweye_zip_effort_depth_survey)
+# The output is relative to the PW survey now
+
+# Try a new model with survey on the count side
+yelloweye_zip_effort_depth_survey <- zeroinfl(yelloweye_catch ~ 
+                            offset(angler_hours) + survey -1 | 
+                            # Predictors of detection
+                            mean_depth, data = PSP_dat)
+
+summary(yelloweye_zip_effort_depth_survey)
+
+
+unique(dat$basin)
+# Plot predicted
+
+# Create df for predicted values
+angler_hours = rep(mean(dat$angler_hours), 3)
+mean_depth = rep(mean(dat$mean_depth, na.rm = TRUE), 3)
+survey = factor(c("Percy_Washington", "ESA_Genetics", "lingcod_bycatch"), levels = c("Percy_Washington", "ESA_Genetics", "lingcod_bycatch" ))
+newdata <- data.frame(angler_hours, mean_depth, survey)
+
+
+# Get predicted values
+newdata$phat <- predict(yelloweye_zip_effort_depth_survey, newdata = newdata, type = "count")
+# newdata$exp_phat <- exp(newdata$phat)
+
+ggplot(newdata, aes(x = survey, y = phat)) + 
+  geom_point()
+```
+
+
+#### Fit the most simple model
 
 For all models, bait, lure, and month don't work (`fitted probabilities numerically 0 or 1 occurredsystem is computationally singular`)
 ```{r}

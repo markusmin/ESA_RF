@@ -367,3 +367,33 @@ lengths_allsurveys_gg <- ggarrange(PW_YE_lengths, bycatch_YE_lengths, gen_YE_len
 fig_dir <- here("figures")
 
 ggsave(lengths_allsurveys_gg, height = 10, width = 20, path = fig_dir, filename = "survey_length_distributions.png", device = "png")
+
+# Combine all, run ANOVA
+
+DFO_south_bio_YE %>% 
+  dplyr::select(FL_cm, English.common.name) %>% 
+  dplyr::rename(Species = English.common.name) %>% 
+  mutate(., survey = "DFO_South") -> DFO_south_length_data
+
+DFO_north_bio_YE %>% 
+  dplyr::select(FL_cm, English.common.name) %>% 
+  dplyr::rename(Species = English.common.name) %>% 
+  mutate(., survey = "DFO_North") -> DFO_north_length_data
+
+bycatch_gen_comb_YE %>% 
+  dplyr::select(Species, FL_cm) %>% 
+  mutate(., survey = "ESA_genetics_lingcod_bycatch") -> bycatch_gen_comb_length_data
+
+PW_YE %>% 
+  dplyr::select(Species, FL_cm) %>% 
+  mutate(., survey = "PW_survey") -> PW_YE_length_data
+
+DFO_south_length_data %>% 
+  union(., DFO_north_length_data) %>% 
+  union(., bycatch_gen_comb_length_data) %>% 
+  union(., PW_YE_length_data) -> all_YE_length_data
+
+length_anova <- aov(FL_cm ~ survey, data = all_YE_length_data)
+summary(length_anova)
+
+TukeyHSD(length_anova)

@@ -1,0 +1,259 @@
+---
+title: "catch_reconstruction"
+author: "Markus Min"
+date: "`r format(Sys.time(), '%B %d %Y')`"
+toc: TRUE
+toc-depth: 3
+output: pdf_document
+header-includes:
+- \usepackage{fancyhdr}
+urlcolor: blue
+---
+\pagestyle{fancy}
+\fancyhead[L]{Catch Reconstruction}
+\fancyhead[R]{2021 5-year review}
+\fancyfoot[C]{\thepage}
+
+# Notes
+
+## TO DO
+
+New approach: Start writing the code, and the necessary information will become clear.
+
+
+- Track down Canadian data - sent email to Dana
+
+Need to put together full time series for commercial and recreational data
+
+Recreational data:
+
+
+
+## The data
+
+Data is available for catches dating back to 1889, but is spotty and with many caveats/drawbacks. The catch is usually aggregated to rockfishes; reliable species composition data is only available for 1970-present. 
+
+There is data from the U.S. portion of the DPS and the Canadian side of the DPS. Need to track down sources for Canadian data (perhaps start with stock assessments for yelloweye?). I don't think there are Bocaccio on the Canadian side of the DPS
+
+
+## Data periods
+
+
+### Commercial Data
+| Time Period | Data source  | Species composition  | Data file(s) |
+|-|-|-|-|
+| 1889-1892 | US Commission of Fish and Fisheries | 
+| 1899 | US Commission of Fish and Fisheries | 
+| 1921-1934; 1943- 1969      | Yellow/green book |   ? |  ROCKHIS_Palsson.xls |
+| 1935-1940 | Bound Volumes | ? | BoundVol_1935_1940_RkFsh.xlsx |
+| 1970-1988      | Schmitt 1991  |    Schmitt 1991 | 1991_Schmitt_table_8.csv - 1991_Schmitt_table_7.csv OR COMBCATCH2011 |
+| 1989-2003      | Palsson  |    Palsson | COMBCATCH2011 |
+| 2004 - 2020 | Fish receiving ticket database (LiFT) | ? | Puget Sound commercial landings_1970-2020.xlsx |
+
+##### Notes:
+
+
+###### Bound volumes (1935-1940)
+- 1935 and 1942 are incomplete due to missing microfiche
+- have totals for rockfish by landing district
+- 99.9% of beam trawl/otter trawl fisheries took place in Puget Sound, didn't take off until 1938 or so, in pre-war years
+- Greg thinks all data in bound volumes has areas listed as catch areas
+
+###### Yellow book data (1921-1969)
+- For the 1921-1972 period covered by the YellowBook data, it is broken down by gear type. If we can find any composition data for the different gear types, we will have much more confidence in trying to estimate species compositions.
+
+###### 1970 - present
+- COMBCATCH2011.xlsx and COMREC.xlsx match up exactly for commercial catches for years of overlap; COMBCATCH2011 has more data and should be used for all historical data
+- There are differences between Wayne's data and the data Theresa supplied for the period 1989 - present (Puget Sound commercial landings_1970-2020.xlsx)
+  - These discrepancies get bigger over time - for the period of about 1970-1980 they're very small differences (maybe 5% of total) but get bigger in the 80s/90s
+  - Theresa's data is consistently larger
+  - NEED TO RECONCILE THESE TWO DATA SOURCES TO USE THERESA'S DATA FOR RECENT YEARS
+  - Theresa said her data was from "Puget Sound catch areas" - depending on how these were defined, perhaps this is the source of discrepancies between the two sources?
+  
+###### 1889-1892, 1899
+- For the period 1889-1892, the data in Rockfish0.xlsx are for all counties - have to subtract out the coastal counties, not from the sound
+  - This mostly concerns Clallam County (see page 157 of "1895_XIX_RptUSFishComm_WillcoxPCst_1889_1892.pdf" for documentation), where the three largest ports are Neah Bay, Port Angeles, and Dungeness. Dungeness and Port Angeles are technically within the DPS while Neah Bay is not, but hard to say if fish landed at these ports were caught in the immediate vicinity of these ports. Catch is broken down by port in 1891 and sometimes 1892, but not for other years.
+- For 1899, the value in Rockfish0 matches the value on page 29 of "1902_Notes on the fisheries of the _Pacific1889.pdf", which corresponds to the total yield of the shore fisheries for rockfish for WA
+
+### Compositional data for commercial catches
+
+#### General notes:
+- Yelloweye and bocaccio are very rare in the trawl catches; this is unsurprising given that they are strongly associated with rocky habitat (can cite the recent ROV surveys)
+- Cyreis Schmitt's work from 1991 is easily the best catch composition data, but only covers the years 1970-1988. It has species by gear type/region - could we use this for earlier time periods, or is there reason to believe that the composition by gear has changed over time? E.g. due to changes due to extractions by fishing, changes in areas, changes in gear/mesh, etc.
+
+##### 1944_DescripWaTrawlFish.pdf: 
+
+"The Washington otter trawl fleet operates in water that is from 10 to 100 fathoms deep, along the Washington coast up to Barkley Sound on Vancouver Island, and inside Puget Sound. The gear is dragged over sand or mud bottoms. With the gear now in use, rocky bottoms are unfishable."
+\
+"The rockfish landed are largely "canaries", a mixtures of S. pinniger and S. caurinus. Considerable quantities of S. flavidus and S. columbianus, commonly called "bass", are also landed. Small quantities of twenty other species, mostly S. maliger are marketed."
+\
+**Takeaways:** 
+- This data comes from both the WA coast and Puget Sound
+- Yelloweye and bocaccio are not commonly landed by otter trawls (responsible for the vast majority of rockfish landings)
+
+##### PSndRkFish_Trawl Fishery.pdf
+
+"Within Puget Soudn waters the principal species taken by trawling are S. caurinus (copper rockfish), S. maliger (quillback rockfish), and S. pinnger (orange rockfish). Populations are scattered throughout Puget Sound. The central area is most productive followed by the southern area and western area."
+\
+**Takeaways:** 
+- This data, which covers the period 1955-1964, makes no mention of yelloweye or bocaccio in the trawl fishery.
+
+##### Groundfish RF samples 1966-1968_SH11.W2791
+
+Page 13: Across two samples in 1967 - "Area: 4A; Month: March; Depth of catch (fathoms): 50-65; Landed weight (lbs.): 9,700; Percent composition by species: S. flavidus 98-99%, S. pinniger 2%, mixed species 1%."
+\
+Page 17: One sample in 1968 - "Area: 4A; Month: January; Depth of catch (fathoms): 15-25; Landed weight (lbs.): 700; Percent composition by species: S. caurinus 93%, S. flavidus 1%, S. melanops 5%, S. paucispinis 1%."
+\
+**Takeaways:** 
+- One sample from 1968 had bocaccio as 1% of landings; never any mention of yelloweye
+- Covers rockfish samples in 1966-1968
+- Doesn't indicate gear type, but I'm pretty sure it's trawl data
+- S. ruberrimus isn't listed as a species in the composition ever (not even as column header)
+- Areas from CA to BC are described; the only areas of interest are statistical areas 4A and 4B:
+  - 4A: "United States inside waters from the Bonilla Pt.-Tatoosh Island line at the entrance to Juan de Fuca Strait including Puget Sound"
+  - 4B: "Canadian inside waters from the Bonilla Pt.-Tatoosh Island line at the entrance to Juan de Fuca Strait to a line drawn north and south through Pine Island at the upper end of Queen Charlotte Strait."
+
+##### RFs Trawl Samples 1969_SH11.W2791
+\
+Page 15: Four samples in 1969 in area 4A, 57-62 fathoms, about 16,000 lbs sampled, 98-99% S. flavidus, 1-2% S. pinniger.
+
+**Takeaways:** 
+- No yelloweye or bocaccio
+
+
+### Recreational Data
+| Time Period | Data source  | Data file(s) |
+|-|-|-|-|
+| 
+| 1975-2002      | ?  |     PugetSound_SportLanding.xlsx |
+| 1970-1998 | Palsson | COMREC.xlsx |
+| 2003 - 2019 | ?  | PSP Sport Estimates 2003-2019.xlsx |
+
+
+
+
+
+
+##### WDFW Marine Areas vs. Groundfish management regions (Rickey)
+
+\
+**For regions in Puget Sound:**
+\
+
+We want region 9 for Wayne's data - this excludes West Juan de Fuca (which is region 7)
+
+| WDFW Marine Area | Groundfish management region (Rickey) |
+| - | - |
+| Sekiu and Pillar Point - Marine Area 5 | 3 Strait of Juan de Fuca |
+| East Juan de Fuca Strait - Marine Area 6 | 3 Strait of Juan de Fuca |
+| San Juan Islands - Marine Area 7 | 1 Gulf - Bellingham, 2 San Juan Islands, 3 Strait of Juan de Fuca |
+| Deception Pass, Hope Island, and Skagit Bay - Marine Area 8-1 |  5 Central Puget Sound |
+| Ports Susan and Gardner - Marine Area 8-2 |  5 Central Puget Sound |
+| Admiralty Inlet - Marine Area 9 | 5 Central Puget Sound |
+| Seattle-Bremerton Area - Marine Area 10 | 5 Central Puget Sound |
+| Tacoma-Vashon Island - Marine Area 11 | 6 Southern Puget Sound |
+| Hood Canal - Marine Area 12 | 4 Hood Canal |
+| South Puget Sound - Marine Area 13 | 6 Southern Puget Sound |
+
+
+##### Notes:
+- COMREC and COMBCATCH2011 spreadsheets have the same recreational data up until 1992, but starting in 1993 (so for the years 1993-1998) the recreational estimates no longer match. Assume that COMBCATCH2011 is the most up-to-date data and should use that?
+
+
+- There are big discrepancies between Wayne's data (COMREC.xlsx) and the data that Theresa provided (PugetSound_SportLanding.xlsx)
+  - I think Theresa's data is in individuals and Wayne's is in weight, but not sure that explains everything
+    - There isn't a consistent ratio between the two and sometimes Theresa's values exceed Wayne's values, so perhaps they're both in individuals?
+- Bargman tables in "old fishery records and analysis" on Google Drive has recreational catch for 1968-1973.
+  - "Combined tables.xls" in same folder have 1965-1973
+  - These tables have data from many locations; the following are coastal areas and thus most likely represent catches outside of the DPS: Ilwaco, Westport, La Push, Neah Bay, Sekiu and Pillar Point
+- Values used by Wayne Palsson definitely don't match up with these values
+
+
+
+
+# Analysis
+
+### Load libraries
+```{r load_libraries}
+library(tidyverse)
+library(readxl)
+library(here)
+```
+
+## Commercial Data
+
+
+
+## Recreational Data
+
+
+### Recreational conversion tables
+Necessary for converting number of individuals to weight (kg or lbs)
+```{r}
+recreational_weight_conversion_path <- here("catch_reconstruction_data", "recreational", "Recreationalconversion.xls")
+recreational_weight_conversion <- read_excel(PSP_sport_2003_2019_path, sheet = "Sheet1", skip = 1)
+recreational_weight_conversion %>% 
+  dplyr::rename(species = "...2") %>% 
+  dplyr::select(-"...1") -> recreational_weight_conversion
+
+# Extract values for yelloweye and bocaccio
+YE_lbs_per_individual <- recreational_weight_conversion[recreational_weight_conversion$species == "Yelloweye rockfish",]$lbs
+BOC_lbs_per_individual <- recreational_weight_conversion[recreational_weight_conversion$species == "Bocaccio",]$lbs
+```
+
+
+### 2003-2019
+
+Will need to follow up with Theresa to understand how catch and variance were estimated based on raw creel data.
+
+How do we deal with different variances for different MCAs within the DPS?
+```{r}
+# Read in sport landing data
+PSP_sport_2003_2019_path <- here("catch_reconstruction_data", "recreational", "PSP Sport Estimates 2003-2019.xlsx")
+PSP_sport_2003_2019 <- read_excel(PSP_sport_2003_2019_path, sheet = "All")
+
+# Fix column names
+names(PSP_sport_2003_2019) <- gsub(x = names(PSP_sport_2003_2019), pattern = "\r\n", replacement = "_")
+names(PSP_sport_2003_2019) <- gsub(x = names(PSP_sport_2003_2019), pattern = "\\.", replacement = "")
+names(PSP_sport_2003_2019) <- gsub(x = names(PSP_sport_2003_2019), pattern = " ", replacement = "_")
+
+# Replace zeros with NAs for variance in catch when catch is zero
+PSP_sport_2003_2019[PSP_sport_2003_2019$Est_Catch == 0,]$Var_Catch <- NA
+
+# Subset MCAs that are in DPS
+# MCAs 4 and 5 are included in this data but are too far west to be in DPS (see Federal Register from 2017)
+PSP_sport_all <- subset(PSP_sport_2003_2019, !(MCA %in% c("4", "5")))
+
+# Subset yelloweye
+yelloweye_sport_2003_2019 <- subset(PSP_sport_all, Common_Name == "Yelloweye Rockfish")
+
+# Combine all data to get estimates of recreational catch by year
+yelloweye_sport_2003_2019 %>% 
+  group_by(Year) %>% 
+  summarise(., rec_catch = sum(Est_Catch), rec_catch_mean_var = mean(Var_Catch, na.rm = TRUE)) %>% 
+    # convert to weight
+  mutate(rec_catch_lbs = rec_catch * YE_lbs_per_individual, rec_catch_lbs_mean_var = rec_catch_mean_var * YE_lbs_per_individual) %>% 
+ # Drop columns for individuals
+dplyr::select(!c(rec_catch, rec_catch_mean_var)) -> yelloweye_rec_2003_2019
+
+# Subset bocaccio
+bocaccio_sport_2003_2019 <- subset(PSP_sport_all, Common_Name == "Bocaccio")
+
+# Combine all data to get estimates of recreational catch by year
+bocaccio_sport_2003_2019 %>% 
+  group_by(Year) %>% 
+  summarise(., rec_catch = sum(Est_Catch), rec_catch_mean_var = mean(Var_Catch, na.rm = TRUE)) %>% 
+  # convert to weight
+  mutate(rec_catch_lbs = rec_catch * BOC_lbs_per_individual, rec_catch_lbs_mean_var = rec_catch_mean_var * BOC_lbs_per_individual) %>% 
+ # Drop columns for individuals
+dplyr::select(!c(rec_catch, rec_catch_mean_var)) -> bocaccio_rec_2003_2019
+
+
+# Fill missing years in yelloweye and bocaccio data with rows with zeros using tidyverse::complete
+yelloweye_rec_2003_2019 %>% 
+  complete(Year = seq(2003, 2019, 1), fill = list(rec_catch_lbs = 0, rec_catch_lbs_mean_var = NA)) -> yelloweye_rec_2003_2019
+
+bocaccio_rec_2003_2019 %>% 
+  complete(Year = seq(2003, 2019, 1), fill = list(rec_catch_lbs = 0, rec_catch_lbs_mean_var = NA)) -> bocaccio_rec_2003_2019
+```
+

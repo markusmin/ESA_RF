@@ -123,15 +123,38 @@ gen_survey %>%
 # Group bait
 unique(gen_survey$bait)
 # "NA"s are from things that aren't actual catch in data, i.e. regurgitated catch, water samples
+# Change all "herring" values to "Herring"
+gen_survey[gen_survey$bait == "herring" & !is.na(gen_survey$bait),]$bait <- "Herring"
+PW_survey[PW_survey$set == "PW_74_010_L73",]$set <- "PW_74_010_L73"
+
 gen_survey %>% 
   mutate(bait_type = ifelse(bait %in% c("live shiner perch", "Pacific sanddab", "shiner perch"), "Live large", 
                             # If there is lure info but NA for bait, then it's "no bait"
                             ifelse(!is.na(Lure) & is.na(bait), "no bait",
-                                    ifelse(bait %in% c("octopus and squirmy tail", "octopus"), "octopus",
-                                            ifelse(Lure %in% c("shrimp flies octopus"), "octopus",
-                                                   ifelse(bait == "unknown" | is.na(bait), "unknown", 
-                                                 bait)))))) -> gen_survey
+                                   ifelse(bait %in% c("octopus and squirmy tail", "octopus"), "octopus",
+                                          ifelse(Lure %in% c("shrimp flies octopus"), "octopus",
+                                                 ifelse(bait == "unknown" | is.na(bait), "unknown", 
+                                                        bait)))))) -> gen_survey
 unique(gen_survey$bait_type)
+
+# The model isn't able to fit anything with bait/lure as explanatory variables, because there are still too many unique combinations.
+# Let's group things further: 1) artificial lure, no bait. 2) artificial lure + any bait. 3) Herring 4) Squid 5) Live large 6) Other/unknown
+
+gen_survey %>% 
+  mutate(., lure_bait_type = ifelse(bait_type == "no bait" & lure_type == "Artificial Lure", "Artificial lure, no bait",
+                                    ifelse(lure_type == "Artificial Lure" & bait_type != "no bait", "Artificial lure + bait",
+                                           ifelse(bait_type == "Herring" & lure_type == "Hook only", "Herring",
+                                                  ifelse(bait_type == "squid" & lure_type == "Hook only", "Squid",
+                                                         ifelse(bait_type == "Live large" & lure_type == "Hook only", "Live large",
+                                                                ifelse(bait_type %in% c("unknown", "Other") | lure_type == "unknown", "other/unknown", NA
+                                                  ))))))) -> gen_survey
+
+# table(gen_survey$lure_bait_type)
+# table(gen_survey$bait_type)
+# table(gen_survey$lure_type)
+
+# Vast majority of other/unknowns are start/stop recordings
+table(subset(gen_survey, lure_bait_type == "other/unknown")$Species)
 
 # Check how many sites don't have any bait or lure information
 gen_survey %>% 
@@ -273,15 +296,15 @@ gen_survey %>%
   # There's also the issue of drift where nothing was caught, so no bait/lure information was recorded
   # Take most frequent, ignoring start/end times (which have no bait or lure info)
   summarise(bait = names(which.max(table(bait_type))),
-            lure = names(which.max(table(lure_type)))) -> gen_survey_baits_lures
+            lure = names(which.max(table(lure_type))),
+            lure_bait = names(which.max(table(lure_bait_type)))) -> gen_survey_baits_lures
 
 # Join bait/lure data with other data
 gen_data_for_model <- left_join(gen_data_for_model, gen_survey_baits_lures, by = "set")
 # For drifts that were start/end times only (no bait/lure info), use "unknown"
-gen_data_for_model %>% 
-  mutate(bait = ifelse(is.na(bait), "unknown", bait)) %>% 
-  mutate(lure = ifelse(is.na(lure), "unknown", lure)) -> gen_data_for_model
-
+gen_data_for_model[is.na(gen_data_for_model$bait),]$bait <- "unknown"
+gen_data_for_model[is.na(gen_data_for_model$lure),]$lure <- "unknown"
+gen_data_for_model[is.na(gen_data_for_model$lure_bait),]$lure_bait <- "unknown"
 
 # How are we going to estimate effort at sites where only one fish was caught?
 # Calculate the mean amount of time it takes to catch a fish and use that
@@ -373,6 +396,12 @@ bycatch_effort %>%
   mutate(bait_type = ifelse(Bait.type == "Artificial lure", "no bait", Bait.type)) %>% 
   mutate(lure_type = ifelse(Bait.type == "Artificial lure", "Artificial Lure", "Hook only")) -> bycatch_effort
 
+# Further simplify lure and bait into one variable
+bycatch_effort %>% 
+  mutate(., lure_bait_type = ifelse(Bait.type == "Artificial lure", "Artificial lure, no bait",
+                                    ifelse(Bait.type == "Herring", "Herring",
+                                           ifelse(Bait.type == "Live large", "Live large", NA)))) -> bycatch_effort
+
 # Create an index field (site + day = set) for both effort and bycatch
 bycatch_effort %>% 
   # First change spaces to underscores in site
@@ -422,6 +451,7 @@ bycatch_effort %>%
             avg_anglers = mean(Anglers),
             bait = names(which.max(table(bait_type))),
             lure = names(which.max(table(lure_type))),
+            lure_bait = names(which.max(table(lure_bait_type))),
             # Add site info
             Site = unique(Site)) %>% 
   mutate(survey = "lingcod_bycatch") -> bycatch_effort_data_for_model
@@ -700,6 +730,18 @@ PW_survey %>%
   mutate(bait_type = ifelse(lure_type == "Artificial Lure" & is.na(bait_type), "no bait", bait_type)) %>% 
   mutate(lure_type = ifelse(bait_type %in% c("Herring", "Squid", "Other") & is.na(lure_type), "Hook only", lure_type)) -> PW_survey
 
+# Further simplify for comparison
+# Let's group things further: 1) artificial lure, no bait. 2) artificial lure + any bait. 3) Herring 4) Squid 5) Live large 6) Other/unknown
+
+PW_survey %>% 
+  mutate(., lure_bait_type = ifelse(bait_type == "no bait" & lure_type == "Artificial Lure", "Artificial lure, no bait",
+                                    ifelse(lure_type == "Artificial Lure" & bait_type != "no bait", "Artificial lure + bait",
+                                           ifelse(bait_type == "Herring" & lure_type == "Hook only", "Herring",
+                                                  ifelse(bait_type == "Squid" & lure_type == "Hook only", "Squid",
+                                                         ifelse(bait_type == "Live large" & lure_type == "Hook only", "Live large",
+                                                                ifelse(bait_type %in% c("unknown", "Other") | lure_type == "unknown", "other/unknown", NA
+                                                                ))))))) -> PW_survey
+
 
 # Translate letter/number locations into lat/lons
 # Extract letters/numbers
@@ -782,6 +824,7 @@ PW_survey %>%
             bocaccio_catch = sum(Species == "Bocaccio"),
             bait = names(which.max(table(bait_type))),
             lure = names(which.max(table(lure_type))),
+            lure_bait = names(which.max(table(lure_bait_type))),
             effort_sec = (max(stop_date_time) - min(start_date_time)),
             date = unique(date),
             month = as.numeric(unique(month)),
@@ -871,6 +914,10 @@ PW_data_for_model %>%
 PW_data_for_model %>% 
   union(., gen_data_for_model) %>% 
   union(., bycatch_data_for_model) -> CPUE_data_for_model
+
+# Change all "unknown" to "other/unknown"
+
+CPUE_data_for_model[CPUE_data_for_model$lure_bait == "unknown",]$lure_bait <- "other/unknown"
 
 # Save as CSV to read in to modeling script
 write.csv(CPUE_data_for_model, here("hook_and_line_data", "CPUE_data_for_model.csv"))

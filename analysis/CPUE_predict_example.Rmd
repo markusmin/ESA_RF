@@ -1,0 +1,74 @@
+---
+title: "CPUE_predict_example"
+author: "Markus Min"
+date: "3/8/2021"
+output: pdf_document
+---
+
+### Load libraries
+```{r load_libraries, message = FALSE, warning = FALSE}
+library(here)
+library(tidyverse)
+library(pscl)
+```
+
+
+### Import data
+```{r}
+dat <- read.csv(here("hook_and_line_data", "CPUE_data_for_model.csv"), row.names = 1)
+dat$month <- as.character(dat$month)
+```
+
+# Model survey in the detection process
+```{r}
+# Survey on the detection side
+yelloweye_zip_effort_depth_basin_survey <- zeroinfl(yelloweye_catch ~ 
+                            offset(angler_hours)| 
+                            # Predictors of detection
+                            mean_depth + basin + survey, data = dat)
+summary(yelloweye_zip_effort_depth_basin_survey)
+
+# Create df for predicted values
+angler_hours = rep(mean(dat$angler_hours), 3)
+mean_depth = rep(mean(dat$mean_depth, na.rm = TRUE), 3)
+basin = factor(rep("Central Sound", 3), levels = c("Central Sound", "Whidbey Island", "South Sound", "Straits of Juan de Fuca", "Hood Canal", "San Juan Islands"))
+survey = factor(c("Percy_Washington", "ESA_Genetics", "lingcod_bycatch"), levels = c("Percy_Washington", "ESA_Genetics", "lingcod_bycatch" ))
+newdata <- data.frame(angler_hours, mean_depth, basin, survey)
+
+# Get predicted values
+phat <- predict(yelloweye_zip_effort_depth_basin_survey, newdata = newdata, type = "prob")
+
+newdata
+
+ggplot(newdata, aes(x = survey, y = phat)) + 
+  geom_point()
+```
+
+# Model survey in the count process
+```{r}
+# Survey on the count side
+
+yelloweye_zip_effort_depth_basin_survey <- zeroinfl(yelloweye_catch ~ 
+                            offset(angler_hours) + survey | 
+                            # Predictors of detection
+                            mean_depth + basin, data = dat)
+summary(yelloweye_zip_effort_depth_basin_survey)
+
+
+# Create df for predicted values
+angler_hours = rep(mean(dat$angler_hours), 3)
+mean_depth = rep(mean(dat$mean_depth, na.rm = TRUE), 3)
+basin = factor(rep("Central Sound", 3), levels = c("Central Sound", "Whidbey Island", "South Sound", "Straits of Juan de Fuca", "Hood Canal", "San Juan Islands"))
+survey = factor(c("Percy_Washington", "ESA_Genetics", "lingcod_bycatch"), levels = c("Percy_Washington", "ESA_Genetics", "lingcod_bycatch" ))
+newdata <- data.frame(angler_hours, mean_depth, basin, survey)
+
+# Get predicted values
+newdata$phat <- predict(yelloweye_zip_effort_depth_basin_survey, newdata = newdata)
+
+newdata
+
+ggplot(newdata, aes(x = survey, y = phat)) + 
+  geom_point()
+```
+
+

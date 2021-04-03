@@ -1,0 +1,370 @@
+---
+title: "predicted_model_fits"
+author: "Markus Min"
+date: "3/8/2021"
+output: pdf_document
+---
+
+#### Load libraries
+```{r load_libraries, message = FALSE, warning = FALSE}
+library(here)
+library(tidyverse)
+library(pscl)
+```
+
+
+### Import data
+```{r}
+dat <- read.csv(here("hook_and_line_data", "CPUE_data_for_model.csv"), row.names = 1)
+dat$month <- as.character(dat$month)
+```
+
+
+```{r}
+# Angler hours not as offset
+yelloweye_zip_effort_depth <- zeroinfl(yelloweye_catch ~ 
+                            angler_hours| 
+                            # Predictors of detection
+                            mean_depth, data = dat)
+summary(yelloweye_zip_effort_depth)
+AIC(yelloweye_zip_effort_depth)
+mm <- model.matrix(yelloweye_zip_effort_depth)
+
+# Plot predicted
+newdata <- data.frame(cbind(rep(mean(dat$angler_hours), 200), c(1:200)))
+colnames(newdata) <- c("angler_hours", "mean_depth")
+yelloweye_predicts <- data.frame(c(1:200), predict(yelloweye_zip_effort_depth, newdata = newdata, type = "prob"))
+colnames(yelloweye_predicts) <- c("mean_depth", "predicted_yelloweye")
+ggplot(yelloweye_predicts, aes(x = mean_depth, y = predicted_yelloweye)) + 
+  geom_point()
+
+
+yelloweye_zip_effort_depth <- zeroinfl(yelloweye_catch ~ 
+                              # Predictors of counts
+                              offset(angler_hours) | 
+                              # Predictors of detection
+                              mean_depth, data = dat)
+
+summary(yelloweye_zip_effort_depth)
+model.matrix(yelloweye_zip_effort_depth)
+AIC(yelloweye_zip_effort_depth)
+mm <- model.matrix(yelloweye_zip_effort_depth)
+
+# Plot predicted
+newdata <- data.frame(cbind(rep(mean(dat$angler_hours), 200), c(1:200)))
+colnames(newdata) <- c("angler_hours", "mean_depth")
+yelloweye_predicts <- data.frame(c(1:200), predict(yelloweye_zip_effort_depth, newdata = newdata, type = "prob"))
+colnames(yelloweye_predicts) <- c("mean_depth", "predicted_yelloweye")
+ggplot(yelloweye_predicts, aes(x = mean_depth, y = predicted_yelloweye)) + 
+  geom_point()
+```
+
+
+## Use code from QERM 514
+
+```{r}
+### Deer model
+set.seed(514)
+## sample size
+nn <- 200
+## parameters for detection model
+gamma_0 <- 0.01
+gamma_tree <- 3
+## parameters for count model
+beta_0 <- 1.5
+beta_tree <- 1.2
+## covariate
+trees <- runif(nn, 0, 1)
+## expectation for Pr(detect)
+mu <- 1 / (1 + exp(-(gamma_0 + gamma_tree * trees)))
+## missed detections (0/1)
+z <- rbinom(nn, 1, mu)
+## expectation for pos counts
+lambda <- exp(beta_0 + beta_tree * trees) 
+## pos counts
+pos_count <- rpois(nn, lambda)
+## observations
+y <- (1 - z) * pos_count
+
+deer_zip <- zeroinfl(y ~ trees | trees)
+## model summary
+summary(deer_zip)
+coef(deer_zip)
+
+coef(yelloweye_zip_effort_depth)
+```
+
+### Model with angler hours as offset
+```{r}
+yelloweye_zip_effort_depth <- zeroinfl(yelloweye_catch ~ 
+                              # Predictors of counts
+                              offset(angler_hours) | 
+                              # Predictors of detection
+                              mean_depth, data = dat)
+
+summary(yelloweye_zip_effort_depth)
+
+
+## fitted for detection prob (pi)
+newdata <- data.frame(cbind(rep(mean(dat$angler_hours), 200), c(1:200)))
+colnames(newdata) <- c("angler_hours", "mean_depth")
+gamma_hat_0 <- coef(yelloweye_zip_effort_depth)[2]
+gamma_hat_1 <- coef(yelloweye_zip_effort_depth)[3]
+pi_hat <- 1/(1+exp(-(gamma_hat_0 + gamma_hat_1 * newdata$mean_depth)))
+
+## matrix of derivatives
+derivs <- matrix(NA, nrow = nn, ncol = 3)
+derivs[,1] <- derivs[,2] <- 0
+derivs[,2] <- (exp(gamma_hat_0 + gamma_hat_1*newdata$mean_depth))/((exp(gamma_hat_0 + gamma_hat_1*newdata$mean_depth)+1)^2)
+derivs[,3] <- (newdata$mean_depth*exp(gamma_hat_0 + gamma_hat_1*newdata$mean_depth))/((exp(gamma_hat_0 + gamma_hat_1*newdata$mean_depth)+1)^2) 
+se <- sqrt( diag ( derivs %*% vcov(yelloweye_zip_effort_depth) %*% t(derivs) ))
+lower <- pi_hat - se * qt(0.025, nn-2, lower.tail = FALSE)
+upper <- pi_hat + se * qt(0.025, nn-2, lower.tail = FALSE)
+
+## fitted for mean & var (lambda)
+beta_hat_0 <- coef(yelloweye_zip_effort_depth)[1]
+beta_hat_1 <- coef(yelloweye_zip_effort_depth)[2]
+lambda_hat <- exp(beta_hat_0 + beta_hat_1*newdata$mean_depth)
+
+## matrix of derivatives
+derivs_2 <- matrix(NA, nrow = nn, ncol = 3)
+derivs_2[,1] <- exp(beta_hat_0+beta_hat_1*newdata$mean_depth)
+derivs_2[,2] <- newdata$mean_depth*exp(beta_hat_0+beta_hat_1*newdata$mean_depth) 
+derivs_2[,3] <- 0
+se_2 <- sqrt( diag ( derivs_2 %*% vcov(yelloweye_zip_effort_depth) %*% t(derivs_2) ))
+lower_2 <- lambda_hat - se_2 * qt(0.025, nn-2, lower.tail = FALSE)
+upper_2 <- lambda_hat + se_2 * qt(0.025, nn-2, lower.tail = FALSE)
+
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+## detections
+plot(newdata$mean_depth, pi_hat, type = "l", las = 1, ylim = c(0, 1), lwd = 2, col = "darkgreen",
+     xlab = "Mean depth (m)", ylab = expression(pi), main = "Missed detection")
+lines(newdata$mean_depth, lower, lty = 2,  col = "darkgreen", lwd = 2)
+lines(newdata$mean_depth, upper, lty = 2,  col = "darkgreen", lwd = 2)
+## counts
+plot(newdata$mean_depth, lambda_hat, type = "l", las = 1, ylim = c(0, 20), lwd = 2, col = "darkgreen",
+     xlab = "Mean depth (m)", ylab = expression(lambda), main = "Counts")
+lines(newdata$mean_depth, lower_2, lty = 2, col = "darkgreen", lwd = 2)
+lines(newdata$mean_depth, upper_2, lty = 2, col = "darkgreen", lwd = 2)
+```
+
+### Model with angler hours as predictor of counts, mean depth as predictor of detection
+```{r}
+yelloweye_zip_effort_depth <- zeroinfl(yelloweye_catch ~ 
+                              # Predictors of counts
+                              angler_hours | 
+                              # Predictors of detection
+                              mean_depth, data = dat)
+
+summary(yelloweye_zip_effort_depth)
+
+## fitted for detection prob (pi)
+newdata <- data.frame(cbind(rep(mean(dat$angler_hours), 200), c(1:200)))
+colnames(newdata) <- c("angler_hours", "mean_depth")
+gamma_hat_0 <- coef(yelloweye_zip_effort_depth)[3]
+gamma_hat_1 <- coef(yelloweye_zip_effort_depth)[4]
+pi_hat <- 1/(1+exp(-(gamma_hat_0 + gamma_hat_1 * newdata$mean_depth)))
+
+## matrix of derivatives
+derivs <- matrix(NA, nrow = nn, ncol = 4)
+derivs[,1] <- derivs[,2] <- 0
+derivs[,3] <- (exp(gamma_hat_0 + gamma_hat_1*newdata$mean_depth))/((exp(gamma_hat_0 + gamma_hat_1*newdata$mean_depth)+1)^2)
+derivs[,4] <- (newdata$mean_depth*exp(gamma_hat_0 + gamma_hat_1*newdata$mean_depth))/((exp(gamma_hat_0 + gamma_hat_1*newdata$mean_depth)+1)^2) 
+se <- sqrt( diag ( derivs %*% vcov(yelloweye_zip_effort_depth) %*% t(derivs) ))
+lower <- pi_hat - se * qt(0.025, nn-2, lower.tail = FALSE)
+upper <- pi_hat + se * qt(0.025, nn-2, lower.tail = FALSE)
+
+## fitted for mean & var (lambda)
+beta_hat_0 <- coef(yelloweye_zip_effort_depth)[1]
+beta_hat_1 <- coef(yelloweye_zip_effort_depth)[2]
+lambda_hat <- exp(beta_hat_0 + beta_hat_1*newdata$angler_hours)
+
+## matrix of derivatives
+derivs_2 <- matrix(NA, nrow = nn, ncol = 4)
+derivs_2[,1] <- exp(beta_hat_0+beta_hat_1*newdata$angler_hours)
+derivs_2[,2] <- newdata$angler_hours*exp(beta_hat_0+beta_hat_1*newdata$angler_hours) 
+derivs_2[,3] <- derivs_2[,4] <- 0
+se_2 <- sqrt( diag ( derivs_2 %*% vcov(yelloweye_zip_effort_depth) %*% t(derivs_2) ))
+lower_2 <- lambda_hat - se_2 * qt(0.025, nn-2, lower.tail = FALSE)
+upper_2 <- lambda_hat + se_2 * qt(0.025, nn-2, lower.tail = FALSE)
+
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+## detections
+plot(newdata$mean_depth, pi_hat, type = "l", las = 1, ylim = c(0, 1), lwd = 2, col = "darkgreen",
+     xlab = "Mean depth", ylab = expression(pi), main = "Missed detection")
+lines(newdata$mean_depth, lower, lty = 2,  col = "darkgreen", lwd = 2)
+lines(newdata$mean_depth, upper, lty = 2,  col = "darkgreen", lwd = 2)
+## counts
+plot(newdata$angler_hours, lambda_hat, type = "l", las = 1, ylim = c(0, 20), lwd = 2, col = "darkgreen",
+     xlab = "Tree density", ylab = expression(lambda), main = "Counts")
+lines(newdata$angler_hours, lower_2, lty = 2, col = "darkgreen", lwd = 2)
+lines(newdata$angler_hours, upper_2, lty = 2, col = "darkgreen", lwd = 2)
+```
+
+### Model with mean depth on both sides of pipe
+```{r}
+yelloweye_zip_effort_depth <- zeroinfl(yelloweye_catch ~ 
+                              # Predictors of counts
+                              mean_depth | 
+                              # Predictors of detection
+                              mean_depth, data = dat)
+
+summary(yelloweye_zip_effort_depth)
+
+## fitted for detection prob (pi)
+newdata <- data.frame(cbind(rep(mean(dat$angler_hours), 200), c(1:200)))
+colnames(newdata) <- c("angler_hours", "mean_depth")
+gamma_hat_0 <- coef(yelloweye_zip_effort_depth)[3]
+gamma_hat_1 <- coef(yelloweye_zip_effort_depth)[4]
+pi_hat <- 1/(1+exp(-(gamma_hat_0 + gamma_hat_1 * newdata$mean_depth)))
+
+## matrix of derivatives
+derivs <- matrix(NA, nrow = nn, ncol = 4)
+derivs[,1] <- derivs[,2] <- 0
+derivs[,3] <- (exp(gamma_hat_0 + gamma_hat_1*newdata$mean_depth))/((exp(gamma_hat_0 + gamma_hat_1*newdata$mean_depth)+1)^2)
+derivs[,4] <- (newdata$mean_depth*exp(gamma_hat_0 + gamma_hat_1*newdata$mean_depth))/((exp(gamma_hat_0 + gamma_hat_1*newdata$mean_depth)+1)^2) 
+se <- sqrt( diag ( derivs %*% vcov(yelloweye_zip_effort_depth) %*% t(derivs) ))
+lower <- pi_hat - se * qt(0.025, nn-2, lower.tail = FALSE)
+upper <- pi_hat + se * qt(0.025, nn-2, lower.tail = FALSE)
+
+## fitted for mean & var (lambda)
+beta_hat_0 <- coef(yelloweye_zip_effort_depth)[1]
+beta_hat_1 <- coef(yelloweye_zip_effort_depth)[2]
+lambda_hat <- exp(beta_hat_0 + beta_hat_1*newdata$mean_depth)
+
+## matrix of derivatives
+derivs_2 <- matrix(NA, nrow = nn, ncol = 4)
+derivs_2[,1] <- exp(beta_hat_0+beta_hat_1*newdata$mean_depth)
+derivs_2[,2] <- newdata$mean_depth*exp(beta_hat_0+beta_hat_1*newdata$mean_depth) 
+derivs_2[,3] <- derivs_2[,4] <- 0
+se_2 <- sqrt( diag ( derivs_2 %*% vcov(yelloweye_zip_effort_depth) %*% t(derivs_2) ))
+lower_2 <- lambda_hat - se_2 * qt(0.025, nn-2, lower.tail = FALSE)
+upper_2 <- lambda_hat + se_2 * qt(0.025, nn-2, lower.tail = FALSE)
+
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+## detections
+plot(newdata$mean_depth, pi_hat, type = "l", las = 1, ylim = c(0, 1), lwd = 2, col = "darkgreen",
+     xlab = "Mean depth", ylab = expression(pi), main = "Missed detection")
+lines(newdata$mean_depth, lower, lty = 2,  col = "darkgreen", lwd = 2)
+lines(newdata$mean_depth, upper, lty = 2,  col = "darkgreen", lwd = 2)
+## counts
+plot(newdata$mean_depth, lambda_hat, type = "l", las = 1, ylim = c(0, 20), lwd = 2, col = "darkgreen",
+     xlab = "Mean depth", ylab = expression(lambda), main = "Counts")
+lines(newdata$mean_depth, lower_2, lty = 2, col = "darkgreen", lwd = 2)
+lines(newdata$mean_depth, upper_2, lty = 2, col = "darkgreen", lwd = 2)
+```
+
+
+### Model with survey as count predictor, mean_depth as detection predictor
+```{r}
+dat$survey <- factor(dat$survey, levels = c("Percy_Washington", "ESA_Genetics", "lingcod_bycatch"))
+
+yelloweye_zip_survey_depth <- zeroinfl(yelloweye_catch ~ 
+                              # Predictors of counts
+                              survey | 
+                              # Predictors of detection
+                              mean_depth, data = dat)
+
+summary(yelloweye_zip_survey_depth)
+
+# Create df for predictions
+newdata <- data.frame(cbind(rep(mean(dat$angler_hours), 210), c(1:210)))
+colnames(newdata) <- c("angler_hours", "mean_depth")
+survey <- factor(c("Percy_Washington", "ESA_Genetics", "lingcod_bycatch"), levels = c("Percy_Washington", "ESA_Genetics", "lingcod_bycatch" ))
+newdata$survey <- rep(survey, 70)
+# Add a new column to match design matrix of 0s and 1s
+newdata %>% 
+  mutate(., PW = ifelse(survey == "Percy_Washington", 1, 0)) %>% 
+  mutate(., ESA = ifelse(survey == "ESA_Genetics", 1, 0)) %>% 
+  mutate(., bycatch = ifelse(survey == "lingcod_bycatch", 1, 0)) -> newdata
+
+## fitted for detection prob (pi)
+gamma_hat_0 <- coef(yelloweye_zip_survey_depth)[4]
+gamma_hat_1 <- coef(yelloweye_zip_survey_depth)[5]
+pi_hat <- 1/(1+exp(-(gamma_hat_0 + gamma_hat_1 * newdata$mean_depth)))
+
+## matrix of derivatives
+nn <- 210
+derivs <- matrix(NA, nrow = nn, ncol = 5)
+derivs[,1] <- derivs[,2] <- derivs[,3] <- 0
+derivs[,4] <- (exp(gamma_hat_0 + gamma_hat_1*newdata$mean_depth))/((exp(gamma_hat_0 + gamma_hat_1*newdata$mean_depth)+1)^2)
+derivs[,5] <- (newdata$mean_depth*exp(gamma_hat_0 + gamma_hat_1*newdata$mean_depth))/((exp(gamma_hat_0 + gamma_hat_1*newdata$mean_depth)+1)^2) 
+se <- sqrt( diag ( derivs %*% vcov(yelloweye_zip_survey_depth) %*% t(derivs) ))
+lower <- pi_hat - se * qt(0.025, nn-2, lower.tail = FALSE)
+upper <- pi_hat + se * qt(0.025, nn-2, lower.tail = FALSE)
+
+## fitted for mean & var (lambda)
+beta_hat_0 <- coef(yelloweye_zip_survey_depth)[1]
+beta_hat_1 <- coef(yelloweye_zip_survey_depth)[2]
+beta_hat_2 <- coef(yelloweye_zip_survey_depth)[3]
+# lambda_hat <- exp(beta_hat_0 + beta_hat_1*newdata$ESA)
+
+# Recalculate lambda_hat
+newdata %>% 
+  mutate(., lambda_hat = ifelse(ESA == 1, exp(beta_hat_0 + beta_hat_1),
+                                ifelse(bycatch == 1, exp(beta_hat_0 + beta_hat_2),
+                                       exp(beta_hat_0)))) -> newdata
+
+## matrix of derivatives
+derivs_2 <- matrix(NA, nrow = nn, ncol = 5)
+derivs_2[,1] <- exp(beta_hat_0+beta_hat_1*newdata$mean_depth)
+derivs_2[,2] <- newdata$mean_depth*exp(beta_hat_0+beta_hat_1*newdata$ESA) 
+derivs_2[,3] <- newdata$mean_depth*exp(beta_hat_0+beta_hat_2*newdata$bycatch) 
+derivs_2[,4] <- derivs_2[,5] <- 0
+
+# Extract standard errors
+count_coef <- as.data.frame(summary(yelloweye_zip_survey_depth)$coefficients$count)
+rownames(count_coef) <- c("Percy_Washington", "ESA_Genetics", "lingcod_bycatch")
+count_coef <- rownames_to_column(count_coef, "survey")
+newdata <- left_join(newdata, count_coef, by = "survey")
+
+# Recalculate (transform) std error
+newdata %>% 
+  mutate(std_error_log = exp(`Std. Error`)) -> newdata
+
+# se_2 <- sqrt( diag ( derivs_2 %*% vcov(yelloweye_zip_survey_depth) %*% t(derivs_2) ))
+# lower_2 <- lambda_hat - se_2 * qt(0.025, nn-2, lower.tail = FALSE)
+# upper_2 <- lambda_hat + se_2 * qt(0.025, nn-2, lower.tail = FALSE)
+
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+## detections
+plot(newdata$mean_depth, pi_hat, type = "l", las = 1, ylim = c(0, 1), lwd = 2, col = "darkgreen",
+     xlab = "Mean depth", ylab = expression(pi), main = "Missed detection")
+lines(newdata$mean_depth, lower, lty = 2,  col = "darkgreen", lwd = 2)
+lines(newdata$mean_depth, upper, lty = 2,  col = "darkgreen", lwd = 2)
+## counts
+# plot(newdata$survey, newdata$lambda_hat, type = "l", las = 1, ylim = c(0, 20), lwd = 2, col = "darkgreen",
+#      xlab = "Survey", ylab = expression(lambda), main = "Counts")
+# lines(newdata$mean_depth, lower_2, lty = 2, col = "darkgreen", lwd = 2)
+# lines(newdata$mean_depth, upper_2, lty = 2, col = "darkgreen", lwd = 2)
+ggplot(newdata, aes(x = survey, y = lambda_hat))+
+  geom_point()+
+  ylab("lambda") +
+  # geom_errorbar(aes(ymin = lambda_hat - `Std. Error`, ymax = lambda_hat + `Std. Error`), width = 0.1)+
+  geom_errorbar(aes(ymin = lambda_hat - std_error_log, ymax = lambda_hat + std_error_log), width = 0.1)+
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 15),
+        plot.title = element_text(size = 20, hjust = 0.5),
+        panel.background = element_rect(fill = "white", color = "black"))+
+  ggtitle("Counts")
+
+
+```
+
+

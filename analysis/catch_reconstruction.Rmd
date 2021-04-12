@@ -515,6 +515,30 @@ yb_catch_estimates %>%
 ```
 
 
+### 1935-1940 (Bound Volumes)
+```{r load_yellowbook_data}
+BV_path <- here("catch_reconstruction_data", "commercial", "BoundVol_1935_1940_RkFsh.xlsx")
+
+BV_1935 <- read_excel(BV_path, sheet = "1935")
+
+BV_1936_1940 <- read_excel(BV_path, sheet = "1936, 1937-1940")
+
+# Combine two dfs
+setdiff(colnames(BV_1935), colnames(BV_1936_1940))
+setdiff(colnames(BV_1936_1940), colnames(BV_1935))
+
+# Drop the columns that aren't in both (these aren't informative)
+
+BV_1935 %>% 
+  dplyr::select(-c(Utilization)) -> BV_1935
+
+BV_1936_1940 %>% 
+  dplyr::select(-c(XRefCurrDispCode_Fkey, Select4Edit)) -> BV_1936_1940
+
+BV_1935 %>% 
+  bind_rows(., BV_1936_1940) -> BV_35_40
+```
+
 
 ### 1955-2003 (HISCOM)
 
@@ -550,6 +574,8 @@ HISCOM %>%
   subset(., species == "Total rockfish") %>% 
   dplyr::select(c(YEAR, REGION, gear, TOTAL))  -> TOTAL_RF_HISCOM
 
+# Create a region code to region name key (from Rickey)
+HISCOM_regions <- data.frame(REGION = c(1,2,3,4,5,6,7,8,9), region = c("Gulf - Bellingham", "San Juan Islands", "Strait of Juan de Fuca", "Hood Canal", "Central Puget Sound", "Southern Puget Sound", "West Juan de Fuca", "PS + West Juan de Fuca", "All PS"))
 ```
 
 #### Plot catch by gear type
@@ -817,6 +843,59 @@ Columns we need:
   - If pre-1970, we need min, max, and mean - less confidence
 3) Source
 
+#### Total rockfish
+```{r}
+
+# 1921-1954: YB (yes gear, no region)
+yb_long %>% 
+  mutate(region = "All PS") %>% 
+  dplyr::rename(total_RF_lbs = value) -> total_RF_21_54
+
+# 1955-2003: HISCOM (yes gear, yes region)
+HISCOM %>% 
+  subset(species == "Total rockfish") %>% 
+  dplyr::select(YEAR, REGION, TOTAL, gear) %>% 
+  # Drop the summary regions
+  subset(., !(REGION %in% c(8,9))) %>% 
+  # Drop West Juan de Fuca
+  subset(., REGION != 7) %>% 
+  # Change region codes to region names
+  left_join(., HISCOM_regions, by = "REGION") %>% 
+  dplyr::select(-REGION) %>% 
+  dplyr::rename(year = YEAR, total_RF_lbs = TOTAL) %>% 
+  # Drop the "total commercial effort category
+  subset(., gear != "Total commercial effort")-> total_RF_55_03
+
+# 2004 onwards: PS_CL_1970_2020 (no gear, no region)
+PS_CL_1970_2020 %>% 
+  mutate(., total_RF_lbs = rowSums(dplyr::select(., -c(Year)), na.rm = TRUE)) %>% 
+  dplyr::select(Year, total_RF_lbs) %>% 
+  mutate(region = "All PS", gear = "all gear types") %>% 
+  dplyr::rename(year = Year) %>% 
+  subset(., year >= 2004) -> total_RF_04_20
+
+# Combine all DFs
+total_RF_21_54 %>% 
+  bind_rows(., total_RF_55_03) %>% 
+  bind_rows(., total_RF_04_20)  -> total_RF_21_20
+
+sort(unique(total_RF_21_20$gear))
+
+# Change gear names to be consistent
+total_RF_21_20 %>% 
+  mutate(., gear = ifelse(gear %in% c("All (combined) troll (1970-1979)", "Bottomfish troll (1980-)", "handline_troll", "Other (salmon) troll (1980-)"), "Troll", gear)) %>% 
+  mutate(., gear = ifelse(gear %in% c("beam_trawl", "Bottom trawl", "Midwater trawl", "otter_trawl"), "Trawl", gear)) %>% 
+  mutate(., gear = ifelse(gear %in% c("drag_seine", "Drag seine"), "Drag Seine", gear)) %>% 
+  mutate(., gear = ifelse(gear %in% c("other_gear", "unknown", "Other gear types"), "Unknown", gear)) %>% 
+  mutate(., gear = ifelse(gear == "pound_net", "Pound Net", gear)) %>% 
+  mutate(., gear = ifelse(gear %in% c("Handline jig"), "Jig", gear)) %>% 
+  mutate(., gear = ifelse(gear %in% c("Salmon net"), "Salmon net" , gear)) %>% 
+  mutate(., gear = ifelse(gear %in% c("Set line", "set_line"), "Set line", gear)) %>% 
+  mutate(., gear = ifelse(gear %in% c("Set line", "set_line"), "Set line", gear)) %>% 
+  mutate(., gear = ifelse(gear %in% c("Set net" , "set_net"), "Set net", gear)) -> total_RF_21_20
+
+```
+
 
 
 #### Yelloweye - version 1
@@ -963,7 +1042,38 @@ shelf_RF_comm_2004_2020
 ```
 
 
-### Plot all commercial catch
+### Plot all commercial catch - Puget Sound
+
+#### Total RF - by gear
+```{r plot_total_RF_gear}
+RF_commercial_catch_gear_plot <- ggplot(total_RF_21_20, aes(x = year, y = total_RF_lbs, fill = gear))+
+  geom_bar(stat = "identity")+
+  scale_fill_tableau(palette = "Tableau 10")+
+  ggtitle("Total Rockfish Catch by Gear Type")+
+  ylab("Catch (pounds)") + 
+  xlab("Year")
+
+RF_commercial_catch_gear_plot
+
+ggsave(paste0(fig_dir, "/total_RF_catch_gear.png"), RF_commercial_catch_gear_plot, height = 6, width = 10)
+
+```
+
+
+#### Total RF - by region
+```{r plot_total_RF_region}
+RF_commercial_catch_region_plot <- ggplot(total_RF_21_20, aes(x = year, y = total_RF_lbs, fill = region))+
+  geom_bar(stat = "identity")+
+  scale_fill_tableau(palette = "Tableau 10")+
+  ggtitle("Total Commercial Rockfish Catch by Region")+
+  ylab("Catch (pounds)") + 
+  xlab("Year")
+
+RF_commercial_catch_region_plot
+
+ggsave(paste0(fig_dir, "/total_RF_catch_region.png"), RF_commercial_catch_region_plot, height = 6, width = 10)
+
+```
 
 #### Yelloweye version 1
 ```{r plot_yelloweye_comm_catch}
@@ -996,6 +1106,49 @@ YE_commercial_catch_plot
 
 ggsave(paste0(fig_dir, "/yelloweye_catch_history_2.png"), YE_commercial_catch_plot, height = 6, width = 10)
 ```
+
+Okay so these two yelloweye plots look very different for the pro-rated yellowbook data (1921-1954), and I think it's because of the changes in region fished. If we apply the region and gear ratios from 19701987, there's a lot of effort in the Strait of Juan de Fuca, where the proportion of yelloweye caught is much higher. And I don't think that for the earlier part of this time series that there was much effort in the Strait. So we need to apply some sort of region data to the earlier time series, or else you're going to get very high estimates that are almost certainly off.
+
+What sources do we have for regional effort?
+- Rockfish0.xls from Theresa might help
+- Can just make some assumptions and apply those?
+
+### Plot Puget Sound + Canada Inside Yelloweye catch
+
+#### Combine commercial catch from Canada and Puget Sound
+```{r Canada_PS_combined_yelloweye}
+# Reformat DFO data to join with PS data
+DFO_recons %>% 
+  dplyr::rename(., year = Year) %>% 
+  # convert metric tons to pounds
+  mutate(., total_catch_lbs = total_catch * 2204.62) %>% 
+  mutate(., country = "Canada") %>% 
+  dplyr::select(c(year, total_catch_lbs, country)) -> canadian_yelloweye_catch
+
+# Reformat PS data
+YE_catch_estimates_1921_2020_2 %>% 
+  dplyr::rename(., total_catch_lbs = yelloweye_catch_estimate) %>% 
+  dplyr::select(year, total_catch_lbs) %>% 
+  mutate(., country = "USA") -> PS_yelloweye_catch
+
+bind_rows(canadian_yelloweye_catch, PS_yelloweye_catch) -> comb_yelloweye_catch
+```
+
+#### Plot
+```{r plot_yelloweye_comm_catch_Canada_PS_combined}
+combined_YE_commercial_catch_plot <- ggplot(comb_yelloweye_catch, aes(x = year, y = total_catch_lbs, fill = country))+
+  geom_bar(stat = "identity")+
+  scale_fill_tableau(palette = "Tableau 10")+
+  ggtitle("Historical Commercial Yelloweye Catch - Canada + USA")+
+  ylab("Catch (pounds)") + 
+  xlab("Year")
+
+combined_YE_commercial_catch_plot
+
+ggsave(paste0(fig_dir, "/yelloweye_commercial_catch_canada_PS.png"), combined_YE_commercial_catch_plot, height = 6, width = 10)
+```
+
+
 
 ## Recreational Data
 

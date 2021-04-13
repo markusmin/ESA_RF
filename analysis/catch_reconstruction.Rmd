@@ -427,12 +427,21 @@ RF_ratios_70_87_comb_plot <- ggplot(RF_ratios_70_87_comb, aes(x = gear, y = prop
     coord_flip()+
   scale_y_continuous(breaks = c(0, 0.25, 0.5, 0.75, 1), limits = c(0, 1.25)) +
   # Add total catch in pounds to plot
-  geom_text(data = RF_ratios_70_87_comb[!duplicated(RF_ratios_70_87_comb[,c("gear")]),], aes(x = gear, y = 1.03, label = total_catch_by_gear), hjust = 0)+
+  geom_text(data = RF_ratios_70_87_comb[!duplicated(RF_ratios_70_87_comb[,c("gear")]),], aes(x = gear, y = 1.03, label = total_catch_by_gear), hjust = 0, size = 6)+
   theme(panel.background = element_rect(fill = "white", color = "black"),
         panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
+        panel.grid.minor = element_blank(),
+        axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 18),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 16),
+        plot.title = element_text(size = 20),
+        axis.title.x = element_text(size = 16),
+        axis.title.y = element_text(size = 20))
 
 RF_ratios_70_87_comb_plot
+
+ggsave(paste0(fig_dir, "/RF_catch_comps_gear_70_87.png"), RF_ratios_70_87_comb_plot, height = 8, width = 10)
 ```
 
 ### 1921-1954 (minus 1934-1942)
@@ -517,26 +526,30 @@ yb_catch_estimates %>%
 
 ### 1935-1940 (Bound Volumes)
 ```{r load_yellowbook_data}
-BV_path <- here("catch_reconstruction_data", "commercial", "BoundVol_1935_1940_RkFsh.xlsx")
+BV_path <- here("catch_reconstruction_data", "commercial", "boundvolumes_OLDMFLnData36_60_ROCKFISH.xlsx")
 
-BV_1935 <- read_excel(BV_path, sheet = "1935")
+BV_1936_60 <- read_excel(BV_path)
 
-BV_1936_1940 <- read_excel(BV_path, sheet = "1936, 1937-1940")
+BV_35_42_path <- here("catch_reconstruction_data", "commercial", "boundvolumes_OLDMFLnData35_42_12570_Inc_wEdits.xlsx")
+
+BV_1935_42 <- read_excel(BV_35_42_path)
 
 # Combine two dfs
-setdiff(colnames(BV_1935), colnames(BV_1936_1940))
-setdiff(colnames(BV_1936_1940), colnames(BV_1935))
+setdiff(colnames(BV_1935_42), colnames(BV_1936_60))
+setdiff(colnames(BV_1936_60), colnames(BV_1935_42))
 
 # Drop the columns that aren't in both (these aren't informative)
+# Rename certain columns
 
-BV_1935 %>% 
-  dplyr::select(-c(Utilization)) -> BV_1935
+BV_1935_42 %>% 
+  dplyr::select(-c("XRefSpeciesID_Fkey", "Utilization",  "XRef_GearCodeID _Fkey", "XRefAreaID_Fkey")) %>% 
+  dplyr::rename(Norm_AmtLanded = Amount_Landed_Normalized) -> BV_1935_42
 
-BV_1936_1940 %>% 
-  dplyr::select(-c(XRefCurrDispCode_Fkey, Select4Edit)) -> BV_1936_1940
+BV_1936_60 %>% 
+  dplyr::select(-c(Select4Edit)) -> BV_1936_60
 
-BV_1935 %>% 
-  bind_rows(., BV_1936_1940) -> BV_35_40
+BV_1935_42 %>% 
+  bind_rows(., BV_1936_60) -> BV_1935_60
 ```
 
 
@@ -899,7 +912,7 @@ total_RF_21_20 %>%
 
 
 #### Yelloweye - version 1
-```{r combine_commercial_data}
+```{r combine_commercial_data_1}
 # 1921-1933; 1943-1954
 yb_catch_estimate_sums %>% 
   dplyr::select(-c(value, bocaccio_mean_catch, bocaccio_min_catch, bocaccio_max_catch)) %>% 
@@ -960,8 +973,10 @@ YE_catch_21_54 %>%
   bind_rows(., yelloweye_catch_04_20) -> YE_catch_estimates_1921_2020
 ```
 
+Years of overlap with Cyreis Schmitt don't match because my values don't include any catch from West Juan de Fuca.
+
 #### Yelloweye - version 2
-```{r combine_commercial_data}
+```{r combine_commercial_data_YE_2}
 # 1921-1933; 1943-1954
 yb_catch_estimate_sums %>% 
   dplyr::select(-c(value, bocaccio_mean_catch, bocaccio_min_catch, bocaccio_max_catch)) %>% 
@@ -1023,24 +1038,56 @@ YE_catch_21_54 %>%
 ```
 
 
-```{r combine_commercial_data}
+#### Bocaccio
+```{r combine_commercial_data_boc}
 # 1921-1933; 1943-1954
-yb_catch_estimate_sums
+yb_catch_estimate_sums %>% 
+  dplyr::select(-c(value, yelloweye_mean_catch, yelloweye_min_catch, yelloweye_max_catch)) %>% 
+  # Change the "yelloweye_mean_catch" to "yelloweye_catch_estimate"
+  dplyr::rename(., bocaccio_catch_estimate = bocaccio_mean_catch) %>% 
+  mutate(., source = "prorated catch") -> BOC_catch_21_54
 
 # 1955-1969
-HISCOM_RF_55_69_prorated
+HISCOM_RF_55_69_prorated_2 %>% 
+  dplyr::rename(., year = YEAR) %>% 
+  dplyr::select(-c(REGION, gear, TOTAL, species, yelloweye_catch_estimate, yelloweye_prop, bocaccio_prop, region)) %>% 
+  # Change the "bocaccio_mean_catch" to "bocaccio_catch_estimate"
+  # dplyr::rename(., bocaccio_catch_estimate = bocaccio_mean_catch) %>% 
+  # Sum across all gear types
+  group_by(year) %>% 
+  summarise_all(sum, na.rm = TRUE) %>% 
+  mutate(., source = "prorated catch") -> BOC_prorated_catch_55_69
 
 # 1970-2003
-BOC_HISCOM
-
-# 1955-2003
-YE_HISCOM
+BOC_HISCOM %>% 
+  dplyr::rename(., year = YEAR) %>% 
+  # Change the "TOTAL" to "bocaccio_catch_estimate"
+  dplyr::rename(., bocaccio_catch_estimate = TOTAL) %>% 
+  mutate(., source = "cyreis_schmitt") %>% 
+  dplyr::select(-c(REGION, gear)) %>% 
+  # Populate columns with NAs to facilitate joining
+  mutate(., bocaccio_min_catch = NA) %>% 
+  mutate(., bocaccio_max_catch = NA) %>% 
+  subset(., year <= 2003 & year >= 1970) -> bocaccio_catch_70_03
 
 # 2004-2020
-YE_comm_2004_2020
-shelf_RF_comm_2004_2020
-```
+# shelf_RF_comm_2004_2020
+# We can't currently prorate the shelf RF catch without any comps data - but it's already so little...
+# From Wayne: ">2004 bococcio are shelf species records, could be greenstriped, redstriped too."
+# shelf_RF_comm_2004_2020 %>% 
+#   dplyr::rename(., year = Year) %>% 
+#   # Change the "BOC_catch_lbs" to "bocaccio_catch_estimate"
+#   dplyr::rename(., bocaccio_catch_estimate = BOC_catch_lbs) %>% 
+#   mutate(., source = "LiFT System") %>% 
+#   # Populate columns with NAs to facilitate joining
+#   mutate(., bocaccio_min_catch = NA) %>% 
+#   mutate(., bocaccio_max_catch = NA) -> bocaccio_catch_04_20
 
+# Join all sources
+BOC_catch_21_54 %>% 
+  bind_rows(., BOC_prorated_catch_55_69) %>% 
+  bind_rows(., bocaccio_catch_70_03) -> BOC_catch_estimates_1921_2003
+```
 
 ### Plot all commercial catch - Puget Sound
 
@@ -1080,7 +1127,7 @@ ggsave(paste0(fig_dir, "/total_RF_catch_region.png"), RF_commercial_catch_region
 YE_commercial_catch_plot <- ggplot(YE_catch_estimates_1921_2020, aes(x = year, y = yelloweye_catch_estimate, fill = source))+
   geom_bar(stat = "identity")+
   scale_fill_tableau(palette = "Tableau 10")+
-  ggtitle("Historical Yelloweye Catch")+
+  ggtitle("Commercial Yelloweye Catch")+
   ylab("Catch (pounds)") + 
   xlab("Year")+
   geom_errorbar(data = subset(YE_catch_estimates_1921_2020, !(year >= 1955 & year <= 1969)), aes(ymin = yelloweye_min_catch, ymax = yelloweye_max_catch), width = 0.25)+
@@ -1096,7 +1143,7 @@ ggsave(paste0(fig_dir, "/yelloweye_catch_history_1.png"), YE_commercial_catch_pl
 YE_commercial_catch_plot <- ggplot(YE_catch_estimates_1921_2020_2, aes(x = year, y = yelloweye_catch_estimate, fill = source))+
   geom_bar(stat = "identity")+
   scale_fill_tableau(palette = "Tableau 10")+
-  ggtitle("Historical Yelloweye Catch")+
+  ggtitle("Commercial Yelloweye Catch")+
   ylab("Catch (pounds)") + 
   xlab("Year")+
   geom_errorbar(data = subset(YE_catch_estimates_1921_2020_2, !(year >= 1955 & year <= 1969)), aes(ymin = yelloweye_min_catch, ymax = yelloweye_max_catch), width = 0.25)+
@@ -1107,11 +1154,27 @@ YE_commercial_catch_plot
 ggsave(paste0(fig_dir, "/yelloweye_catch_history_2.png"), YE_commercial_catch_plot, height = 6, width = 10)
 ```
 
-Okay so these two yelloweye plots look very different for the pro-rated yellowbook data (1921-1954), and I think it's because of the changes in region fished. If we apply the region and gear ratios from 19701987, there's a lot of effort in the Strait of Juan de Fuca, where the proportion of yelloweye caught is much higher. And I don't think that for the earlier part of this time series that there was much effort in the Strait. So we need to apply some sort of region data to the earlier time series, or else you're going to get very high estimates that are almost certainly off.
+Okay so these two yelloweye plots look very different for the pro-rated yellowbook data (1921-1954), and I think it's because of the changes in region fished. If we apply the region and gear ratios from 1970-1987, there's a lot of effort in the Strait of Juan de Fuca, where the proportion of yelloweye caught is much higher. And I don't think that for the earlier part of this time series that there was much effort in the Strait. So we need to apply some sort of region data to the earlier time series, or else you're going to get very high estimates that are almost certainly off.
 
 What sources do we have for regional effort?
 - Rockfish0.xls from Theresa might help
+- Bound Volumes have data for 1935 onward... Might help
 - Can just make some assumptions and apply those?
+
+#### Bocaccio
+```{r plot_yelloweye_comm_catch}
+BOC_commercial_catch_plot <- ggplot(BOC_catch_estimates_1921_2003, aes(x = year, y = bocaccio_catch_estimate, fill = source))+
+  geom_bar(stat = "identity")+
+  scale_fill_tableau(palette = "Tableau 10")+
+  ggtitle("Commercial Bocaccio Catch")+
+  ylab("Catch (pounds)") + 
+  xlab("Year")+
+  geom_errorbar(data = subset(BOC_catch_estimates_1921_2003, !(year >= 1955 & year <= 1969)), aes(ymin = bocaccio_min_catch, ymax = bocaccio_max_catch), width = 0.25)
+
+BOC_commercial_catch_plot
+
+ggsave(paste0(fig_dir, "/bocaccio_commercial_catch_history.png"), BOC_commercial_catch_plot, height = 6, width = 10)
+```
 
 ### Plot Puget Sound + Canada Inside Yelloweye catch
 
@@ -1356,6 +1419,103 @@ ggsave(paste0(fig_dir, "/COMREC_Palsson_recreational.png"), combined_COMREC_plot
 
 
 
+
+#### Catch by numbers of fish (MOST ACCURATE, I THINK)
+
+Here, we're taking the numbers of rockfishes caught by recreational anglers (this is the data that Wayne published in 2009) and prorating it based on the recreational catch compositions from Wayne.
+```{r load_rec_catch_70_09}
+# Load catch numbers
+rec_catch_nos_path <- here("catch_reconstruction_data", "recreational", "rec_catch_numbers_1970_2009.xlsx")
+
+rec_NPS <- read_excel(rec_catch_nos_path, sheet = "North Sound")
+rec_NPS[is.na(rec_NPS)] <- 0
+rec_SPS <- read_excel(rec_catch_nos_path, sheet = "South Sound")
+rec_SPS[is.na(rec_SPS)] <- 0
+
+# Load species composition data
+rec_spp_comp_NPS_path <- here("catch_reconstruction_data", "recreational", "north_sound_rec_comps.xlsx")
+rec_spp_comp_SPS_path <- here("catch_reconstruction_data", "recreational", "south_sound_rec_comps.xlsx")
+# Mean across time periods
+rec_mean_spp_comp_path <- here("catch_reconstruction_data", "recreational", "mean_rec_comps.xlsx")
+
+# Load data, replace all NAs with 0s
+rec_spp_comp_NPS <- read_excel(rec_spp_comp_NPS_path)
+rec_spp_comp_NPS[is.na(rec_spp_comp_NPS)] <- 0
+rec_spp_comp_SPS <- read_excel(rec_spp_comp_SPS_path)
+rec_spp_comp_SPS[is.na(rec_spp_comp_SPS)] <- 0
+rec_mean_spp_comp_NPS <- read_excel(rec_mean_spp_comp_path, sheet = "North Sound")
+rec_mean_spp_comp_NPS[is.na(rec_mean_spp_comp_NPS)] <- 0
+rec_mean_spp_comp_SPS <- read_excel(rec_mean_spp_comp_path, sheet = "South Sound")
+rec_mean_spp_comp_SPS[is.na(rec_mean_spp_comp_SPS)] <- 0
+```
+
+When we prorate catch, we'll have a low estimate (1980-1989 proportions) and a high estimate (1965-1967 proportions)
+```{r prorate_rec_catch_north_sound}
+# North Sound
+rec_NPS %>% 
+  dplyr::select(Year, `Bocaccio`, `Yelloweye Rockfish`, `Rockfish - General`) -> rec_NPS_subset
+
+# Add the catch composition data
+rec_NPS_subset$boc_prop_high <- subset(rec_mean_spp_comp_NPS, Species == "Bocaccio")$`1965-1967a`
+rec_NPS_subset$boc_prop_low <- subset(rec_mean_spp_comp_NPS, Species == "Bocaccio")$`1980-1989`
+
+rec_NPS_subset$ye_prop_high <- subset(rec_mean_spp_comp_NPS, Species == "Yelloweye")$`1965-1967a`
+rec_NPS_subset$ye_prop_low <- subset(rec_mean_spp_comp_NPS, Species == "Yelloweye")$`1980-1989`
+
+# Prorate, estimate weight
+rec_NPS_subset %>% 
+  mutate(., Bocaccio_high = Bocaccio + `Rockfish - General`*boc_prop_high/100) %>% 
+  mutate(., boc_high_lbs = Bocaccio_high*BOC_lbs_per_individual) %>% 
+  mutate(., Bocaccio_low = Bocaccio + `Rockfish - General`*boc_prop_low/100) %>% 
+  mutate(., boc_low_lbs = Bocaccio_low*BOC_lbs_per_individual) %>% 
+  mutate(., Yelloweye_high = `Yelloweye Rockfish` + `Rockfish - General`*ye_prop_high/100) %>% 
+  mutate(., ye_high_lbs = Yelloweye_high*YE_lbs_per_individual) %>% 
+  mutate(., Yelloweye_low = `Yelloweye Rockfish` + `Rockfish - General`*ye_prop_low/100) %>% 
+  mutate(., ye_low_lbs = Yelloweye_low*YE_lbs_per_individual) %>% 
+  mutate(., region = "North Sound") -> rec_NPS_subset
+```
+
+```{r prorate_rec_catch_south_sound}
+# North Sound
+rec_SPS %>% 
+  dplyr::select(Year, `Bocaccio`, `Yelloweye Rockfish`, `Rockfish - General`) -> rec_SPS_subset
+
+# Add the catch composition data
+rec_SPS_subset$boc_prop_high <- subset(rec_mean_spp_comp_SPS, Species == "Bocaccio")$`1965-1967a`
+rec_SPS_subset$boc_prop_low <- subset(rec_mean_spp_comp_SPS, Species == "Bocaccio")$`1980-1989`
+
+rec_SPS_subset$ye_prop_high <- subset(rec_mean_spp_comp_SPS, Species == "Yelloweye")$`1965-1967a`
+rec_SPS_subset$ye_prop_low <- subset(rec_mean_spp_comp_SPS, Species == "Yelloweye")$`1980-1989`
+
+# Prorate, estimate weight
+rec_SPS_subset %>% 
+  mutate(., Bocaccio_high = Bocaccio + `Rockfish - General`*boc_prop_high/100) %>% 
+  mutate(., boc_high_lbs = Bocaccio_high*BOC_lbs_per_individual) %>% 
+  mutate(., Bocaccio_low = Bocaccio + `Rockfish - General`*boc_prop_low/100) %>% 
+  mutate(., boc_low_lbs = Bocaccio_low*BOC_lbs_per_individual) %>% 
+  mutate(., Yelloweye_high = `Yelloweye Rockfish` + `Rockfish - General`*ye_prop_high/100) %>% 
+  mutate(., ye_high_lbs = Yelloweye_high*YE_lbs_per_individual) %>% 
+  mutate(., Yelloweye_low = `Yelloweye Rockfish` + `Rockfish - General`*ye_prop_low/100) %>% 
+  mutate(., ye_low_lbs = Yelloweye_low*YE_lbs_per_individual) %>% 
+  mutate(., region = "South Sound") -> rec_SPS_subset
+```
+
+
+```{r combine_rec_north_south_sound}
+rec_NPS_subset %>% 
+  bind_rows(., rec_SPS_subset) %>% 
+  dplyr::select(Year, boc_high_lbs, boc_low_lbs, ye_high_lbs, ye_low_lbs) %>% 
+  # Group by year and sum across regions
+  group_by(Year) %>% 
+  summarise_all(sum) %>% 
+  subset(., Year <= 2002) -> rec_all_PS_70_02
+
+```
+
+
+
+
+
 ### 2003-2019
 
 Will need to follow up with Theresa to understand how catch and variance were estimated based on raw creel data.
@@ -1410,4 +1570,150 @@ yelloweye_rec_2003_2019 %>%
 bocaccio_rec_2003_2019 %>% 
   complete(Year = seq(2003, 2019, 1), fill = list(rec_catch_lbs = 0, rec_catch_lbs_mean_var = NA)) -> bocaccio_rec_2003_2019
 ```
+
+### Combine recreational catch statistics
+```{r combine_rec}
+# Yelloweye
+rec_all_PS_70_02 %>% 
+  dplyr::select(Year, ye_high_lbs, ye_low_lbs) %>% 
+  bind_rows(., yelloweye_rec_2003_2019) %>% 
+  mutate(., rec_catch_lbs_SD = sqrt(rec_catch_lbs_mean_var)) %>% 
+  # Convert to long format
+  pivot_longer(cols = c("ye_high_lbs", "ye_low_lbs", "rec_catch_lbs"), names_to = "catch_source") -> YE_rec_1970_2019
+
+# Bocaccio
+rec_all_PS_70_02 %>% 
+  dplyr::select(Year, boc_high_lbs, boc_low_lbs) %>% 
+  bind_rows(., bocaccio_rec_2003_2019) %>% 
+  mutate(., rec_catch_lbs_SD = sqrt(rec_catch_lbs_mean_var)) %>% 
+  # Convert to long format
+  pivot_longer(cols = c("boc_high_lbs", "boc_low_lbs", "rec_catch_lbs"), names_to = "catch_source")-> boc_rec_1970_2019
+```
+
+### Plot recreational catch
+```{r rec_catch_plot}
+# change catch source to factor for plotting
+YE_rec_1970_2019 %>% 
+  mutate(catch_source = ifelse(catch_source == "ye_high_lbs", "High Catch Estimate", catch_source)) %>% 
+  mutate(catch_source = ifelse(catch_source == "ye_low_lbs", "Low Catch Estimate", catch_source)) %>% 
+  mutate(catch_source = ifelse(catch_source == "rec_catch_lbs", "Creel Survey (2003-2020)", catch_source)) %>% 
+  mutate(catch_source = factor(catch_source, levels = c("High Catch Estimate", "Low Catch Estimate", "Creel Survey (2003-2020)"))) -> YE_rec_1970_2019 
+
+YE_rec_catch_plot <- ggplot(YE_rec_1970_2019, aes(x = Year, y = value, fill = catch_source))+
+  geom_bar(stat = "identity", width = 1, position = "dodge")+
+  scale_fill_manual(values = c("#1f78b4", "#e31a1c", "#ff7f00"))+
+  ggtitle("Recreational Yelloweye Catch")+
+  ylab("Catch (pounds)") + 
+  xlab("Year")
+
+YE_rec_catch_plot
+
+ggsave(paste0(fig_dir, "/YE_rec_catch.png"), YE_rec_catch_plot, height = 6, width = 10)
+
+# change catch source to factor for plotting
+boc_rec_1970_2019 %>% 
+  mutate(catch_source = ifelse(catch_source == "boc_high_lbs", "High Catch Estimate", catch_source)) %>% 
+  mutate(catch_source = ifelse(catch_source == "boc_low_lbs", "Low Catch Estimate", catch_source)) %>% 
+  mutate(catch_source = ifelse(catch_source == "rec_catch_lbs", "Creel Survey (2003-2020)", catch_source)) %>% 
+  mutate(catch_source = factor(catch_source, levels = c("High Catch Estimate", "Low Catch Estimate", "Creel Survey (2003-2020)"))) -> boc_rec_1970_2019
+
+boc_rec_catch_plot <- ggplot(boc_rec_1970_2019, aes(x = Year, y = value, fill = catch_source))+
+  geom_bar(stat = "identity", width = 1, position = "dodge")+
+  scale_fill_manual(values = c("#1f78b4", "#e31a1c", "#ff7f00"))+
+  ggtitle("Recreational Yelloweye Catch")+
+  ylab("Catch (pounds)") + 
+  xlab("Year")
+
+boc_rec_catch_plot
+
+ggsave(paste0(fig_dir, "/boc_rec_catch.png"), boc_rec_catch_plot, height = 6, width = 10)
+```
+
+## Combine commercial and recreational catch, plot
+```{r rec_commercial_combine_data}
+# Yelloweye
+YE_rec_1970_2019 %>% 
+  dplyr::select(-c(rec_catch_lbs_mean_var, rec_catch_lbs_SD)) %>% 
+  group_by(Year) %>% 
+  summarise_all(mean, na.rm = TRUE) %>% 
+  dplyr::select(Year, value) %>% 
+  dplyr::rename(year = Year, catch_lbs = value) %>% 
+  mutate(., catch = "Recreational") -> YE_rec_estimates_1970_2019
+  
+YE_catch_estimates_1921_2020_2 %>% 
+  dplyr::select(year, yelloweye_catch_estimate) %>% 
+  dplyr::rename(catch_lbs = yelloweye_catch_estimate) %>% 
+  mutate(., catch = "Commercial") -> YE_commercial_catch_1921_2020
+
+YE_rec_estimates_1970_2019 %>% 
+  bind_rows(., YE_commercial_catch_1921_2020) -> YE_total_catch_history
+
+# Bocaccio
+boc_rec_1970_2019
+BOC_catch_estimates_1921_2003
+
+boc_rec_1970_2019 %>% 
+  dplyr::select(-c(rec_catch_lbs_mean_var, rec_catch_lbs_SD)) %>% 
+  group_by(Year) %>% 
+  summarise_all(mean, na.rm = TRUE) %>% 
+  dplyr::select(Year, value) %>% 
+  dplyr::rename(year = Year, catch_lbs = value) %>% 
+  mutate(., catch = "Recreational") -> boc_rec_estimates_1970_2019
+  
+BOC_catch_estimates_1921_2003 %>% 
+  dplyr::select(year, bocaccio_catch_estimate) %>% 
+  dplyr::rename(catch_lbs = bocaccio_catch_estimate) %>% 
+  mutate(., catch = "Commercial") -> BOC_commercial_catch_1921_2003
+
+boc_rec_estimates_1970_2019 %>% 
+  bind_rows(., BOC_commercial_catch_1921_2003) -> BOC_total_catch_history
+```
+
+### Plot combined catch history
+```{r plot_combined_catch_history}
+ye_catch_history_plot <- ggplot(YE_total_catch_history, aes(x = year, y = catch_lbs, fill = catch))+
+  geom_bar(stat = "identity")+
+  scale_fill_manual(values = c("#1f78b4", "#33a02c"))+
+  ggtitle("Total Yelloweye Catch")+
+  ylab("Catch (pounds)") + 
+  xlab("Year")
+
+ye_catch_history_plot
+
+ggsave(paste0(fig_dir, "/yelloweye_rockfish_catch_history.png"), ye_catch_history_plot, height = 6, width = 10)
+
+
+boc_catch_history_plot <- ggplot(BOC_total_catch_history, aes(x = year, y = catch_lbs, fill = catch))+
+  geom_bar(stat = "identity")+
+  scale_fill_manual(values = c("#1f78b4", "#33a02c"))+
+  ggtitle("Total Bocaccio Catch")+
+  ylab("Catch (pounds)") + 
+  xlab("Year")
+
+boc_catch_history_plot
+
+ggsave(paste0(fig_dir, "/bocaccio_catch_history.png"), boc_catch_history_plot, height = 6, width = 10)
+```
+
+
+## Combine DFO with USA data, commercial AND recreational
+```{r YE_USA_CAN_com_rec}
+YE_total_catch_history %>% 
+  dplyr::rename(total_catch_lbs = catch_lbs) %>% 
+  mutate(., country = paste0("USA - ", catch)) %>% 
+  bind_rows(., canadian_yelloweye_catch) -> USA_CAN_YE_combined_catch
+
+combined_USA_CANYE_total_catch_plot <- ggplot(USA_CAN_YE_combined_catch, aes(x = year, y = total_catch_lbs, fill = country))+
+  geom_bar(stat = "identity")+
+  scale_fill_tableau(palette = "Tableau 10")+
+  ggtitle("Historical Yelloweye Catch - Canada + USA")+
+  ylab("Catch (pounds)") + 
+  xlab("Year")
+
+combined_USA_CANYE_total_catch_plot
+
+ggsave(paste0(fig_dir, "/YE_USA_CAN_catch.png"), combined_USA_CANYE_total_catch_plot, height = 6, width = 10)
+
+```
+
 

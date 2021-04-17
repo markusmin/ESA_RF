@@ -1,0 +1,275 @@
+---
+title: "ROV_analysis"
+author: "Markus Min"
+date: "4/15/2021"
+output: html_document
+---
+
+### Load libraries, set fig_dir
+```{r load_libraries}
+library(tidyverse)
+library(readxl)
+library(here)
+library(ggthemes)
+library(ggpubr)
+
+# Libraries for creating maps
+library(rgdal)
+library(broom)
+library(ggpubr)
+library(sf)
+
+fig_dir <- here("figures", "ROV")
+```
+
+
+### Load data
+
+Note: The only species data that has lat/longs of detections is the 2015-2016 PS Survey
+
+Note about unclipped transects: "A number of the transects could not be fully processed due to missing time values that are needed to clip out unusable sections, and some cannot be processed because I don’t have any tracking data and that needs to be hand-keyed (these are identified in one of the attached spreadsheets)."
+
+#### 2015-2016 Puget Sound Survey
+```{r load_ROV_data_15_16_PS}
+ROV_data_path <- here("ROV_data")
+
+PS_15_16_species <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2015-16 PS Species")
+
+# Convert DMS to decimal degrees
+PS_15_16_species %>% 
+  mutate(., latitude = Lat_deg + Lat_decmin/60) %>% 
+  mutate(., longitude = Long_deg - Long_decmin/60) -> PS_15_16_species
+
+# Order so that Bocaccio is on the bottom and gets plotted on top
+PS_15_16_species[order(PS_15_16_species$SpeciesName),] %>% map_df(rev) -> PS_15_16_species
+
+# Load segments data
+PS_15_16_segments <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2015-16 PS Segments")
+
+# For the line lengths, keep only the R values (columns 9 - 15)
+
+# Read in clipped lines
+# Note: columns 9:15 are the R script results, while columns 1:7 are the ArcGIS results. For consistency with the unclipped segments, we'll use the ArcGIS results
+# R results
+# read_excel(paste0(ROV_data_path, "/2015-16_smoothed_line_lengths.xlsx"), sheet = "2015-16 High clipped", skip = 7)[,c(9:15)] %>% 
+#   dplyr::rename(Tran_ID = Tran_ID...9, Tran_seg = Tran_seg...10, stdev = stdev...15) -> PS_15_16_linelengths_clipped
+# ArcGIS results
+read_excel(paste0(ROV_data_path, "/2015-16_smoothed_line_lengths.xlsx"), sheet = "2015-16 High clipped", skip = 7)[,c(1:7)] %>%
+  dplyr::rename(Tran_ID = Tran_ID...1, Tran_seg = Tran_seg...2, length_m_25 = length_m...3, length_m_50 = length_m...4, length_m_100 = length_m...5, stdev = stdev...7) -> PS_15_16_linelengths_clipped
+
+# Read in unclipped lines
+# Note: The other columns on this sheet are the same as the area swept calculations sheet for the clipped segments
+read_excel(paste0(ROV_data_path, "/2015-16_smoothed_line_lengths.xlsx"), sheet = "2015-16 High unclipped", skip = 3)[,c(1:6)] -> PS_15_16_linelengths_unclipped
+
+read_excel(paste0(ROV_data_path, "/2015-16_areaswept_7Apr2021.xlsx"), skip = 3)[,c(1:4)] %>% 
+  dplyr::rename(avg_tran_len_m = `avg tran length (m)`, avg_tran_width_m = `avg tran width (m)`, area_swept_m = `area swept (m)`) -> PS_15_16_area_swept
+```
+
+#### 2018 San Juan Islands Survey
+```{r load_ROV_data_15_16_PS}
+ROV_data_path <- here("ROV_data")
+
+SJI_2018_species <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2018 SJI Species")
+
+# Convert DMS to decimal degrees (no lat/long info currently so this doesn't do anything)
+SJI_2018_species %>% 
+  mutate(., latitude = Lat_deg + Lat_decmin/60) %>% 
+  mutate(., longitude = Long_deg - Long_decmin/60) -> SJI_2018_species
+
+# Order so that Bocaccio is on the bottom and gets plotted on top
+SJI_2018_species[order(SJI_2018_species$SpeciesName),] %>% map_df(rev) -> SJI_2018_species
+```
+
+#### 2018 Vector Survey
+```{r load_ROV_data_15_16_PS}
+ROV_data_path <- here("ROV_data")
+
+vector_2018_species <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2018 Vector Species")
+
+# Convert DMS to decimal degrees (no lat/long info currently so this doesn't do anything)
+vector_2018_species %>% 
+  mutate(., latitude = Lat_deg + Lat_decmin/60) %>% 
+  mutate(., longitude = Long_deg - Long_decmin/60) -> vector_2018_species
+
+# Order so that Bocaccio is on the bottom and gets plotted on top
+vector_2018_species[order(vector_2018_species$SpeciesName),] %>% map_df(rev) -> vector_2018_species
+```
+
+#### 2018 Gulf Islands Survey
+```{r load_ROV_data_15_16_PS}
+ROV_data_path <- here("ROV_data")
+
+GI_2018_species <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2018 GI Species")
+
+# Convert DMS to decimal degrees (no lat/long info currently so this doesn't do anything)
+GI_2018_species %>% 
+  mutate(., latitude = Lat_deg + Lat_decmin/60) %>% 
+  mutate(., longitude = Long_deg - Long_decmin/60) -> GI_2018_species
+
+# Order so that Bocaccio is on the bottom and gets plotted on top
+GI_2018_species[order(GI_2018_species$SpeciesName),] %>% map_df(rev) -> GI_2018_species
+```
+
+## Map individuals from survey
+
+### 2015-2016 Puget Sound Survey Map
+```{r map_ESA_rockfishes_PS}
+# Load shapefile data
+usa_spdf <- readOGR(dsn = here("map_files", "USA_adm0.shp"))
+usa_spdf_fort <- tidy(usa_spdf)
+
+# Create base map
+PS_map <- ggplot(usa_spdf_fort, aes(x = long, y = lat, group = group))+
+  # Create grid using geom_vline and geom_hline
+  # geom_vline(xintercept = seq(-123.1, min_lon, 1/nm), color = "gray50", size = 0.1)+
+  # geom_hline(yintercept = seq(min_lat, 48.5, 1/60), color = "gray50", size = 0.1)+
+  #base map
+  geom_polygon(color = "gray20")+
+  ylab("Latitude")+
+  coord_fixed(ylim = c(47.1,48.25),  xlim = c(-123.1,-122.1), ratio = 1.3)+
+  theme(plot.background = element_rect(fill = "white"),
+        panel.grid = element_blank())
+
+# Add locations
+ESA_ROV_detections_map <- PS_map +
+  geom_point(data = PS_15_16_species, aes(x = longitude, y = latitude, color = SpeciesName), inherit.aes = FALSE)
+
+# ESA_ROV_detections_map
+
+ggsave(paste0(fig_dir, "/PS_15_16_ROV_map.png"), ESA_ROV_detections_map, height = 8, width = 8)
+```
+
+
+
+## 2015-2016 Puget Sound Survey Analysis
+
+Need to understand which transects are missing, and why
+
+1) PS_15_16_species has species observations, linked to transect and segment number
+2) PS_15_16_area_swept has the area swept totals for each transect
+  - Missing some transects, since this is only for those transects that are "clipped"
+```{r reformat_15_16_PS_survey_data}
+PS_15_16_species %>% 
+  # Rename "Transect" as "Tran_ID" to match area_swept sheet
+  dplyr::rename(Tran_ID = Transect) -> PS_15_16_species
+
+# Rename some transects
+PS_15_16_species[PS_15_16_species$Tran_ID == "H560 Part 2",]$Tran_ID <- "H560"
+PS_15_16_species[PS_15_16_species$Tran_ID == "H408 Part 2",]$Tran_ID <- "H408"
+
+PS_15_16_area_swept
+PS_15_16_segments
+PS_15_16_linelengths_clipped
+```
+
+### Data exploration: Which transects appear to be missing?
+
+Note: Survey design says that while 552 transects were planned in the "high" area, only 515 were completed
+
+It says that they saw two bocaccio, but I only see one in the data
+```{r explore_transects}
+PS_15_16_transects <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2015-16 PS Transects")
+PS_15_16_transects_missingtimes <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "Transects - Need Times")
+
+PS_15_16_transects_missingtimes %>% 
+  mutate(., missingtime = "TRUE") -> PS_15_16_transects_missingtimes
+
+PS_15_16_transects %>% 
+  mutate(., Survey = "2015-16 PS") %>% 
+  mutate(., missingtime = "FALSE") %>% 
+  dplyr::select(-AreaSwept) -> PS_15_16_transects
+
+PS_15_16_transects %>% 
+  bind_rows(., PS_15_16_transects_missingtimes) %>% 
+  subset(., Survey == "2015-16 PS") -> PS_15_16_transects_all
+
+PS_15_16_transects_all[order(PS_15_16_transects_all$Transect),] -> PS_15_16_transects_all
+
+# Extract only the numeric part of the transect ID
+PS_15_16_transects_all %>% 
+  mutate(., transect_no = parse_number(Transect)) %>% 
+  mutate(., transect_habitat = gsub("[0-9]","", Transect)) -> PS_15_16_transects_all
+
+# Look at only high probability
+PS_15_16_transects_all %>% 
+  subset(., grepl("H", transect_habitat)) -> PS_15_16_high_transects
+
+# Number of unique transects: 506. So missing 9?
+length(unique(PS_15_16_high_transects$transect_no))
+
+# Investigate which numbers are missing
+numbers <- seq(1,600,1)
+missing_transect_nos <- numbers[!numbers %in%  PS_15_16_high_transects$transect_no]
+
+```
+
+
+### Figure out which unclipped transects have ESA-listed species
+```{r look_for_unclipped_transects_of_importance}
+positive_transects <- unique(PS_15_16_species$Tran_ID)
+clipped_transects <- unique(PS_15_16_linelengths_clipped$Tran_ID)
+
+setdiff(positive_transects, clipped_transects)
+# 560 is because it's divided into two parts, not an issue
+# H408 is in the unclipped but not the clipped data; also says that it was found in H408 part 2
+
+```
+
+These transects aren't in the clipped or unclipped line lengths, but are found in the "segments" data:
+- H177, H233, H259, H287, H307, H557
+- None are identified in the "Transects - Need Times" sheet
+
+
+### Estimate area swept for unclipped segments
+```{r est_area_swept_unclipped}
+
+
+```
+
+
+
+
+### Calculate stratum density
+
+The area swept for each transect ($A_i$) was the product of the mean transect width ($\overline{W_i}$) and the smoothed transect length ($L_i$).Taxon densities for individual transects ($D_i$) were estimated by dividing the species count ($C_i$) by the transect area:
+$$
+D_i = \frac{C_i} {L_i\overline{W_i}} = \frac{C_i} {\overline{A_i}}
+$$
+
+```{r calculate_taxon_densities_for_individual_transects}
+
+```
+
+
+
+
+The mean stratum density ($\overline{D_s}$) for a given taxon was then the sum of the individual transect densities divided by the number of transects ($N_s$):
+$$
+\overline{D_s} = \frac{\sum\limits_{i=1}^N D_i} {N_s}
+$$
+The variance of the mean stratum density was calculated as:
+$$
+Var(\overline{D_s}) = \frac{\sum\limits_{i=1}^N (D_i-\overline{D_s})^2} {N_s - 1}
+
+$$
+
+
+### Calculate abundance estimates
+
+Total abundance ($P$) in numbers of individuals was the product of the stratum surface area ($SA_s$) and the mean taxon density ($D$), with variance calculated as the product of surface area and the variance of mean stratum density:
+$$
+P_s = SA_s\overline{D_s};Var(P_s) = SA_sVar(\overline{D_s})
+$$
+
+Coefficients of variation for each taxon (as percentages) were calculated as the standard deviation of mean stratum density ($\overline{D}$) divided by the product of the square root of the station count ($N$) multiplied by the mean stratum density ($\overline{D}$):
+
+$$
+CV = \frac{\sqrt{Var(\overline{D})}} {\sqrt{N}*\overline{D}} * 100
+$$
+
+
+
+
+
+
+

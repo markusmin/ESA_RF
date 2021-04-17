@@ -525,7 +525,7 @@ yb_catch_estimates %>%
 
 
 ### 1935-1940 (Bound Volumes)
-```{r load_yellowbook_data}
+```{r load_BV_data}
 BV_path <- here("catch_reconstruction_data", "commercial", "boundvolumes_OLDMFLnData36_60_ROCKFISH.xlsx")
 
 BV_1936_60 <- read_excel(BV_path)
@@ -533,6 +533,9 @@ BV_1936_60 <- read_excel(BV_path)
 BV_35_42_path <- here("catch_reconstruction_data", "commercial", "boundvolumes_OLDMFLnData35_42_12570_Inc_wEdits.xlsx")
 
 BV_1935_42 <- read_excel(BV_35_42_path)
+# Subset rockfish
+BV_1935_42 %>% 
+  subset(., Species_Orig == "ROCK COD")  -> BV_1935_42
 
 # Combine two dfs
 setdiff(colnames(BV_1935_42), colnames(BV_1936_60))
@@ -550,8 +553,83 @@ BV_1936_60 %>%
 
 BV_1935_42 %>% 
   bind_rows(., BV_1936_60) -> BV_1935_60
+
+# Load the catch area to region key
+BC_catcharea_key_path <- here("catch_reconstruction_data", "commercial", "boundvolume_catcharea_key.xlsx")
+BC_catcharea_key <- read_excel(BC_catcharea_key_path)
+
+# Combine the two catch area columns, join with key
+BV_1935_60 %>% 
+  mutate(., catch_area = ifelse(is.na(Norm_CatchArea), CatchArea_Orig, Norm_CatchArea)) %>% 
+  left_join(., BC_catcharea_key, by = "catch_area") -> BV_1935_60
+
+# Drop the data from outside PS
+BV_1935_60 %>% 
+  subset(., !(region %in% c("OUTSIDE", "COAST", "COLUMBIA RIVER", "UNKNOWN"))) -> BV_PS
+
+# Edit gears
+BV_PS %>% 
+  mutate(., gear = ifelse(is.na(Norm_Gear), Gear_Orig, Norm_Gear)) %>% 
+  mutate(gear = ifelse(gear %in% c("BT", "Trawl - Otter", "Trawl - Beam"), "Trawl", gear)) %>% 
+  mutate(gear = ifelse(gear %in% c("DS", "Drag Seine"), "Drag Seine", gear)) %>%          
+  mutate(gear = ifelse(gear %in% c("H&L", "HL", "Hook and Line"), "Hook and Line", gear)) %>%   
+  mutate(gear = ifelse(gear %in% c("SL", "Longline/Set Line"), "Set line", gear)) %>%     
+  mutate(gear = ifelse(gear %in% c("PS", "Purse Seine", "Purse Seine  - (salmon)"), "Purse seine", gear)) %>%   
+  mutate(gear = ifelse(gear %in% c("Troll - Unknown", "Troll - (salmon)", "Troll - Bottomfish"), "Troll", gear)) %>%    
+  mutate(gear = ifelse(gear %in% c("Handline/Jigger"), "Handline jig", gear)) %>%    
+  mutate(gear = ifelse(gear %in% c("Set Net/Gillnet - Tribal", "Drag Seine - Tribal"), "Tribal Fisheries", gear)) %>%    
+  mutate(gear = ifelse(gear %in% c("Not reported", "Trap - Shellfish Pot (Dungeness)", "Beach Seine", "Gillnet - Drift (Salmon)"), "Other", gear)) -> BV_PS
+           
+unique(BV_PS$gear)
+
+subset(BV_PS, YearLanded_Orig == 1941)
+
+# Summarize by year to compare with yellow book data
+BV_PS %>% 
+  dplyr::select(YearLanded_Orig, Norm_AmtLanded) %>% 
+  group_by(YearLanded_Orig) %>% 
+  summarise(annual_catch = sum(Norm_AmtLanded, na.rm = TRUE)) %>% 
+  mutate(data_source = "Bound Volumes")-> BV_PS_annual_sums
 ```
 
+
+#### Plot BV Data
+
+##### By species category
+```{r BV_species_plot}
+BV_species_catch_plot <- ggplot(BV_PS, aes(x = YearLanded_Orig, y = Norm_AmtLanded, fill = Species_Orig))+
+  geom_bar(stat = "identity")+
+  scale_fill_tableau(palette = "Tableau 20")+
+  ggtitle("Bound Volume Rockfish Catch by Species")+
+  ylab("Catch (pounds)") + 
+  xlab("Year")
+
+BV_species_catch_plot
+```
+
+##### By region
+```{r BV_region_plot}
+BV_region_catch_plot <- ggplot(BV_PS, aes(x = YearLanded_Orig, y = Norm_AmtLanded, fill = region))+
+  geom_bar(stat = "identity")+
+  scale_fill_tableau(palette = "Tableau 20")+
+  ggtitle("Bound Volume Rockfish by Catch Region")+
+  ylab("Catch (pounds)") + 
+  xlab("Year")
+
+BV_region_catch_plot
+```
+
+##### By gear type
+```{r BV_gear_type_plot}
+BV_gear_catch_plot <- ggplot(BV_PS, aes(x = YearLanded_Orig, y = Norm_AmtLanded, fill = gear))+
+  geom_bar(stat = "identity")+
+  scale_fill_tableau(palette = "Tableau 20")+
+  ggtitle("Bound Volume Rockfish by Gear Type")+
+  ylab("Catch (pounds)") + 
+  xlab("Year")
+
+BV_gear_catch_plot
+```
 
 ### 1955-2003 (HISCOM)
 
@@ -1121,6 +1199,30 @@ RF_commercial_catch_region_plot
 ggsave(paste0(fig_dir, "/total_RF_catch_region.png"), RF_commercial_catch_region_plot, height = 6, width = 10)
 
 ```
+
+#### Total RF - Compare Yellow Book and Bound Volumes
+```{r}
+total_RF_21_20 %>% 
+  group_by(year) %>% 
+  summarise(annual_catch = sum(total_RF_lbs, na.rm = TRUE)) %>% 
+  subset(., year <= 1960 & year >= 1935) %>% 
+  mutate(data_source = "Yellow Book") -> YB_PS_annual_sums
+
+BV_PS_annual_sums %>% 
+  dplyr::rename(year = YearLanded_Orig) %>% 
+  bind_rows(., YB_PS_annual_sums) -> BV_vs_YB_PS_annual_sums
+
+BV_vs_YB_plot <- ggplot(BV_vs_YB_PS_annual_sums, aes(x = year, y = annual_catch, fill = data_source))+
+  geom_bar(stat = "identity", width = 0.5, position = "dodge")+
+  scale_fill_tableau(palette = "Tableau 10")+
+  ggtitle("Total Rockfish Catch - Bound Volumes vs. Yellow Book")+
+  ylab("Catch (pounds)") + 
+  xlab("Year")
+
+BV_vs_YB_plot
+```
+
+
 
 #### Yelloweye version 1
 ```{r plot_yelloweye_comm_catch}

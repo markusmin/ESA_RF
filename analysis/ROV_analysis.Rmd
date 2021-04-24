@@ -23,13 +23,14 @@ fig_dir <- here("figures", "ROV")
 ```
 
 
+# 2015-16 Puget Sound Survey
+
 ### Load data
 
 Note: The only species data that has lat/longs of detections is the 2015-2016 PS Survey
 
 Note about unclipped transects: "A number of the transects could not be fully processed due to missing time values that are needed to clip out unusable sections, and some cannot be processed because I don’t have any tracking data and that needs to be hand-keyed (these are identified in one of the attached spreadsheets)."
 
-#### 2015-2016 Puget Sound Survey
 ```{r load_ROV_data_15_16_PS}
 ROV_data_path <- here("ROV_data")
 
@@ -65,50 +66,6 @@ read_excel(paste0(ROV_data_path, "/2015-16_areaswept_7Apr2021.xlsx"), skip = 3)[
   dplyr::rename(avg_tran_len_m = `avg tran length (m)`, avg_tran_width_m = `avg tran width (m)`, area_swept_m = `area swept (m)`) -> PS_15_16_area_swept
 ```
 
-#### 2018 San Juan Islands Survey
-```{r load_ROV_data_15_16_PS}
-ROV_data_path <- here("ROV_data")
-
-SJI_2018_species <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2018 SJI Species")
-
-# Convert DMS to decimal degrees (no lat/long info currently so this doesn't do anything)
-SJI_2018_species %>% 
-  mutate(., latitude = Lat_deg + Lat_decmin/60) %>% 
-  mutate(., longitude = Long_deg - Long_decmin/60) -> SJI_2018_species
-
-# Order so that Bocaccio is on the bottom and gets plotted on top
-SJI_2018_species[order(SJI_2018_species$SpeciesName),] %>% map_df(rev) -> SJI_2018_species
-```
-
-#### 2018 Vector Survey
-```{r load_ROV_data_15_16_PS}
-ROV_data_path <- here("ROV_data")
-
-vector_2018_species <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2018 Vector Species")
-
-# Convert DMS to decimal degrees (no lat/long info currently so this doesn't do anything)
-vector_2018_species %>% 
-  mutate(., latitude = Lat_deg + Lat_decmin/60) %>% 
-  mutate(., longitude = Long_deg - Long_decmin/60) -> vector_2018_species
-
-# Order so that Bocaccio is on the bottom and gets plotted on top
-vector_2018_species[order(vector_2018_species$SpeciesName),] %>% map_df(rev) -> vector_2018_species
-```
-
-#### 2018 Gulf Islands Survey
-```{r load_ROV_data_15_16_PS}
-ROV_data_path <- here("ROV_data")
-
-GI_2018_species <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2018 GI Species")
-
-# Convert DMS to decimal degrees (no lat/long info currently so this doesn't do anything)
-GI_2018_species %>% 
-  mutate(., latitude = Lat_deg + Lat_decmin/60) %>% 
-  mutate(., longitude = Long_deg - Long_decmin/60) -> GI_2018_species
-
-# Order so that Bocaccio is on the bottom and gets plotted on top
-GI_2018_species[order(GI_2018_species$SpeciesName),] %>% map_df(rev) -> GI_2018_species
-```
 
 ## Map individuals from survey
 
@@ -210,10 +167,11 @@ positive_transects <- unique(PS_15_16_species$Tran_ID)
 clipped_transects <- unique(PS_15_16_linelengths_clipped$Tran_ID)
 
 setdiff(positive_transects, clipped_transects)
-# 560 is because it's divided into two parts, not an issue
-# H408 is in the unclipped but not the clipped data; also says that it was found in H408 part 2
-
 ```
+
+- 560 is because it's divided into two parts, not an issue
+- H408 is in the unclipped but not the clipped data; also says that it was found in H408 part 2
+
 
 These transects aren't in the clipped or unclipped line lengths, but are found in the "segments" data:
 - H177, H233, H259, H287, H307, H557
@@ -270,6 +228,157 @@ $$
 
 
 
+
+
+
+# 2018 San Juan Islands Survey
+```{r load_ROV_data_2018_SJI}
+ROV_data_path <- here("ROV_data")
+
+SJI_2018_species <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2018 SJI Species")
+
+# Convert DMS to decimal degrees (no lat/long info currently so this doesn't do anything)
+SJI_2018_species %>% 
+  mutate(., latitude = Lat_deg + Lat_decmin/60) %>% 
+  mutate(., longitude = Long_deg - Long_decmin/60) -> SJI_2018_species
+
+# Order so that Bocaccio is on the bottom and gets plotted on top
+SJI_2018_species[order(SJI_2018_species$SpeciesName),] %>% map_df(rev) -> SJI_2018_species
+```
+
+# 2018 Vector Survey
+
+### Load data
+
+What do the suffixes "-CA-V", "-CA-P1", and "-CA-P2" mean?
+- P1 and P2 mean part 1 and part 2
+- I'm guessing CA-V means Canada-Vector?
+```{r load_ROV_data_2018_vector}
+ROV_data_path <- here("ROV_data")
+
+# Load counts of species
+v18_species <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2018 Vector Species")
+
+# Rename some of the transects to match with area swept calculations
+v18_species %>% 
+  # Explore to "Exp"
+  mutate(., Transect = gsub("Explore", "Exp", Transect)) %>% 
+  # Remove all suffixes
+  mutate(., Transect = gsub("-CA.*", "", Transect)) %>% 
+  dplyr::rename(Station = Transect) -> v18_species
+
+# Load area swept calculations
+v18_areaswept <- read_excel(paste0(ROV_data_path, "/2018_Vector_areaswept.xlsx"), sheet = "2018_Vector_areaswept", skip = 2)
+v18_areaswept %>% 
+  dplyr::rename(notes = `...5`, avg_tran_width_m = `avg tran width_m`, tran_length_m = `tran length_m`, area_swept = `area swept`)  -> v18_areaswept
+
+# # Convert DMS to decimal degrees (no lat/long info currently so this doesn't do anything)
+# v18_species %>% 
+#   mutate(., latitude = Lat_deg + Lat_decmin/60) %>% 
+#   mutate(., longitude = Long_deg - Long_decmin/60) -> v18_species
+# 
+# # Order so that Bocaccio is on the bottom and gets plotted on top
+# v18_species[order(v18_species$SpeciesName),] %>% map_df(rev) -> v18_species
+
+```
+
+#### Compare area swept and species observation data
+```{r data_exploration}
+positive_transects <- unique(v18_species$Station)
+areaswept_transects <- unique(v18_areaswept$Station)
+
+setdiff(positive_transects, areaswept_transects)
+# Not missing any area swept calculations
+```
+
+
+### Calculate stratum density
+
+The area swept for each transect ($A_i$) was the product of the mean transect width ($\overline{W_i}$) and the smoothed transect length ($L_i$). Taxon densities for individual transects ($D_i$) were estimated by dividing the species count ($C_i$) by the transect area:
+$$
+D_i = \frac{C_i} {L_i\overline{W_i}} = \frac{C_i} {\overline{A_i}}
+$$
+
+```{r calculate_taxon_densities_for_individual_transects}
+# Summarise fish observations for each transect
+v18_species %>% 
+  group_by(Station) %>% 
+  summarise(., total_ye = sum(FishCount)) -> v18_ye_counts
+
+# Join species observation and area swept values
+v18_ye_counts %>% 
+  left_join(., v18_areaswept, by = "Station") %>% 
+  mutate(., ye_density = total_ye/area_swept) -> v18_density
+
+v18_density
+```
+
+
+
+
+The mean stratum density ($\overline{D_s}$) for a given taxon was then the sum of the individual transect densities divided by the number of transects ($N_s$):
+$$
+\overline{D_s} = \frac{\sum\limits_{i=1}^N D_i} {N_s}
+$$
+
+```{r calculate_mean_stratum_density}
+v18_mean_stratum_density <- sum(v18_density$ye_density)/length(unique(v18_areaswept$Station))
+  
+```
+
+
+The variance of the mean stratum density was calculated as:
+$$
+Var(\overline{D_s}) = \frac{\sum\limits_{i=1}^N (D_i-\overline{D_s})^2} {N_s - 1}
+
+$$
+
+
+```{r calculate_mean_stratum_density_variance}
+v18_density %>% 
+  mutate(., mean_ye_density = v18_mean_stratum_density) %>% 
+  mutate(., square_dens_diff = (ye_density - mean_ye_density)^2) -> v18_density
+
+mean_stratum_density_var <- sum(v18_density$square_dens_diff)/(length(unique(v18_areaswept$Station))-1)
+```
+
+
+### Calculate abundance estimates
+
+Total abundance ($P$) in numbers of individuals was the product of the stratum surface area ($SA_s$) and the mean taxon density ($D$), with variance calculated as the product of surface area and the variance of mean stratum density:
+$$
+P_s = SA_s\overline{D_s};Var(P_s) = SA_sVar(\overline{D_s})
+$$
+
+Coefficients of variation for each taxon (as percentages) were calculated as the standard deviation of mean stratum density ($\overline{D}$) divided by the product of the square root of the station count ($N$) multiplied by the mean stratum density ($\overline{D}$):
+
+$$
+CV = \frac{\sqrt{Var(\overline{D})}} {\sqrt{N}*\overline{D}} * 100
+$$
+
+
+
+
+
+
+
+
+
+
+# 2018 Gulf Islands Survey
+```{r load_ROV_data_2018_GI}
+ROV_data_path <- here("ROV_data")
+
+GI_2018_species <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2018 GI Species")
+
+# Convert DMS to decimal degrees (no lat/long info currently so this doesn't do anything)
+GI_2018_species %>% 
+  mutate(., latitude = Lat_deg + Lat_decmin/60) %>% 
+  mutate(., longitude = Long_deg - Long_decmin/60) -> GI_2018_species
+
+# Order so that Bocaccio is on the bottom and gets plotted on top
+GI_2018_species[order(GI_2018_species$SpeciesName),] %>% map_df(rev) -> GI_2018_species
+```
 
 
 

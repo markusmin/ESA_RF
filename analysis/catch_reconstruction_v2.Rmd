@@ -1,5 +1,5 @@
 ---
-title: "catch_reconstruction"
+title: "catch_reconstruction v2"
 author: "Markus Min"
 date: "`r format(Sys.time(), '%B %d %Y')`"
 toc: TRUE
@@ -14,170 +14,354 @@ urlcolor: blue
 \fancyhead[R]{2021 5-year review}
 \fancyfoot[C]{\thepage}
 
-# Notes
+### Description
+This R markdown file will go through the catch reconstruction of yelloweye rockfish and bocaccio catch in Puget Sound. This document will generate different plausible catch scenarios and address the uncertainty at each step of the analysis. This analysis will go in reverse chronological order and go through commercial catch first and then recreational catch.. For more notes on the catch reconstruction, please see "catch_reconstruction.Rmd" in the same "analysis" folder.
+\\
+Additionally, in accordance with the [2017 Rockfish Recovery Plan](https://www.fisheries.noaa.gov/resource/document/yelloweye-rockfish-and-bocaccio-recovery-plan), catches for three different geographic areas will be constructed:
+1. The entire DPS (Canada and United States), minus the Hood Canal population
+2. The Hood Canal population
+3. The United States side of the DPS, excluding Hood Canal
+
+### Load libraries, set fig_dir
+```{r load_libraries}
+library(tidyverse)
+library(readxl)
+library(here)
+library(ggthemes)
+library(ggpubr)
+
+fig_dir <- here("figures", "catch_reconstruction")
+```
 
 
-## The data
+# Commercial data
 
-Data is available for catches dating back to 1889, but is spotty and with many caveats/drawbacks. The catch is usually aggregated to rockfishes; reliable species composition data is only available for 1970-present. 
+## 2004-2020
 
-There is data from the U.S. portion of the DPS and the Canadian side of the DPS. The catches from the Canadian side of the DPS are about an order of magnitude higher than those on the U.S. side.
+#### Notes:
+This data period is characterized by 1) low catches of bocaccio and yelloweye following regulatory changes and 2) relatively high confidence in the data.
 
+##### Catch areas
+This data is split by region into the marine fish-shellfish marine catch reporting areas (WDFW). Areas in relation to DPSs:
+1) Hood Canal: Regions 27A, 27B, and 27C. Note that Rickey's management region of "Hood Canal" includes area 25C in addition to these, but according to the rockfish recovery plan 25C is not part of the DPS. 27A appears to mostly be within the Hood Canal DPS, but a small section is outside.
+2) U.S. DPS except Hood Canal: Everything else except areas 29 and 23C (these are West Juan de Fuca and outside of the DPS).
 
-## Data periods
+\\
+We are currently lacking regional resolution for this time period which should hopefully be fixed soon.
+#### Yelloweye catch scenarios
+Yelloweye rockfish are a reporting category for this time period and as such will only have one catch estimate. 
+\\
+#### Bocaccio catch scenarios
+Bocaccio rockfish are lumped into the "shelf rockfish" category and will have different catch scenarios (these could be amended if any species composition data comes available):
+1. High catch: All "shelf rockfish" are bocaccio.
+2. Medium catch: 50% of "shelf rockfish" are bocaccio.
+3. Low catch: No "shelf rockfish" are bocaccio.
 
+```{r 2004-2020_commercial_data}
+PS_CL_1970_2020_path <- here("catch_reconstruction_data", "commercial", "Puget Sound commercial landings_1970-2020.xlsx")
+PS_CL_1970_2020 <- read_excel(PS_CL_1970_2020_path, skip = 1, sheet = "By catch area")
 
-### Commercial Data
-| Time Period | Data source  | Species composition  | Data file(s) |
-|-|-|-|-|
-| 1889-1892 | US Commission of Fish and Fisheries | 
-| 1899 | US Commission of Fish and Fisheries | 
-| 1921-1935; 1943-1954 | Yellow Book | ? |  yellowbook_1921_1954.csv |
-| 1935-1940 | Bound Volumes | ? | BoundVol_1935_1940_RkFsh.xlsx |
-| 1955-1969 | Yellow Book, with recent updates to data | ? | HISCOM |
-| 1970-1988      | Schmitt 1991  |    Schmitt 1991 | HISCOM |
-| 1989-2003      | Palsson  |    Palsson | HISCOM |
-| 2004 - 2020 | Fish receiving ticket database (LiFT) | ? | Puget Sound commercial landings_1970-2020.xlsx |
-
-For period 1943-1954, ROCKHIS_Palsson.xls/ROCKHIS09.xls exactly matches with Yellow Book.
-For period 1955-on, it doesn't, but is very close. Doesn't quite match with HISCOM file
-
-For period 1943 - 1954: Use ROCKHIS_Palsson.xls for total rockfish catch
-For period 1955 onward: Use HISCOM.xls, which include some species-specific information for some period
-
-
-
-
-##### Notes:
-
-
-###### Bound volumes (1935-1940)
-- 1935 and 1942 are incomplete due to missing microfiche
-- have totals for rockfish by landing district
-- 99.9% of beam trawl/otter trawl fisheries took place in Puget Sound, didn't take off until 1938 or so, in pre-war years
-- Greg thinks all data in bound volumes has areas listed as catch areas
-
-###### Yellow book data (1921-1969)
-- For the 1921-1972 period covered by the YellowBook data, it is broken down by gear type. If we can find any composition data for the different gear types, we will have much more confidence in trying to estimate species compositions.
-
-###### 1970 - present
-- COMBCATCH2011.xlsx and COMREC.xlsx match up exactly for commercial catches for years of overlap; COMBCATCH2011 has more data and should be used for all historical data
-- There are differences between Wayne's data and the data Theresa supplied for the period 1989 - present (Puget Sound commercial landings_1970-2020.xlsx)
-  - These discrepancies get bigger over time - for the period of about 1970-1980 they're very small differences (maybe 5% of total) but get bigger in the 80s/90s
-  - Theresa's data is consistently larger
-  - NEED TO RECONCILE THESE TWO DATA SOURCES TO USE THERESA'S DATA FOR RECENT YEARS
-  - Theresa said her data was from "Puget Sound catch areas" - depending on how these were defined, perhaps this is the source of discrepancies between the two sources?
-  
-###### 1889-1892, 1899
-- For the period 1889-1892, the data in Rockfish0.xlsx are for all counties - have to subtract out the coastal counties, not from the sound
-  - This mostly concerns Clallam County (see page 157 of "1895_XIX_RptUSFishComm_WillcoxPCst_1889_1892.pdf" for documentation), where the three largest ports are Neah Bay, Port Angeles, and Dungeness. Dungeness and Port Angeles are technically within the DPS while Neah Bay is not, but hard to say if fish landed at these ports were caught in the immediate vicinity of these ports. Catch is broken down by port in 1891 and sometimes 1892, but not for other years.
-- For 1899, the value in Rockfish0 matches the value on page 29 of "1902_Notes on the fisheries of the _Pacific1889.pdf", which corresponds to the total yield of the shore fisheries for rockfish for WA
+# Create new categories and rename
+PS_CL_1970_2020 %>% 
+  dplyr::rename(catch_lbs = SumOfRoundPoundQuantity, year = Year, species = MarketSpeciesCategoryName) %>% 
+  mutate(DPS = ifelse(CatchAreaCode %in% c("27A", "27B", "27C"), "Hood Canal",
+                      ifelse(CatchAreaCode %in% c("29", "23C"), "Outside DPS","U.S. DPS except Hood Canal"))) %>% 
+  dplyr::select(-c(CatchAreaCode, CatchAreaDescription, MarketSpeciesCategoryCode)) %>% 
+  group_by(year, DPS, species) %>% 
+  summarise(catch_lbs = sum(catch_lbs)) -> PS_CL_1970_2020
 
 
+# Yelloweye are a market category; subset yelloweye
+PS_CL_1970_2020 %>% 
+  # Ungroup to prevent duplicated rows
+  ungroup() %>% 
+  subset(year >= 2004) %>% 
+  subset(., species == "ROCKFISH (YELLOWEYE)") %>% 
+  # Add zeros for years where there was no catch using tidyverse::complete
+  complete(., DPS = c("U.S. DPS except Hood Canal", "Outside DPS", "Hood Canal"), year = seq(2004, 2020, 1), fill = list(catch_lbs = 0, species = "ROCKFISH (YELLOWEYE)")) %>% 
+  subset(., DPS %in% c("U.S. DPS except Hood Canal", "Hood Canal")) %>% 
+  # Drop species field
+  dplyr::select(-species) -> YE_comm_2004_2020
+
+# Generate three catch scenarios (all the same)
+YE_comm_2004_2020 %>% 
+  mutate(., high_catch = catch_lbs) %>% 
+  mutate(., low_catch = catch_lbs) %>% 
+  mutate(., medium_catch = catch_lbs) -> YE_comm_2004_2020 
+
+# Bocaccio are not a market category, but are in the "shelf rockfish" group
+PS_CL_1970_2020 %>% 
+  # Ungroup to prevent duplicated rows
+  ungroup() %>% 
+  subset(year >= 2004) %>% 
+  subset(., species == "SHELF ROCKFISH") %>% 
+  # Add zeros for years where there was no catch using tidyverse::complete
+  complete(., DPS = c("U.S. DPS except Hood Canal", "Outside DPS", "Hood Canal"), year = seq(2004, 2020, 1), fill = list(catch_lbs = 0, species = "SHELF ROCKFISH")) %>% 
+  # Combine US side of DPS and Hood Canal for Bocaccio
+  mutate(DPS = ifelse(DPS %in% c("Hood Canal", "U.S. DPS except Hood Canal"), "U.S. DPS except Hood Canal", DPS)) %>% 
+  group_by(year, DPS) %>% 
+  summarise(catch_lbs = sum(catch_lbs))  %>% 
+  subset(., DPS %in% c("U.S. DPS except Hood Canal", "Hood Canal")) -> shelf_RF_comm_2004_2020
+
+# Generate three catch scenarios
+shelf_RF_comm_2004_2020 %>% 
+  mutate(., high_catch = catch_lbs) %>% 
+  mutate(., low_catch = 0) %>% 
+  mutate(., medium_catch = 0.5*catch_lbs) -> shelf_RF_comm_2004_2020
+
+# We don't have any data to assess what proportion of these might be bocaccio
+```
+
+
+## 1970-2003 (HISCOM)
+
+#### Notes:
+This data was provided by Wayne Palsson. For the time period 1970-2003, catch has already been prorated to species level based on catch composition data.
+\\
+#### Yelloweye catch scenarios
+Yelloweye rockfish was estimated by prorating total rockfish catch based on reliable catch composition data for this time period. However, region 3 (Strait of Juan de Fuca) is about half in and half out of the DPS, as such, the different catch scenarios concern whether or not this data is included:
+1. High catch: All catch from the Strait of Juan de Fuca is included.
+2. Medium catch: 50% of the catch from the Strait of Juan de Fuca is included.
+3. Low catch: No catch from the Strait of Juan de Fuca is included.
+\\
+#### Bocaccio catch scenarios
+Bocaccio was estimated by prorating total rockfish catch based on reliable catch composition data for this time period and as such will only have one catch estimate. However, region 3 (Strait of Juan de Fuca) is about half in and half out of the DPS, as such, the different catch scenarios concern whether or not this data is included:
+1. High catch: All catch from the Strait of Juan de Fuca is included.
+2. Medium catch: 50% of the catch from the Strait of Juan de Fuca is included.
+3. Low catch: No catch from the Strait of Juan de Fuca is included.
+
+#### Prepare data
+Here we load the HISCOM data and make edits to it, converting species, gear, and region codes to what they actually signify.
+```{r load_HISCOM_data_and_edit}
+HISCOM_path <- here("catch_reconstruction_data", "commercial", "HISCOM.xlsx")
+
+HISCOM <- read_excel(HISCOM_path)
+
+# Change types of certain columns
+HISCOM %>% 
+  mutate(., YEAR = as.numeric(YEAR)) %>% 
+  mutate(., REGION = as.numeric(REGION)) %>% 
+  mutate(EFFORT = as.numeric(EFFORT)) %>% 
+  mutate(SPECIES = as.numeric(SPECIES)) %>% 
+  dplyr::rename(species_code = SPECIES) -> HISCOM
+
+# Change species column to species names rather than codes; use conversion table Wayne provided
+recreational_weight_conversion_path <- here("catch_reconstruction_data", "recreational", "Recreationalconversion.xls")
+recreational_weight_conversion <- read_excel(recreational_weight_conversion_path, sheet = "Sheet1", skip = 1)
+recreational_weight_conversion %>% 
+  dplyr::rename(species = "...2") %>% 
+  dplyr::rename(species_code = "...1") %>% 
+  # Drop weight conversions
+  dplyr::select(-c(kg, lbs)) -> species_code_key
+
+# Make some edits to make it consistent with the Rickey doc
+
+# Add the missing codes
+missing_codes <- data.frame(species_code = c(35, 36, 37), species = c("MONTHLY or ANNYAL TOTAL CATCH", "Total flatfish (excl. Pacific Halibut)", "Total rockfish"))
+species_code_key <- dplyr::bind_rows(species_code_key, missing_codes)
+
+species_code_key <- species_code_key[!is.na(species_code_key$species_code),]
+
+# Merge on species_code; drop species_code
+HISCOM %>% 
+  dplyr::left_join(., species_code_key, by = "species_code") %>% 
+  dplyr::select(-c(species_code)) -> HISCOM
+
+# Change effort to text
+effort_codes <- data.frame(EFFORT = c(1,2,3,4,5,6,7,8,9,10,11,12), gear = c("Handline jig", "Bottomfish troll (1980-)", "Other (salmon) troll (1980-)", "Set line", "Set net", "Salmon net", "Drag seine", "Other gear types", "Bottom trawl", "Midwater trawl", "Total commercial effort", "All (combined) troll (1970-1979)"))
+# Merge on EFFORT; drop EFFORT
+HISCOM %>% 
+  dplyr::left_join(., effort_codes, by = "EFFORT") %>% 
+  dplyr::select(-c(EFFORT)) -> HISCOM
+
+# Create a region code to region name key (from Rickey)
+HISCOM_regions <- data.frame(REGION = c(1,2,3,4,5,6,7,8,9), region = c("Gulf - Bellingham", "San Juan Islands", "Strait of Juan de Fuca", "Hood Canal", "Central Puget Sound", "Southern Puget Sound", "West Juan de Fuca", "PS + West Juan de Fuca", "All PS"))
+# Change region numbers to region names
+HISCOM %>% 
+  left_join(., HISCOM_regions, by = "REGION") %>% 
+  dplyr::select(-REGION) -> HISCOM
+```
+
+```{r subset_species_HISCOM}
+# Subset yelloweye
+HISCOM %>% 
+  subset(., gear == "Total commercial effort") %>% 
+  subset(., species == "Yelloweye rockfish") %>% 
+  dplyr::select(c(YEAR, region, gear, TOTAL)) %>% 
+  dplyr::rename(year = YEAR) %>% 
+  # Add zeros for years where there was no catch using tidyverse::complete
+  ungroup() %>% 
+  complete(., region = c("Gulf - Bellingham", "San Juan Islands", "Strait of Juan de Fuca", "Hood Canal", "Central Puget Sound", "Southern Puget Sound", "West Juan de Fuca", "PS + West Juan de Fuca", "All PS"), gear = "Total commercial effort", year = seq(1955, 2003, 1), fill = list(TOTAL = 0)) -> YE_HISCOM
+
+# Subset Hood Canal population - only one estimate
+YE_HISCOM %>% 
+  subset(., region == "Hood Canal") %>% 
+  mutate(., DPS = "Hood Canal")  %>% 
+  # add columns for joining
+  mutate(., high_catch = TOTAL) %>% 
+  mutate(., low_catch = TOTAL) %>% 
+  mutate(., medium_catch = TOTAL) %>% 
+  dplyr::rename(., catch_lbs = TOTAL) %>% 
+  dplyr::select(-c(region, gear)) -> YE_HISCOM_hood_canal
+
+# High catch scenario - including all catch from Strait of Juan de Fuca
+YE_HISCOM %>% 
+  subset(., region == "All PS") %>% 
+  mutate(., DPS = "U.S. DPS except Hood Canal") %>% 
+  dplyr::rename(high_catch = TOTAL) -> YE_HISCOM_USDPS_high
+
+# Medium catch scenario - including 50% of catch from Strait of Juan de Fuca
+YE_HISCOM %>% 
+  subset(., region %in% c("All PS", "Strait of Juan de Fuca")) %>% 
+  group_by(year) %>% 
+  mutate(medium_catch = TOTAL - 0.5*TOTAL[region == "Strait of Juan de Fuca"]) %>% 
+  mutate(., DPS = "U.S. DPS except Hood Canal") %>% 
+  subset(., region == "All PS") -> YE_HISCOM_USDPS_medium
+
+# Low catch scenario - including no catch from Strait of Juan de Fuca
+YE_HISCOM %>% 
+  subset(., region %in% c("All PS", "Strait of Juan de Fuca")) %>% 
+  group_by(year) %>% 
+  mutate(low_catch = TOTAL - TOTAL[region == "Strait of Juan de Fuca"]) %>% 
+  mutate(., DPS = "U.S. DPS except Hood Canal") %>% 
+  subset(., region == "All PS") -> YE_HISCOM_USDPS_low
+
+# Subset bocaccio
+HISCOM %>% 
+  subset(., gear == "Total commercial effort") %>% 
+  subset(., species == "Bocaccio") %>% 
+  dplyr::select(c(YEAR, region, gear, TOTAL)) %>% 
+  dplyr::rename(year = YEAR) %>% 
+  # Add zeros for years where there was no catch using tidyverse::complete
+  ungroup() %>% 
+  complete(., region = c("Gulf - Bellingham", "San Juan Islands", "Strait of Juan de Fuca", "Hood Canal", "Central Puget Sound", "Southern Puget Sound", "West Juan de Fuca", "PS + West Juan de Fuca", "All PS"), gear = "Total commercial effort", year = seq(1955, 2003, 1), fill = list(TOTAL = 0)) -> BOC_HISCOM
+
+# Subset Hood Canal population - only one estimate
+BOC_HISCOM %>% 
+  subset(., region == "Hood Canal") %>% 
+  mutate(., DPS = "Hood Canal") %>% 
+  # add columns for joining
+  mutate(., high_catch = TOTAL) %>% 
+  mutate(., low_catch = TOTAL) %>% 
+  mutate(., medium_catch = TOTAL) %>% 
+  dplyr::rename(., catch_lbs = TOTAL) %>% 
+  dplyr::select(-c(region, gear)) -> BOC_HISCOM_hood_canal
+
+# High catch scenario - including all catch from Strait of Juan de Fuca
+BOC_HISCOM %>% 
+  subset(., region == "All PS") %>% 
+  mutate(., DPS = "U.S. DPS except Hood Canal") %>% 
+  dplyr::rename(high_catch = TOTAL) -> BOC_HISCOM_USDPS_high
+
+# Medium catch scenario - including 50% of catch from Strait of Juan de Fuca
+BOC_HISCOM %>% 
+  subset(., region %in% c("All PS", "Strait of Juan de Fuca")) %>% 
+  group_by(year) %>% 
+  mutate(medium_catch = TOTAL - 0.5*TOTAL[region == "Strait of Juan de Fuca"]) %>% 
+  mutate(., DPS = "U.S. DPS except Hood Canal") %>% 
+  subset(., region == "All PS") -> BOC_HISCOM_USDPS_medium
+
+# Medium catch scenario - including no catch from Strait of Juan de Fuca
+BOC_HISCOM %>% 
+  subset(., region %in% c("All PS", "Strait of Juan de Fuca")) %>% 
+  group_by(year) %>% 
+  mutate(low_catch = TOTAL - TOTAL[region == "Strait of Juan de Fuca"]) %>% 
+  mutate(., DPS = "U.S. DPS except Hood Canal") %>% 
+  subset(., region == "All PS") -> BOC_HISCOM_USDPS_low
+```
+
+```{r make_exploratory_plots}
+# Plot catch of yelloweye and bocaccio by region, to get a visual on how sensitive estimates will be to exclusion of Strait of Juan de Fuca data
+YE_HISCOM_plot_region <- ggplot(subset(YE_HISCOM, !(region %in% c("All PS", "PS + West Juan de Fuca", "West Juan de Fuca"))), aes(x = year, y = TOTAL, fill = region)) +
+  geom_bar(stat = "identity") +
+  ggtitle("Yelloweye catch by region, 1955-2003") +
+  scale_fill_tableau(palette = "Tableau 10")
+
+ggsave(paste0(fig_dir, "/YE_HISCOM_plot_region.png"), YE_HISCOM_plot_region, height = 8, width = 10)
+
+BOC_HISCOM_plot_region <- ggplot(subset(BOC_HISCOM, !(region %in% c("All PS", "PS + West Juan de Fuca", "West Juan de Fuca"))), aes(x = year, y = TOTAL, fill = region)) +
+  geom_bar(stat = "identity") +
+  ggtitle("Bocaccio catch by region, 1955-2003") +
+  scale_fill_tableau(palette = "Tableau 10")
+
+ggsave(paste0(fig_dir, "/BOC_HISCOM_plot_region.png"), BOC_HISCOM_plot_region, height = 8, width = 10)
+```
+
+
+
+```{r reformat_data_for_analysis}
+YE_HISCOM_USDPS_low %>% 
+  left_join(., YE_HISCOM_USDPS_medium, by = c("year", "region", "gear", "TOTAL", "DPS")) %>% 
+  left_join(., YE_HISCOM_USDPS_high, by = c("year", "region", "gear", "DPS")) %>% 
+  dplyr::rename(catch_lbs = TOTAL) %>% 
+  dplyr::select(-c(region, gear)) %>% 
+  # Add hood canal data
+  bind_rows(., YE_HISCOM_hood_canal) %>% 
+  # Subset years
+  subset(., year >= 1970) -> YE_comm_1970_2003
+
+BOC_HISCOM_USDPS_low %>% 
+  left_join(., BOC_HISCOM_USDPS_medium, by = c("year", "region", "gear", "TOTAL", "DPS")) %>% 
+  left_join(., BOC_HISCOM_USDPS_high, by = c("year", "region", "gear", "DPS")) %>% 
+  dplyr::rename(catch_lbs = TOTAL) %>% 
+  dplyr::select(-c(region, gear)) %>% 
+  # Add hood canal data
+  bind_rows(., BOC_HISCOM_hood_canal) %>% 
+  # Subset years
+  subset(., year >= 1970) -> BOC_comm_1970_2003
+```
+
+## 1955-1969
+
+#### Notes:
+This data was provided by Wayne Palsson. For this time period, we have three categories for rockfish: "general rockfish", "red snapper", and "black rockfish". We do not have any catch composition data for this time period.
+\\
+There are two main decisions to make regarding this time period:
+1) Are yelloweye catches for this time period limited to "red snapper", or is it possible that in addition to "red snapper" there are actually yelloweye in the "general rockfish" category?
+2) Should catches from the Strait of Juan de Fuca be included?
+\\
+For now, we will assume that yelloweye catch is only the "red snapper" catch. Bocaccio catch will be prorated based on the 1970-1987 catch composition data from Schmitt 1991.
+
+#### Yelloweye catch scenarios
+Region 3 (Strait of Juan de Fuca) is about half in and half out of the DPS, as such, the different catch scenarios concern whether or not this data is included:
+1. High catch: All "red snapper" catch from the Strait of Juan de Fuca is included.
+2. Medium catch: 50% of the "red snapper" catch from the Strait of Juan de Fuca is included.
+3. Low catch: No "red snapper" catch from the Strait of Juan de Fuca is included.
+\\
+#### Bocaccio catch scenarios
+Region 3 (Strait of Juan de Fuca) is about half in and half out of the DPS, as such, the different catch scenarios concern whether or not this data is included:
+1. High catch: All catch from the Strait of Juan de Fuca is included.
+2. Medium catch: 50% of the catch from the Strait of Juan de Fuca is included.
+3. Low catch: No catch from the Strait of Juan de Fuca is included.
+```{r 1955_1969_catch}
+
+```
 
 
 
 
-### Compositional data for commercial catches
-
-PAGE 23 of PDF (9 of document) in **Schmitt 1991** addresses how their catch estimates were developed:
-"Landingsins of any and all rockfish species are grouped and reported simply as "Rockfish" on FRTs. Rockfish species composition by weight was estimated for each gear type and management region from field sampling data and knowledge of the fisheries. One species composition matrix (Table 2) adapted from Pedersen and Bargmann (1986) was applied to all rockfish landings during 1970-1987. Sampling data collected in 1988 for trawl landings in the Gulf-Bellingham Region and for set line landings in the Gulf Bellingham and Juan de Fuca Regions were incorporated in the rockfish species composition matrix applied to 1988 landings (Table 3)."
-
-
-
-#### General notes:
-- Yelloweye and bocaccio are very rare in the trawl catches; this is unsurprising given that they are strongly associated with rocky habitat (can cite the recent ROV surveys)
-- Cyreis Schmitt's work from 1991 is easily the best catch composition data, but only covers the years 1970-1988. It has species by gear type/region - could we use this for earlier time periods, or is there reason to believe that the composition by gear has changed over time? E.g. due to changes due to extractions by fishing, changes in areas, changes in gear/mesh, etc.
-
-##### 1944_DescripWaTrawlFish.pdf: 
-
-"The Washington otter trawl fleet operates in water that is from 10 to 100 fathoms deep, along the Washington coast up to Barkley Sound on Vancouver Island, and inside Puget Sound. The gear is dragged over sand or mud bottoms. With the gear now in use, rocky bottoms are unfishable."
-\
-"The rockfish landed are largely "canaries", a mixtures of S. pinniger and S. caurinus. Considerable quantities of S. flavidus and S. columbianus, commonly called "bass", are also landed. Small quantities of twenty other species, mostly S. maliger are marketed."
-\
-**Takeaways:** 
-- This data comes from both the WA coast and Puget Sound
-- Yelloweye and bocaccio are not commonly landed by otter trawls (responsible for the vast majority of rockfish landings)
-
-##### PSndRkFish_Trawl Fishery.pdf
-
-"Within Puget Soudn waters the principal species taken by trawling are S. caurinus (copper rockfish), S. maliger (quillback rockfish), and S. pinnger (orange rockfish). Populations are scattered throughout Puget Sound. The central area is most productive followed by the southern area and western area."
-\
-**Takeaways:** 
-- This data, which covers the period 1955-1964, makes no mention of yelloweye or bocaccio in the trawl fishery.
-
-##### Groundfish RF samples 1966-1968_SH11.W2791
-
-Page 13: Across two samples in 1967 - "Area: 4A; Month: March; Depth of catch (fathoms): 50-65; Landed weight (lbs.): 9,700; Percent composition by species: S. flavidus 98-99%, S. pinniger 2%, mixed species 1%."
-\
-Page 17: One sample in 1968 - "Area: 4A; Month: January; Depth of catch (fathoms): 15-25; Landed weight (lbs.): 700; Percent composition by species: S. caurinus 93%, S. flavidus 1%, S. melanops 5%, S. paucispinis 1%."
-\
-**Takeaways:** 
-- One sample from 1968 had bocaccio as 1% of landings; never any mention of yelloweye
-- Covers rockfish samples in 1966-1968
-- Doesn't indicate gear type, but I'm pretty sure it's trawl data
-- S. ruberrimus isn't listed as a species in the composition ever (not even as column header)
-- Areas from CA to BC are described; the only areas of interest are statistical areas 4A and 4B:
-  - 4A: "United States inside waters from the Bonilla Pt.-Tatoosh Island line at the entrance to Juan de Fuca Strait including Puget Sound"
-  - 4B: "Canadian inside waters from the Bonilla Pt.-Tatoosh Island line at the entrance to Juan de Fuca Strait to a line drawn north and south through Pine Island at the upper end of Queen Charlotte Strait."
-
-##### RFs Trawl Samples 1969_SH11.W2791
-\
-Page 15: Four samples in 1969 in area 4A, 57-62 fathoms, about 16,000 lbs sampled, 98-99% S. flavidus, 1-2% S. pinniger.
-
-**Takeaways:** 
-- No yelloweye or bocaccio
-
-
-
-
-### Recreational Data
-| Time Period | Data source  | Data file(s) |
-|-|-|-|-|
-| 
-| 1975-2002      | ?  |     PugetSound_SportLanding.xlsx |
-| 1970-1998 | Palsson | COMREC.xlsx |
-| 2003 - 2019 | ?  | PSP Sport Estimates 2003-2019.xlsx |
 
 
 
 
 
 
-##### WDFW Marine Areas vs. Groundfish management regions (Rickey)
-
-\
-**For regions in Puget Sound:**
-\
-
-We want region 9 for Wayne's data - this excludes West Juan de Fuca (which is region 7)
-
-| WDFW Marine Area | Groundfish management region (Rickey) |
-| - | - |
-| Sekiu and Pillar Point - Marine Area 5 | 3 Strait of Juan de Fuca |
-| East Juan de Fuca Strait - Marine Area 6 | 3 Strait of Juan de Fuca |
-| San Juan Islands - Marine Area 7 | 1 Gulf - Bellingham, 2 San Juan Islands, 3 Strait of Juan de Fuca |
-| Deception Pass, Hope Island, and Skagit Bay - Marine Area 8-1 |  5 Central Puget Sound |
-| Ports Susan and Gardner - Marine Area 8-2 |  5 Central Puget Sound |
-| Admiralty Inlet - Marine Area 9 | 5 Central Puget Sound |
-| Seattle-Bremerton Area - Marine Area 10 | 5 Central Puget Sound |
-| Tacoma-Vashon Island - Marine Area 11 | 6 Southern Puget Sound |
-| Hood Canal - Marine Area 12 | 4 Hood Canal |
-| South Puget Sound - Marine Area 13 | 6 Southern Puget Sound |
 
 
-##### Notes:
-- COMREC and COMBCATCH2011 spreadsheets have the same recreational data up until 1992, but starting in 1993 (so for the years 1993-1998) the recreational estimates no longer match. Assume that COMBCATCH2011 is the most up-to-date data and should use that?
 
-There's a gap from 1999-2002 for recreational data... not sure where this is
 
-- There are big discrepancies between Wayne's data (COMREC.xlsx) and the data that Theresa provided (PugetSound_SportLanding.xlsx)
-  - I think Theresa's data is in individuals and Wayne's is in weight, but not sure that explains everything
-    - There isn't a consistent ratio between the two and sometimes Theresa's values exceed Wayne's values, so perhaps they're both in individuals?
-- Bargman tables in "old fishery records and analysis" on Google Drive has recreational catch for 1968-1973.
-  - "Combined tables.xls" in same folder have 1965-1973
-  - These tables have data from many locations; the following are coastal areas and thus most likely represent catches outside of the DPS: Ilwaco, Westport, La Push, Neah Bay, Sekiu and Pillar Point
-- Values used by Wayne Palsson definitely don't match up with these values
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

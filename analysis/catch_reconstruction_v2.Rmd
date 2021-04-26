@@ -36,6 +36,123 @@ fig_dir <- here("figures", "catch_reconstruction")
 
 # Commercial data
 
+## First step: Load species composition data from Cyreis Schmitt
+The first step in our analysis is to load the species composition tables from Cyreis Schmitt, as this data will be used for multiple time periods in the commercial catch.
+```{r load_spp_comps}
+## Load species composition tables
+comp_table_path <- here("catch_reconstruction_data", "commercial", "schmitt_1991_table2_spp_comp_region_gear.xlsx")
+trawl_comps <- read_excel(comp_table_path, sheet = "trawl")
+set_net_comps <- read_excel(comp_table_path, sheet = "set_net")
+set_line_comps <- read_excel(comp_table_path, sheet = "set_line")
+troll_comps <- read_excel(comp_table_path, sheet = "troll")
+jig_comps <- read_excel(comp_table_path, sheet = "jig")
+
+# Convert all to long format, and format for joining
+
+# trawl_comps
+trawl_comps %>% 
+  pivot_longer(cols = colnames(trawl_comps)[c(2:length(colnames(trawl_comps)))], names_to = "region") %>% 
+  # Change percentages to proportions
+  mutate(., value = value/100) %>% 
+  # Keep only yelloweye and bocaccio
+  subset(., species %in% c("Yelloweye", "Bocaccio")) %>% 
+  mutate(., bocaccio_prop = ifelse(species == "Bocaccio", value, NA)) %>% 
+  mutate(., yelloweye_prop = ifelse(species == "Yelloweye", value, NA)) %>% 
+  # Drop species column now that it's in column name; also drop "value" (since these are now separated into boc and ye props)
+  dplyr::select(-c(species, value)) %>% 
+  # Merge rows together, replacing NAs
+  group_by(region) %>% 
+  summarise_each(funs(sum(., na.rm = TRUE))) -> trawl_comps_YE_boc
+  # Add region numbers
+  trawl_comps_YE_boc$REGION = c(5,1,4,3,2,6,7)
+  # Add gear type column
+  trawl_comps_YE_boc$gear <- "Bottom trawl"
+  
+# set_net_comps
+set_net_comps %>% 
+  pivot_longer(cols = colnames(set_net_comps)[c(2:length(colnames(set_net_comps)))], names_to = "region") %>% 
+  # Change percentages to proportions
+  mutate(., value = value/100) %>% 
+  # Keep only yelloweye and bocaccio
+  subset(., species %in% c("Yelloweye", "Bocaccio")) %>% 
+  mutate(., bocaccio_prop = ifelse(species == "Bocaccio", value, NA)) %>% 
+  mutate(., yelloweye_prop = ifelse(species == "Yelloweye", value, NA)) %>% 
+  # Drop species column now that it's in column name; also drop "value" (since these are now separated into boc and ye props)
+  dplyr::select(-c(species, value)) %>% 
+  # Merge rows together, replacing NAs
+  group_by(region) %>% 
+  summarise_each(funs(sum(., na.rm = TRUE))) -> set_net_comps_YE_boc
+  # Add region numbers
+  set_net_comps_YE_boc$REGION = c(5,1,4,3,2,6,7)
+  # Add gear type column
+  set_net_comps_YE_boc$gear <- "Set net"
+  
+# set_line_comps
+set_line_comps %>% 
+  pivot_longer(cols = colnames(set_line_comps)[c(2:length(colnames(set_line_comps)))], names_to = "region") %>% 
+  # Change percentages to proportions
+  mutate(., value = value/100) %>% 
+  # Keep only yelloweye and bocaccio
+  subset(., species %in% c("Yelloweye", "Bocaccio")) %>% 
+  mutate(., bocaccio_prop = ifelse(species == "Bocaccio", value, NA)) %>% 
+  mutate(., yelloweye_prop = ifelse(species == "Yelloweye", value, NA)) %>% 
+  # Drop species column now that it's in column name; also drop "value" (since these are now separated into boc and ye props)
+  dplyr::select(-c(species, value)) %>% 
+  # Merge rows together, replacing NAs
+  group_by(region) %>% 
+  summarise_each(funs(sum(., na.rm = TRUE))) -> set_line_comps_YE_boc
+  # Add region numbers
+  set_line_comps_YE_boc$REGION = c(5,1,4,3,2,6,7)
+  # Add gear type column
+  set_line_comps_YE_boc$gear <- "Set line"
+  
+# troll_comps
+troll_comps %>% 
+  pivot_longer(cols = colnames(troll_comps)[c(2:length(colnames(troll_comps)))], names_to = "region") %>% 
+  # Change percentages to proportions
+  mutate(., value = value/100) %>% 
+  # Keep only yelloweye and bocaccio
+  subset(., species %in% c("Yelloweye", "Bocaccio")) %>% 
+  mutate(., bocaccio_prop = ifelse(species == "Bocaccio", value, NA)) %>% 
+  mutate(., yelloweye_prop = ifelse(species == "Yelloweye", value, NA)) %>% 
+  # Drop species column now that it's in column name; also drop "value" (since these are now separated into boc and ye props)
+  dplyr::select(-c(species, value)) %>% 
+  # Merge rows together, replacing NAs
+  group_by(region) %>% 
+  summarise_each(funs(sum(., na.rm = TRUE))) -> troll_comps_YE_boc
+  # Add region numbers
+  troll_comps_YE_boc$REGION = c(5,1,4,3,2,6,7)
+  # Add gear type column
+  troll_comps_YE_boc$gear <- "All troll"
+
+# jig_comps
+jig_comps %>% 
+  pivot_longer(cols = colnames(jig_comps)[c(2:length(colnames(jig_comps)))], names_to = "region") %>% 
+  # Change percentages to proportions
+  mutate(., value = value/100) %>% 
+  # Keep only yelloweye and bocaccio
+  subset(., species %in% c("Yelloweye", "Bocaccio")) %>% 
+  mutate(., bocaccio_prop = ifelse(species == "Bocaccio", value, NA)) %>% 
+  mutate(., yelloweye_prop = ifelse(species == "Yelloweye", value, NA)) %>% 
+  # Drop species column now that it's in column name; also drop "value" (since these are now separated into boc and ye props)
+  dplyr::select(-c(species, value)) %>% 
+  # Merge rows together, replacing NAs
+  group_by(region) %>% 
+  summarise_each(funs(sum(., na.rm = TRUE))) -> jig_comps_YE_boc
+  # Add region numbers
+  jig_comps_YE_boc$REGION = c(5,1,4,3,2,6,7)
+  # Add gear type column
+  jig_comps_YE_boc$gear <- NA
+  
+# Join all comp data together
+trawl_comps_YE_boc %>% 
+  bind_rows(., set_net_comps_YE_boc) %>% 
+  bind_rows(., set_line_comps_YE_boc) %>% 
+  bind_rows(., troll_comps_YE_boc) %>% 
+  bind_rows(., jig_comps_YE_boc) -> comp_tables
+```
+
+
 ## 2004-2020
 
 #### Notes:
@@ -178,8 +295,7 @@ HISCOM %>%
 HISCOM_regions <- data.frame(REGION = c(1,2,3,4,5,6,7,8,9), region = c("Gulf - Bellingham", "San Juan Islands", "Strait of Juan de Fuca", "Hood Canal", "Central Puget Sound", "Southern Puget Sound", "West Juan de Fuca", "PS + West Juan de Fuca", "All PS"))
 # Change region numbers to region names
 HISCOM %>% 
-  left_join(., HISCOM_regions, by = "REGION") %>% 
-  dplyr::select(-REGION) -> HISCOM
+  left_join(., HISCOM_regions, by = "REGION") -> HISCOM
 ```
 
 ```{r subset_species_HISCOM}
@@ -321,6 +437,9 @@ There are two main decisions to make regarding this time period:
 2) Should catches from the Strait of Juan de Fuca be included?
 \\
 For now, we will assume that yelloweye catch is only the "red snapper" catch. Bocaccio catch will be prorated based on the 1970-1987 catch composition data from Schmitt 1991.
+\\
+We also have "red snapper" already from the HISCOM data, so we just need to re-subset that dataframe for the appropriate timeframe.
+\\ Another interesting note: West Juan de Fuca (region 7) was not used until 1970. Does this mean that there was no catch from this region until 1970 when it abruptly started, or was this due to a change in regional reporting requirements? i.e. were Strait of Juan de Fuca and West Juan de Fuca one region prior to 1970?
 
 #### Yelloweye catch scenarios
 Region 3 (Strait of Juan de Fuca) is about half in and half out of the DPS, as such, the different catch scenarios concern whether or not this data is included:
@@ -329,12 +448,51 @@ Region 3 (Strait of Juan de Fuca) is about half in and half out of the DPS, as s
 3. Low catch: No "red snapper" catch from the Strait of Juan de Fuca is included.
 \\
 #### Bocaccio catch scenarios
-Region 3 (Strait of Juan de Fuca) is about half in and half out of the DPS, as such, the different catch scenarios concern whether or not this data is included:
-1. High catch: All catch from the Strait of Juan de Fuca is included.
-2. Medium catch: 50% of the catch from the Strait of Juan de Fuca is included.
-3. Low catch: No catch from the Strait of Juan de Fuca is included.
+For the time period 1955-1969, for the Strait of Juan de Fuca (region 3), there are only the following gear types: All troll, Drag seine, Bottom trawl, Set net and Salmon net. According to the species composition table from Cyreis Schmitt, none of these gear types ever caught Bocaccio in the Strait of Juan de Fuca. Thus the catch of Bocaccio will not be affected by how much of the Strait of Juan de Fuca catch is included in the catch estimates.
+\\
+Therefore, there is only one estimate of Bocaccio from this time period.
 ```{r 1955_1969_catch}
+# Yelloweye
+YE_HISCOM_USDPS_low %>% 
+  left_join(., YE_HISCOM_USDPS_medium, by = c("year", "region", "gear", "TOTAL", "DPS")) %>% 
+  left_join(., YE_HISCOM_USDPS_high, by = c("year", "region", "gear", "DPS")) %>% 
+  dplyr::rename(catch_lbs = TOTAL) %>% 
+  dplyr::select(-c(region, gear)) %>% 
+  # Add hood canal data
+  bind_rows(., YE_HISCOM_hood_canal) %>% 
+  # Subset years
+  subset(., year >= 1955 & year <= 1969) -> YE_comm_1955_1969
 
+# Bocaccio
+# Prorate Bocaccio catch based on species composition tables from Cyreis Schmitt
+comp_tables
+
+HISCOM %>% 
+  # Subset years for which we need to prorate catch
+  subset(., YEAR >= 1955 & YEAR <= 1969) %>% 
+  # Subset only unidentified rockfishes (for this time period, it is all rockfish that aren't "red snapper" or "black rockfish")
+  subset(., species %in% c("Misc. rockfish")) %>% 
+  dplyr::select(c(YEAR, REGION, region, gear, TOTAL, species)) %>% 
+  # Drop the total commercial effort category
+  subset(., gear != "Total commercial effort") %>% 
+  # combine the troll categories
+    mutate(gear = ifelse(gear %in% c("All (combined) troll (1970-1979)", "Bottomfish troll (1980-)", "Other (salmon) troll (1980-)"), "All troll", gear)) %>% 
+  # Remove the summary regions
+  subset(., !(region == "All PS")) %>% 
+  # Add the comp table data
+  left_join(., dplyr::select(comp_tables, -region), by = c("REGION", "gear")) %>% 
+  # Multiple TOTAL by prop to get catch
+  mutate(., bocaccio_catch_estimate = bocaccio_prop*TOTAL) -> boc_55_69_prorated
+
+# summarise across years, rename columns
+boc_55_69_prorated %>% 
+  dplyr::rename(year = YEAR) %>% 
+  group_by(year) %>% 
+  summarise(catch_lbs = sum(bocaccio_catch_estimate, na.rm = TRUE)) %>% 
+  mutate(DPS = "U.S. DPS") %>% 
+  mutate(., high_catch = catch_lbs) %>% 
+  mutate(., medium_catch = catch_lbs) %>% 
+  mutate(., low_catch = catch_lbs) -> BOC_comm_55_69
 ```
 
 

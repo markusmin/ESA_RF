@@ -1474,8 +1474,8 @@ In all of the Buckley documents, yelloweye rockfish is called "Rasphead rockfish
 
 Wayne Palsson says this about the Buckley papers: "Early species composition observations are available for 1965 to 1967 based on expanded harvest estimates (Buckley 1967, 1968; Buckley and Satterthwaite 1970) and offer a glimpse into earlier species proportions of the rockfish harvest in North and South Puget Sound. Samplers at that time were developing their basis of species identifications and some observations may be questionable."
 
-#### Yelloweye and Bocaccio catch scenarios
-1968-1969: high = all unclassified rockfish prorated, medium = half of unclassified rockfish prorate,d low = no unclassified rockfish prorated.
+#### Yelloweye catch scenarios
+?????? Not sure if I should try to multiply by a factor or not for different scenarios... documents do say that these should be treated as minimum estimates, but I'm not sure what a defensible conversion factor is.
 
 
 
@@ -1488,6 +1488,8 @@ Buckley (1967) - 1965 recreational bottomfish fishery:
 - "At present, the majority of Washington's sport anglers consider most bottomfish as "scrap fish" and the ratio of the number retained in the harvest to the number actually caught appears extremely low in all areas."
   - Possible that catch is underestimate of total fishing mortality of rockfishes, given barotrauma
 - "1965 was the first year State-wide bottomfish harvests were calculated"
+- "Bottomfish data were usually taken for species, but if this was not possible (perhaps due to insufficient time for positive identification) those fish in question were recorded on the family level."
+  - This explains why sometimes rockfish are identified to the species level and sometimes only as "unclassified rockfish".
 
 
 Buckley and Sattherwhaite (1970) - 1967 recreational bottomfish fishery:
@@ -1500,15 +1502,50 @@ Buckley and Sattherwhaite (1970) - 1967 recreational bottomfish fishery:
 
 #### Bargmann tables (1968-1973)
 - Use years 1968 and 1969. Data is available in Google Drive here (old fishery records and analysis): https://docs.google.com/spreadsheets/d/0B3NnRv_9_F9sNG1ITG1fQU5ZUFk/edit#gid=1104389180
+- "The data used in this report were gathered by technicians collecting data primarily for the sport salmon fishery, and data on marine fish catches were recorded secondarily. As such, there were many gaps and areas of incomplete coverage in the bottomfish harvest estimates. The reader is cautioned that **the estimates presented here should be regarded as minimum harvest estimates**.
 
 
 ##### WDFW Annual Bulletins
+
+These are all available online through the University of Washington library.
 
 1940 report:
 - "Approximately 60% of the resorts reported regularly on a purely voluntary basis... It should be noted that all individual catches brought in to any given resort cannot be recorded by the manager. For that reason the catch statistics given below can be assumed to constitute only a very conservative record of the number of fish caught by recreational fishermen fishing from the various resorts."
 - "In estimating the total sports catch of any species for 1940, allowance must be made for (a) 43% of known boathouses not reporting during the eight-months period above, (b) four additional months to complete the year, and (c) catches made by persons not using boathouse facilities.
   - Tables indicate the in each year, somewhere between 30% and 60% of total known boathouses are reporting.
 - "While statistics of sports catches kept by the Department of Fisheries on the present basis provide the basis of reasonable estimates, **the data are by no means complete or accurate**." 
+
+Note: Annual bulletins started in 1935, but 1935-1937 had no note of sport fishing statistics. Reporting by boathouses dropped dramatically in 1942, and then in 1943 it appears that the Department of Fisheries stopped surveying boathouses altogether.
+
+A quote from page 11 of the 1946 annual bulletin:
+
+"The Puget Sound salmon investigation was extended in 1946 to include a study of the magnitude of the sport fishery. **A similar study had been carried on for several years before the war** and had demonstrated the necessity for determining the number of fish which is taken each year by Puget Sound sportsmen. Daily catch report blanks were distributed to boathouse operators throughout the Puget Sound area and sport-catch statistics were received from more than one half of the boathouses contacted."
+- So clearly there was a sport fishery, but they seem to have stopped monitoring it during the war and didn't pick it up again.
+
+From page 27 of the 1948 annual bulletin (this is about the recreational salmon fishery):
+
+"The sport fishery, however, has increased in popularity in recent years and the number of fishermen has increased tremendously. New areas have become popular. In 1939 there were 231,000 fishermen days, while in 1947 there were 343,000, or an increase of 100,000 in eight years. These figures, moreover, merely represent just those persons that fished from rented boats, and **no estimate is attempted of trips made in private boats**. At the present the Department of Fisheries has no check or record of private boat fishing, but in 1949 a survey will be made of this fishing for the first time."
+- Increased recreational effort, and these statistics are an underestimate (these surveys only of boathouses).
+
+Page 43 of the 1949 report: 
+"Surveys of the number fishermen using Puget Sound have been made by the department since 1938 but never such scale 1949 when evaluation of private fishing parties was attempted along with the usual boathouse count . It is calculated that a minimum of 684,814 fisherman trips occurred, compared with the previous high of 343,000 in 1947. There are about 150 boathouses renting 4,000 small fishing craft on the Sound . Another 2,000 private boats are moored at the boathouses exclusive of public moorage facilities. A total of 15,000 outboard motorboats is registered with the coast guard . Boat counts in the sports fishing areas showed an average of about 30 private craft for every 100 rented boats during the busiest part of the 1949 season . The average in the winter months, from November through February, was about 7 for every 100. In arriving at the total number of fishermen , boathouse catches were increased in these proportions to allow for fish landed by private boats . During the winter , as many as 100 fishermen a day fished from Seattle docks . Their take of salmon , often as great as that of the boat fishermen , also is included in the sports total."
+- They stopped monitoring the bottomfish fishery it seems, but there are at least records of fisherman trips/fishermen days.
+- I think a reasonable estimate would be a ramp up from the original estimates in 1938 through when we have data starting in 1965? Not sure what sort of ramp though.
+
+Page 66 of the 1962 report (of the recreational salmon fishery):
+For all of Washington: "The estimated number of angler trips was a new record jumping to 1,130,800, an increase of nearly 100,000 over the previous high set in 1961."
+"The total catch in Puget Sound of 193,200 salmon, was not large when compared to the corresponding 778,800 angler trips".
+  - This would not represent a big ramp up from 1949 (684,814).
+  
+  
+Page 16-D of the 1965 report:
+"A calculated 34,196 angler trips were expended in noncoastal marine areas for bottomfish only in 1965, approximately 3.4% of the 1965 food fish angling effort for these waters."
+- This same information is in the Buckley (1967) report on the 1965 bottomfish sport fishery.
+
+Page 16-A of the 1965 report has angler trips by area
+- 1,278,000 total in Washington
+- 125,000 in Ilwaco, 170,000 in Westport, 22,000 in LaPush, 46,000 in Neah Bay (I believe these are the coastal marine waters), then 98,000 in Sekiu-Pillar Point.
+
 
 ### Bargmann (1968-1969)
 Sheets are numbered according to the table numbers in the document.
@@ -1534,20 +1571,20 @@ Need to skip first four rows, and first column.
 ```{r load_bargmann_data}
 bargmann_path <- here("catch_reconstruction_data", "recreational", "pre_1970", "Bargman tables.xls")
 
-JDF_inc <- read_excel(bargmann_path, sheet = 9, skip = 4)
-JDF_spe <- read_excel(bargmann_path, sheet = 10, skip = 4)
-SJI_inc <- read_excel(bargmann_path, sheet = 11, skip = 4)
-SJI_spe <- read_excel(bargmann_path, sheet = 12, skip = 4)
-DPHI_inc <- read_excel(bargmann_path, sheet = 13, skip = 4)
-DPHI_spe <- read_excel(bargmann_path, sheet = 14, skip = 4)
-NPS_inc <- read_excel(bargmann_path, sheet = 15, skip = 4)
-NPS_spe <- read_excel(bargmann_path, sheet = 16, skip = 4)
-CPS_inc <- read_excel(bargmann_path, sheet = 17, skip = 4)
-CPS_spe <- read_excel(bargmann_path, sheet = 18, skip = 4)
-SPS_inc <- read_excel(bargmann_path, sheet = 19, skip = 4)
-SPS_spe <- read_excel(bargmann_path, sheet = 20, skip = 4)
-HC_inc <- read_excel(bargmann_path, sheet = 21, skip = 4)
-HC_spe <- read_excel(bargmann_path, sheet = 22, skip = 4)
+JDF_inc <- read_excel(bargmann_path, sheet = "9", skip = 4)
+JDF_spe <- read_excel(bargmann_path, sheet = "10", skip = 4)
+SJI_inc <- read_excel(bargmann_path, sheet = "11", skip = 4)
+SJI_spe <- read_excel(bargmann_path, sheet = "12", skip = 4)
+DPHI_inc <- read_excel(bargmann_path, sheet = "13", skip = 4)
+DPHI_spe <- read_excel(bargmann_path, sheet = "14", skip = 4)
+NPS_inc <- read_excel(bargmann_path, sheet = "15", skip = 4)
+NPS_spe <- read_excel(bargmann_path, sheet = "16", skip = 4)
+CPS_inc <- read_excel(bargmann_path, sheet = "17", skip = 4)
+CPS_spe <- read_excel(bargmann_path, sheet = "18", skip = 4)
+SPS_inc <- read_excel(bargmann_path, sheet = "19", skip = 4)
+SPS_spe <- read_excel(bargmann_path, sheet = "20", skip = 4)
+HC_inc <- read_excel(bargmann_path, sheet = "21", skip = 4)
+HC_spe <- read_excel(bargmann_path, sheet = "22", skip = 4)
 
 # Make some edits/re-format
 JDF_inc %>% 
@@ -1623,9 +1660,10 @@ bargmann_data %>%
 # Replace all NAs with zeros
 bargmann_data[is.na(bargmann_data$catch_individuals),]$catch_individuals <- 0
 unique(bargmann_data$area)
-# Add a North Puget Sound vs. South Puget Sound column for prorating catch
+# Add a North Puget Sound vs. South Puget Sound vs. Hood Canal column for prorating catch, dividing DPS
 bargmann_data %>% 
-  mutate(., PS = ifelse(area %in% c(8,9,10,11,12), "South Puget Sound", "North Puget Sound")) -> bargmann_data
+  mutate(., PS = ifelse(area %in% c(8,9,10,11), "South Puget Sound", 
+                        ifelse(area == 12, "Hood Canal",  "North Puget Sound"))) -> bargmann_data
 ```
 
 ```{r summarise_data}
@@ -1636,18 +1674,33 @@ bargmann_data %>%
 
 # Prorate catch according to 1965-1967 comp data
 # Add the catch composition data
+# Note: is it better to use these estimates, or use the same year and use only the species-level identifications to prorate catch of the unclassified rockfish group?
+
+# Here we are using the South Puget Sound comps for the Hood Canal catches
 bargmann_annual_sums %>% 
   mutate(boc_prop = ifelse(PS == "North Puget Sound", subset(rec_mean_spp_comp_NPS, Species == "Bocaccio")$`1965-1967a`/100, subset(rec_mean_spp_comp_SPS, Species == "Bocaccio")$`1965-1967a`/100)) %>% 
   mutate(ye_prop = ifelse(PS == "North Puget Sound", subset(rec_mean_spp_comp_NPS, Species == "Yelloweye")$`1965-1967a`/100, subset(rec_mean_spp_comp_SPS, Species == "Yelloweye")$`1965-1967a`/100)) -> bargmann_annual_sums
 
 
 # Prorate and summarise for yelloweye
+
+# U.S. DPS minus Hood canal
 bargmann_annual_sums %>% 
   subset(Species %in% c("unclassified rockfish", "Yelloweye rockfish")) %>% 
   mutate(., catch = ifelse(Species == "Yelloweye rockfish", total_catch, ye_prop*total_catch)) %>% 
+  subset(PS != "Hood Canal") %>% 
   group_by(year) %>% 
   summarise(catch = sum(catch)) %>% 
-  mutate(catch_lbs = catch*YE_lbs_per_individual) -> ye_catch_bargmann
+  mutate(catch_lbs = catch*YE_lbs_per_individual) -> ye_catch_bargmann_USDPS
+
+# Hood Canal
+bargmann_annual_sums %>% 
+  subset(Species %in% c("unclassified rockfish", "Yelloweye rockfish")) %>% 
+  mutate(., catch = ifelse(Species == "Yelloweye rockfish", total_catch, ye_prop*total_catch)) %>% 
+  subset(PS == "Hood Canal") %>% 
+  group_by(year) %>% 
+  summarise(catch = sum(catch)) %>% 
+  mutate(catch_lbs = catch*YE_lbs_per_individual) -> ye_catch_bargmann_HC
 
 # Prorate and summarise for bocaccio
 bargmann_annual_sums %>% 
@@ -1658,6 +1711,511 @@ bargmann_annual_sums %>%
   mutate(catch_lbs = catch*BOC_lbs_per_individual) -> boc_catch_bargmann
   
 ```
+
+### Buckley (1965-1967)
+
+The Buckley tables have the exact same numbering as the Bargmann tables
+
+```{r load_buckley_1965_data}
+buck65_path <- here("catch_reconstruction_data", "recreational", "pre_1970", "Buckley 1965 tables.xls")
+
+JDF_inc <- read_excel(buck65_path, sheet = "9", skip = 3)
+JDF_spe <- read_excel(buck65_path, sheet = "10", skip = 3)
+SJI_inc <- read_excel(buck65_path, sheet = "11", skip = 4)
+SJI_spe <- read_excel(buck65_path, sheet = "12", skip = 3)
+DPHI_inc <- read_excel(buck65_path, sheet = "13", skip = 3)
+DPHI_spe <- read_excel(buck65_path, sheet = "14", skip = 3)
+NPS_inc <- read_excel(buck65_path, sheet = "15", skip = 3)
+NPS_spe <- read_excel(buck65_path, sheet = "16", skip = 3)
+CPS_inc <- read_excel(buck65_path, sheet = "17", skip = 3)
+CPS_spe <- read_excel(buck65_path, sheet = "18", skip = 3)
+SPS_inc <- read_excel(buck65_path, sheet = "19", skip = 3)
+SPS_spe <- read_excel(buck65_path, sheet = "20", skip = 3)
+HC_inc <- read_excel(buck65_path, sheet = "21", skip = 3)
+HC_spe <- read_excel(buck65_path, sheet = "22", skip = 3)
+
+# Make some edits/re-format
+JDF_inc %>% 
+  mutate(take = "incidental", area = 6) %>% 
+  dplyr::select(Species, Totals, take, area) -> JDF_inc
+JDF_spe %>% 
+  mutate(take = "specific", area = 6) %>% 
+  dplyr::select(Species, Totals, take, area) -> JDF_spe
+SJI_inc %>% 
+  mutate(take = "incidental", area = 7) %>% 
+  dplyr::select(Species, Totals, take, area) -> SJI_inc
+SJI_spe %>% 
+  mutate(take = "specific", area = 7) %>% 
+  dplyr::select(Species, Totals, take, area) -> SJI_spe
+DPHI_inc %>% 
+  mutate(take = "incidental", area = 8) %>% 
+  dplyr::select(Species, Totals, take, area) -> DPHI_inc
+DPHI_spe %>% 
+  mutate(take = "specific", area = 8) %>% 
+  dplyr::select(Species, Totals, take, area) -> DPHI_spe
+NPS_inc %>% 
+  mutate(take = "incidental", area = 9) %>% 
+  dplyr::select(Species, Totals, take, area) -> NPS_inc
+NPS_spe %>% 
+  mutate(take = "specific", area = 9) %>% 
+  dplyr::select(Species, Totals, take, area) -> NPS_spe
+CPS_inc %>% 
+  mutate(take = "incidental", area = 10) %>% 
+  dplyr::select(Species, Totals, take, area) -> CPS_inc
+CPS_spe %>% 
+  mutate(take = "specific", area = 10) %>% 
+  dplyr::select(Species, Totals, take, area) -> CPS_spe
+SPS_inc %>% 
+  mutate(take = "incidental", area = 11) %>% 
+  dplyr::select(Species, Totals, take, area) -> SPS_inc
+SPS_spe %>% 
+  mutate(take = "specific", area = 11) %>% 
+  dplyr::select(Species, Totals, take, area) -> SPS_spe
+HC_inc %>% 
+  mutate(take = "incidental", area = 12) %>% 
+  dplyr::select(Species, Totals, take, area) -> HC_inc
+HC_spe %>% 
+  mutate(take = "specific", area = 12) %>% 
+  dplyr::select(Species, Totals, take, area) -> HC_spe
+
+# Join together all
+JDF_inc  %>% 
+  bind_rows(., JDF_spe) %>% 
+  bind_rows(., SJI_inc) %>% 
+  bind_rows(., SJI_spe) %>% 
+  bind_rows(., DPHI_inc) %>% 
+  bind_rows(., DPHI_spe) %>% 
+  bind_rows(., NPS_inc) %>% 
+  bind_rows(., NPS_spe) %>% 
+  bind_rows(., CPS_inc) %>% 
+  bind_rows(., CPS_spe) %>% 
+  bind_rows(., SPS_inc) %>% 
+  bind_rows(., SPS_spe) %>% 
+  bind_rows(., HC_inc) %>% 
+  bind_rows(., HC_spe) -> buck65_data
+
+# combine years into one column
+buck65_data %>% 
+  dplyr::rename(catch_individuals = Totals) -> buck65_data
+
+unique(buck65_data$Species)
+# Remove the irrelevant species
+buck65_data %>% 
+  subset(Species %in% c("Rasphead rockfish", "Rockfishes", "Bocaccio")) %>% 
+  mutate(Species = ifelse(Species == "Rasphead rockfish", "Yelloweye rockfish", Species)) -> buck65_data
+
+unique(buck65_data$area)
+# Add a North Puget Sound vs. South Puget Sound vs. Hood Canal column for prorating catch, dividing DPS
+buck65_data %>% 
+  mutate(., PS = ifelse(area %in% c(8,9,10,11), "South Puget Sound", 
+                        ifelse(area == 12, "Hood Canal",  "North Puget Sound"))) -> buck65_data
+```
+
+
+```{r summarise_data}
+# Summarise across regions
+buck65_data %>% 
+  group_by(Species, PS) %>% 
+  summarise(total_catch = sum(catch_individuals)) -> buck65_annual_sums
+
+# Prorate catch according to 1965-1967 comp data
+# Add the catch composition data
+# Note: is it better to use these estimates, or use the same year and use only the species-level identifications to prorate catch of the unclassified rockfish group?
+
+# Here we are using the South Puget Sound comps for the Hood Canal catches
+buck65_annual_sums %>% 
+  mutate(boc_prop = ifelse(PS == "North Puget Sound", subset(rec_mean_spp_comp_NPS, Species == "Bocaccio")$`1965-1967a`/100, subset(rec_mean_spp_comp_SPS, Species == "Bocaccio")$`1965-1967a`/100)) %>% 
+  mutate(ye_prop = ifelse(PS == "North Puget Sound", subset(rec_mean_spp_comp_NPS, Species == "Yelloweye")$`1965-1967a`/100, subset(rec_mean_spp_comp_SPS, Species == "Yelloweye")$`1965-1967a`/100)) -> buck65_annual_sums
+
+# U.S. DPS minus Hood canal
+buck65_annual_sums %>% 
+  subset(Species %in% c("Rockfishes", "Yelloweye rockfish")) %>% 
+  mutate(., catch = ifelse(Species == "Yelloweye rockfish", total_catch, ye_prop*total_catch)) %>% 
+  subset(PS != "Hood Canal") %>% 
+  ungroup() %>% 
+  summarise(catch = sum(catch)) %>% 
+  mutate(year = 1965) %>% 
+  mutate(catch_lbs = catch*YE_lbs_per_individual) -> ye_catch_buck65_USDPS
+
+# Hood Canal
+buck65_annual_sums %>% 
+  subset(Species %in% c("Rockfishes", "Yelloweye rockfish")) %>% 
+  mutate(., catch = ifelse(Species == "Yelloweye rockfish", total_catch, ye_prop*total_catch)) %>% 
+  subset(PS == "Hood Canal") %>% 
+  ungroup() %>% 
+  summarise(catch = sum(catch)) %>% 
+  mutate(year = 1965) %>% 
+  mutate(catch_lbs = catch*YE_lbs_per_individual) -> ye_catch_buck65_HC
+
+# Prorate and summarise for bocaccio
+buck65_annual_sums %>% 
+  subset(Species %in% c("Rockfishes", "Bocaccio")) %>% 
+  mutate(., catch = ifelse(Species == "Bocaccio", total_catch, boc_prop*total_catch)) %>% 
+  ungroup() %>% 
+  summarise(catch = sum(catch)) %>% 
+  mutate(year = 1965) %>% 
+  mutate(catch_lbs = catch*BOC_lbs_per_individual) -> boc_catch_buck65
+  
+```
+Note: Yelloweye catchces from this time period are crazy high, mostly owing to a super high incidental take in area 11 (South Puget Sound) - 3450 individuals, with 2,429 in the month of June.
+
+
+```{r load_buckley_1966_data}
+buck66_path <- here("catch_reconstruction_data", "recreational", "pre_1970", "Buckley 1966 tables.xls")
+
+JDF_inc <- read_excel(buck66_path, sheet = "11", skip = 4)
+JDF_spe <- read_excel(buck66_path, sheet = "12", skip = 4)
+SJI_inc <- read_excel(buck66_path, sheet = "13", skip = 4)
+SJI_spe <- read_excel(buck66_path, sheet = "14", skip = 4)
+DPHI_inc <- read_excel(buck66_path, sheet = "15", skip = 4)
+DPHI_spe <- read_excel(buck66_path, sheet = "16", skip = 4)
+NPS_inc <- read_excel(buck66_path, sheet = "17", skip = 4)
+NPS_spe <- read_excel(buck66_path, sheet = "18", skip = 4)
+CPS_inc <- read_excel(buck66_path, sheet = "19", skip = 4)
+CPS_spe <- read_excel(buck66_path, sheet = "20", skip = 4)
+SPS_inc <- read_excel(buck66_path, sheet = "21", skip = 4)
+SPS_spe <- read_excel(buck66_path, sheet = "22", skip = 4)
+HC_inc <- read_excel(buck66_path, sheet = "23", skip = 4)
+HC_spe <- read_excel(buck66_path, sheet = "24", skip = 4)
+
+# Make some edits/re-format
+JDF_inc %>% 
+  mutate(take = "incidental", area = 6) %>% 
+  dplyr::select(Species, Totals, take, area) -> JDF_inc
+JDF_spe %>% 
+  mutate(take = "specific", area = 6) %>% 
+  dplyr::select(Species, Totals, take, area) -> JDF_spe
+SJI_inc %>% 
+  mutate(take = "incidental", area = 7) %>% 
+  dplyr::select(Species, Totals, take, area) -> SJI_inc
+SJI_spe %>% 
+  mutate(take = "specific", area = 7) %>% 
+  dplyr::select(Species, Totals, take, area) -> SJI_spe
+DPHI_inc %>% 
+  mutate(take = "incidental", area = 8) %>% 
+  dplyr::select(Species, Totals, take, area) -> DPHI_inc
+DPHI_spe %>% 
+  mutate(take = "specific", area = 8) %>% 
+  dplyr::select(Species, Totals, take, area) -> DPHI_spe
+NPS_inc %>% 
+  mutate(take = "incidental", area = 9) %>% 
+  dplyr::select(Species, Totals, take, area) -> NPS_inc
+NPS_spe %>% 
+  mutate(take = "specific", area = 9) %>% 
+  dplyr::select(Species, Totals, take, area) -> NPS_spe
+CPS_inc %>% 
+  mutate(take = "incidental", area = 10) %>% 
+  dplyr::select(Species, Totals, take, area) -> CPS_inc
+CPS_spe %>% 
+  mutate(take = "specific", area = 10) %>% 
+  dplyr::select(Species, Totals, take, area) -> CPS_spe
+SPS_inc %>% 
+  mutate(take = "incidental", area = 11) %>% 
+  dplyr::select(Species, Totals, take, area) -> SPS_inc
+SPS_spe %>% 
+  mutate(take = "specific", area = 11) %>% 
+  dplyr::select(Species, Totals, take, area) -> SPS_spe
+HC_inc %>% 
+  mutate(take = "incidental", area = 12) %>% 
+  dplyr::select(Species, Totals, take, area) -> HC_inc
+HC_spe %>% 
+  mutate(take = "specific", area = 12) %>% 
+  dplyr::select(Species, Totals, take, area) -> HC_spe
+
+# Join together all
+JDF_inc  %>% 
+  bind_rows(., JDF_spe) %>% 
+  bind_rows(., SJI_inc) %>% 
+  bind_rows(., SJI_spe) %>% 
+  bind_rows(., DPHI_inc) %>% 
+  bind_rows(., DPHI_spe) %>% 
+  bind_rows(., NPS_inc) %>% 
+  bind_rows(., NPS_spe) %>% 
+  bind_rows(., CPS_inc) %>% 
+  bind_rows(., CPS_spe) %>% 
+  bind_rows(., SPS_inc) %>% 
+  bind_rows(., SPS_spe) %>% 
+  bind_rows(., HC_inc) %>% 
+  bind_rows(., HC_spe) -> buck66_data
+
+# combine years into one column
+buck66_data %>% 
+  dplyr::rename(catch_individuals = Totals) -> buck66_data
+
+unique(buck66_data$Species)
+# Remove the irrelevant species
+buck66_data %>% 
+  subset(Species %in% c("Yelloweye rockfish", "Rockfishes", "Bocaccio")) %>% 
+  mutate(Species = ifelse(Species == "Rasphead rockfish", "Yelloweye rockfish", Species)) -> buck66_data
+
+unique(buck66_data$area)
+# Add a North Puget Sound vs. South Puget Sound vs. Hood Canal column for prorating catch, dividing DPS
+buck66_data %>% 
+  mutate(., PS = ifelse(area %in% c(8,9,10,11), "South Puget Sound", 
+                        ifelse(area == 12, "Hood Canal",  "North Puget Sound"))) -> buck66_data
+```
+
+
+```{r summarise_data}
+# Summarise across regions
+buck66_data %>% 
+  group_by(Species, PS) %>% 
+  summarise(total_catch = sum(catch_individuals)) -> buck66_annual_sums
+
+# Prorate catch according to 1965-1967 comp data
+# Add the catch composition data
+# Note: is it better to use these estimates, or use the same year and use only the species-level identifications to prorate catch of the unclassified rockfish group?
+
+# Here we are using the South Puget Sound comps for the Hood Canal catches
+buck66_annual_sums %>% 
+  mutate(boc_prop = ifelse(PS == "North Puget Sound", subset(rec_mean_spp_comp_NPS, Species == "Bocaccio")$`1965-1967a`/100, subset(rec_mean_spp_comp_SPS, Species == "Bocaccio")$`1965-1967a`/100)) %>% 
+  mutate(ye_prop = ifelse(PS == "North Puget Sound", subset(rec_mean_spp_comp_NPS, Species == "Yelloweye")$`1965-1967a`/100, subset(rec_mean_spp_comp_SPS, Species == "Yelloweye")$`1965-1967a`/100)) -> buck66_annual_sums
+
+# U.S. DPS minus Hood canal
+buck66_annual_sums %>% 
+  subset(Species %in% c("Rockfishes", "Yelloweye rockfish")) %>% 
+  mutate(., catch = ifelse(Species == "Yelloweye rockfish", total_catch, ye_prop*total_catch)) %>% 
+  subset(PS != "Hood Canal") %>% 
+  ungroup() %>% 
+  summarise(catch = sum(catch)) %>% 
+  mutate(year = 1966) %>% 
+  mutate(catch_lbs = catch*YE_lbs_per_individual) -> ye_catch_buck66_USDPS
+
+# Hood Canal
+buck66_annual_sums %>% 
+  subset(Species %in% c("Rockfishes", "Yelloweye rockfish")) %>% 
+  mutate(., catch = ifelse(Species == "Yelloweye rockfish", total_catch, ye_prop*total_catch)) %>% 
+  subset(PS == "Hood Canal") %>% 
+  ungroup() %>% 
+  summarise(catch = sum(catch)) %>% 
+  mutate(year = 1966) %>% 
+  mutate(catch_lbs = catch*YE_lbs_per_individual) -> ye_catch_buck66_HC
+
+# Prorate and summarise for bocaccio
+buck66_annual_sums %>% 
+  subset(Species %in% c("Rockfishes", "Bocaccio")) %>% 
+  mutate(., catch = ifelse(Species == "Bocaccio", total_catch, boc_prop*total_catch)) %>% 
+  ungroup() %>% 
+  summarise(catch = sum(catch)) %>% 
+  mutate(year = 1966) %>% 
+  mutate(catch_lbs = catch*BOC_lbs_per_individual) -> boc_catch_buck66
+  
+```
+
+
+```{r load_buckley_1967_data}
+buck67_path <- here("catch_reconstruction_data", "recreational", "pre_1970", "buckley 1967 tables.xls")
+
+JDF_inc <- read_excel(buck67_path, sheet = "16", skip = 3)
+JDF_spe <- read_excel(buck67_path, sheet = "17", skip = 3)
+SJI_inc <- read_excel(buck67_path, sheet = "18", skip = 3)
+SJI_spe <- read_excel(buck67_path, sheet = "19", skip = 3)
+DPHI_inc <- read_excel(buck67_path, sheet = "20", skip = 3)
+DPHI_spe <- read_excel(buck67_path, sheet = "21", skip = 3)
+NPS_inc <- read_excel(buck67_path, sheet = "22", skip = 3)
+NPS_spe <- read_excel(buck67_path, sheet = "23", skip = 3)
+CPS_inc <- read_excel(buck67_path, sheet = "24", skip = 3)
+CPS_spe <- read_excel(buck67_path, sheet = "25", skip = 3)
+SPS_inc <- read_excel(buck67_path, sheet = "26", skip = 3)
+SPS_spe <- read_excel(buck67_path, sheet = "27", skip = 3)
+HC_inc <- read_excel(buck67_path, sheet = "28", skip = 3)
+HC_spe <- read_excel(buck67_path, sheet = "Sheet9", skip = 3)
+
+# Make some edits/re-format
+JDF_inc %>% 
+  mutate(take = "incidental", area = 6) %>% 
+  dplyr::rename(Species = Area) %>% 
+  dplyr::select(Species, Totals, take, area) -> JDF_inc
+JDF_spe %>% 
+  mutate(take = "specific", area = 6) %>% 
+  dplyr::rename(Species = Area) %>%
+  dplyr::select(Species, Totals, take, area) -> JDF_spe
+SJI_inc %>% 
+  mutate(take = "incidental", area = 7) %>% 
+  dplyr::rename(Species = Area) %>%
+  dplyr::select(Species, Totals, take, area) -> SJI_inc
+SJI_spe %>% 
+  mutate(take = "specific", area = 7) %>% 
+  dplyr::rename(Species = Area) %>%
+  dplyr::select(Species, Totals, take, area) -> SJI_spe
+DPHI_inc %>% 
+  mutate(take = "incidental", area = 8) %>% 
+  dplyr::rename(Species = Area) %>%
+  dplyr::select(Species, Totals, take, area) -> DPHI_inc
+DPHI_spe %>% 
+  mutate(take = "specific", area = 8) %>% 
+  dplyr::rename(Species = Area) %>%
+  dplyr::select(Species, Totals, take, area) -> DPHI_spe
+NPS_inc %>% 
+  mutate(take = "incidental", area = 9) %>% 
+  dplyr::rename(Species = Area) %>%
+  dplyr::select(Species, Totals, take, area) -> NPS_inc
+NPS_spe %>% 
+  mutate(take = "specific", area = 9) %>% 
+  dplyr::rename(Species = Area) %>%
+  dplyr::select(Species, Totals, take, area) -> NPS_spe
+CPS_inc %>% 
+  mutate(take = "incidental", area = 10) %>% 
+  dplyr::rename(Species = Area) %>%
+  dplyr::select(Species, Totals, take, area) -> CPS_inc
+CPS_spe %>% 
+  mutate(take = "specific", area = 10) %>% 
+  dplyr::rename(Species = Area) %>%
+  dplyr::select(Species, Totals, take, area) -> CPS_spe
+SPS_inc %>% 
+  mutate(take = "incidental", area = 11) %>% 
+  dplyr::rename(Species = Area) %>%
+  dplyr::select(Species, Totals, take, area) -> SPS_inc
+SPS_spe %>% 
+  mutate(take = "specific", area = 11) %>% 
+  dplyr::rename(Species = Area) %>%
+  dplyr::select(Species, Totals, take, area) -> SPS_spe
+HC_inc %>% 
+  mutate(take = "incidental", area = 12) %>% 
+  dplyr::rename(Species = Area) %>%
+  dplyr::select(Species, Totals, take, area) -> HC_inc
+HC_spe %>% 
+  mutate(take = "specific", area = 12) %>% 
+  dplyr::rename(Species = Area) %>%
+  dplyr::select(Species, Totals, take, area) -> HC_spe
+
+# Join together all
+JDF_inc  %>% 
+  bind_rows(., JDF_spe) %>% 
+  bind_rows(., SJI_inc) %>% 
+  bind_rows(., SJI_spe) %>% 
+  bind_rows(., DPHI_inc) %>% 
+  bind_rows(., DPHI_spe) %>% 
+  bind_rows(., NPS_inc) %>% 
+  bind_rows(., NPS_spe) %>% 
+  bind_rows(., CPS_inc) %>% 
+  bind_rows(., CPS_spe) %>% 
+  bind_rows(., SPS_inc) %>% 
+  bind_rows(., SPS_spe) %>% 
+  bind_rows(., HC_inc) %>% 
+  bind_rows(., HC_spe) -> buck67_data
+
+# combine years into one column
+buck67_data %>% 
+  dplyr::rename(catch_individuals = Totals) -> buck67_data
+
+unique(buck67_data$Species)
+# Remove the irrelevant species
+buck67_data %>% 
+  subset(Species %in% c("Rasphead rockfish", "Rockfishes", "Bocaccio")) %>% 
+  mutate(Species = ifelse(Species == "Rasphead rockfish", "Yelloweye rockfish", Species)) -> buck67_data
+
+unique(buck67_data$area)
+# Add a North Puget Sound vs. South Puget Sound vs. Hood Canal column for prorating catch, dividing DPS
+buck67_data %>% 
+  mutate(., PS = ifelse(area %in% c(8,9,10,11), "South Puget Sound", 
+                        ifelse(area == 12, "Hood Canal",  "North Puget Sound"))) -> buck67_data
+```
+
+
+```{r summarise_data}
+# Summarise across regions
+buck67_data %>% 
+  group_by(Species, PS) %>% 
+  summarise(total_catch = sum(catch_individuals)) -> buck67_annual_sums
+
+# Prorate catch according to 1965-1967 comp data
+# Add the catch composition data
+# Note: is it better to use these estimates, or use the same year and use only the species-level identifications to prorate catch of the unclassified rockfish group?
+
+# Here we are using the South Puget Sound comps for the Hood Canal catches
+buck67_annual_sums %>% 
+  mutate(boc_prop = ifelse(PS == "North Puget Sound", subset(rec_mean_spp_comp_NPS, Species == "Bocaccio")$`1965-1967a`/100, subset(rec_mean_spp_comp_SPS, Species == "Bocaccio")$`1965-1967a`/100)) %>% 
+  mutate(ye_prop = ifelse(PS == "North Puget Sound", subset(rec_mean_spp_comp_NPS, Species == "Yelloweye")$`1965-1967a`/100, subset(rec_mean_spp_comp_SPS, Species == "Yelloweye")$`1965-1967a`/100)) -> buck67_annual_sums
+
+# U.S. DPS minus Hood canal
+buck67_annual_sums %>% 
+  subset(Species %in% c("Rockfishes", "Yelloweye rockfish")) %>% 
+  mutate(., catch = ifelse(Species == "Yelloweye rockfish", total_catch, ye_prop*total_catch)) %>% 
+  subset(PS != "Hood Canal") %>% 
+  ungroup() %>% 
+  summarise(catch = sum(catch)) %>% 
+  mutate(year = 1967) %>% 
+  mutate(catch_lbs = catch*YE_lbs_per_individual) -> ye_catch_buck67_USDPS
+
+# Hood Canal
+buck67_annual_sums %>% 
+  subset(Species %in% c("Rockfishes", "Yelloweye rockfish")) %>% 
+  mutate(., catch = ifelse(Species == "Yelloweye rockfish", total_catch, ye_prop*total_catch)) %>% 
+  subset(PS == "Hood Canal") %>% 
+  ungroup() %>% 
+  summarise(catch = sum(catch)) %>% 
+  mutate(year = 1967) %>% 
+  mutate(catch_lbs = catch*YE_lbs_per_individual) -> ye_catch_buck67_HC
+
+# Prorate and summarise for bocaccio
+buck67_annual_sums %>% 
+  subset(Species %in% c("Rockfishes", "Bocaccio")) %>% 
+  mutate(., catch = ifelse(Species == "Bocaccio", total_catch, boc_prop*total_catch)) %>% 
+  ungroup() %>% 
+  summarise(catch = sum(catch)) %>% 
+  mutate(year = 1967) %>% 
+  mutate(catch_lbs = catch*BOC_lbs_per_individual) -> boc_catch_buck67
+
+```
+
+
+### 1965-1969: Combine Buckley and Bargmann
+```{r combine_buckley_bargmann}
+ye_catch_bargmann_HC %>% 
+  mutate(year = as.numeric(year)) %>% 
+  bind_rows(., ye_catch_buck67_HC) %>% 
+  bind_rows(., ye_catch_buck66_HC) %>% 
+  bind_rows(., ye_catch_buck65_HC) -> ye_catch_65_69_HC
+
+ye_catch_bargmann_USDPS %>% 
+  mutate(year = as.numeric(year)) %>% 
+  bind_rows(., ye_catch_buck67_USDPS) %>% 
+  bind_rows(., ye_catch_buck66_USDPS) %>% 
+  bind_rows(., ye_catch_buck65_USDPS) -> ye_catch_65_69_USDPS
+
+boc_catch_bargmann %>% 
+  mutate(year = as.numeric(year)) %>% 
+  bind_rows(., boc_catch_buck67) %>% 
+  bind_rows(., boc_catch_buck66) %>% 
+  bind_rows(., boc_catch_buck65) -> boc_catch_65_69
+
+
+```
+
+### 1938-1942 WDFW Annual Bulletins
+
+```{r 1938_1941_rec_data}
+WDFW_38_41_path <- here("catch_reconstruction_data", "recreational", "pre_1970", "1938_1941_sportcatch.xlsx")
+
+read_excel(WDFW_38_41_path, sheet = "1938") %>% 
+  mutate(year = 1938) %>% 
+  mutate(red_snapper = as.numeric(red_snapper)) -> rec_38
+read_excel(WDFW_38_41_path, sheet = "1939") %>% 
+  mutate(year = 1939) %>% 
+  mutate(red_snapper = as.numeric(red_snapper)) -> rec_39
+read_excel(WDFW_38_41_path, sheet = "1940") %>% 
+  mutate(year = 1940) -> rec_40
+read_excel(WDFW_38_41_path, sheet = "1941") %>% 
+  mutate(year = 1941) -> rec_41
+
+rec_38 %>% 
+  bind_rows(., rec_39) %>%
+  bind_rows(., rec_40) %>% 
+  bind_rows(., rec_41) -> rec_38_41
+
+
+
+# Plot mean catches by month
+ggplot(rec_38_41, aes(x = factor(month, levels = c("February", "March", "April", "May", "June", "July", "August", "September", "October", "November")), y = rock_cod/no_boathouses, color = factor(year)))+
+  geom_point()
+
+# Peak catches are in the summer, so I don't think that the fact that we're missing December-March is a big deal.
+```
+
+
+
+
 
 
 

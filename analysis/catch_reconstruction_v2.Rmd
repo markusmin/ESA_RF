@@ -1119,9 +1119,9 @@ yelloweye_sport_2003_2019 %>%
   dplyr::select(year, DPS, high_catch_n, medium_catch_n, low_catch_n) %>% 
   complete(., year = seq(2003, 2019, 1), fill = list(high_catch_n = 0, medium_catch_n = 0, low_catch_n = 0, DPS = "Hood Canal")) %>% 
   # Convert individuals to weights
-  mutate(., high_catch = high_catch_n * YE_lbs_per_individual) %>%
-  mutate(., medium_catch = medium_catch_n * YE_lbs_per_individual) %>%
-  mutate(., low_catch = low_catch_n * YE_lbs_per_individual) %>%
+  mutate(., high_catch_lbs = high_catch_n * YE_lbs_per_individual) %>%
+  mutate(., medium_catch_lbs = medium_catch_n * YE_lbs_per_individual) %>%
+  mutate(., low_catch_lbs = low_catch_n * YE_lbs_per_individual) %>%
   dplyr::select(-c(high_catch_n, medium_catch_n, low_catch_n)) -> YE_HC_rec_2003_2019 
 
 # U.S. DPS except Hood Canal
@@ -1137,9 +1137,9 @@ yelloweye_sport_2003_2019 %>%
   mutate(., DPS = "U.S. DPS except Hood Canal") %>% 
   complete(., year = seq(2003, 2019, 1), fill = list(high_catch_n = 0, medium_catch_n = 0, low_catch_n = 0, DPS = "U.S. DPS except Hood Canal")) %>% 
   # Convert individuals to weights
-  mutate(., high_catch = high_catch_n * YE_lbs_per_individual) %>%
-  mutate(., medium_catch = medium_catch_n * YE_lbs_per_individual) %>%
-  mutate(., low_catch = low_catch_n * YE_lbs_per_individual) %>%
+  mutate(., high_catch_lbs = high_catch_n * YE_lbs_per_individual) %>%
+  mutate(., medium_catch_lbs = medium_catch_n * YE_lbs_per_individual) %>%
+  mutate(., low_catch_lbs = low_catch_n * YE_lbs_per_individual) %>%
   dplyr::select(-c(high_catch_n, medium_catch_n, low_catch_n)) -> YE_USDPS_rec_2003_2019 
 
 ```
@@ -1160,9 +1160,9 @@ bocaccio_sport_2003_2019 %>%
   mutate(., DPS = "U.S. DPS") %>% 
   complete(., year = seq(2003, 2019, 1), fill = list(high_catch_n = 0, medium_catch_n = 0, low_catch_n = 0, DPS = "U.S. DPS")) %>% 
   # Convert individuals to weights
-  mutate(., high_catch = high_catch_n * BOC_lbs_per_individual) %>%
-  mutate(., medium_catch = medium_catch_n * BOC_lbs_per_individual) %>%
-  mutate(., low_catch = low_catch_n * BOC_lbs_per_individual) %>%
+  mutate(., high_catch_lbs = high_catch_n * BOC_lbs_per_individual) %>%
+  mutate(., medium_catch_lbs = medium_catch_n * BOC_lbs_per_individual) %>%
+  mutate(., low_catch_lbs = low_catch_n * BOC_lbs_per_individual) %>%
   dplyr::select(-c(high_catch_n, medium_catch_n, low_catch_n)) -> BOC_USDPS_rec_2003_2019 
 ```
 
@@ -1195,6 +1195,8 @@ For this time period, we will prorate catches based on composition data and subs
 1. High catch: Prorated estimate x 3.
 2. Medium catch: Prorated estimate x 2.
 3. Low catch: Prorated estimate x 1.
+
+For yelloweye, we also need to separate Hood Canal from the rest of the data. Looking at Palsson 1987, catch from Hood Canal looks to be about 1-3% of total catches of yelloweye. For now if we need a placeholder, I think we can safely assume that 2% of yelloweye catch is from Hood canal and it would be a fine assumption. If we're talking about South Puget Sound only, it's more like 12%. We'll use that as a placeholder until we get better data.
 
 ```{r load_rec_catch_70_09, cache=TRUE}
 # Load catch numbers
@@ -1297,9 +1299,9 @@ rec_NPS_94_02 %>%
   mutate(., high_catch_n = (`Yelloweye Rockfish` + total*ye_prop)*3) %>%
   mutate(., medium_catch_n = (`Yelloweye Rockfish` + total*ye_prop)*2) %>%
   mutate(., low_catch_n = (`Yelloweye Rockfish` + total*ye_prop)*1) %>%
-  mutate(., high_catch = high_catch_n*YE_lbs_per_individual) %>% 
-  mutate(., medium_catch = medium_catch_n*YE_lbs_per_individual) %>% 
-  mutate(., low_catch = low_catch_n*YE_lbs_per_individual) %>% 
+  mutate(., high_catch_lbs = high_catch_n*YE_lbs_per_individual) %>% 
+  mutate(., medium_catch_lbs = medium_catch_n*YE_lbs_per_individual) %>% 
+  mutate(., low_catch_lbs = low_catch_n*YE_lbs_per_individual) %>% 
   dplyr::select(-c(high_catch_n, medium_catch_n, low_catch_n, boc_prop, ye_prop)) -> ye_rec_NPS_94_02
 
 # Bocaccio: Prorate, catch scenarios, estimate weight
@@ -1308,9 +1310,9 @@ rec_NPS_94_02 %>%
   mutate(., high_catch_n = (`Bocaccio` + total*boc_prop)*3) %>%
   mutate(., medium_catch_n = (`Bocaccio` + total*boc_prop)*2) %>%
   mutate(., low_catch_n = (`Bocaccio` + total*boc_prop)*1) %>%
-  mutate(., high_catch = high_catch_n*BOC_lbs_per_individual) %>% 
-  mutate(., medium_catch = medium_catch_n*BOC_lbs_per_individual) %>% 
-  mutate(., low_catch = low_catch_n*BOC_lbs_per_individual) %>% 
+  mutate(., high_catch_lbs = high_catch_n*BOC_lbs_per_individual) %>% 
+  mutate(., medium_catch_lbs = medium_catch_n*BOC_lbs_per_individual) %>% 
+  mutate(., low_catch_lbs = low_catch_n*BOC_lbs_per_individual) %>% 
   dplyr::select(-c(high_catch_n, medium_catch_n, low_catch_n, boc_prop, ye_prop)) -> boc_rec_NPS_94_02
   
 
@@ -1329,9 +1331,9 @@ rec_SPS_94_02 %>%
   mutate(., high_catch_n = (`Yelloweye Rockfish` + total)*ye_prop*3) %>%
   mutate(., medium_catch_n = (`Yelloweye Rockfish` + total)*ye_prop*2) %>%
   mutate(., low_catch_n = (`Yelloweye Rockfish` + total)*ye_prop*1) %>%
-  mutate(., high_catch = high_catch_n*YE_lbs_per_individual) %>% 
-  mutate(., medium_catch = medium_catch_n*YE_lbs_per_individual) %>% 
-  mutate(., low_catch = low_catch_n*YE_lbs_per_individual) %>% 
+  mutate(., high_catch_lbs = high_catch_n*YE_lbs_per_individual) %>% 
+  mutate(., medium_catch_lbs = medium_catch_n*YE_lbs_per_individual) %>% 
+  mutate(., low_catch_lbs = low_catch_n*YE_lbs_per_individual) %>% 
   dplyr::select(-c(high_catch_n, medium_catch_n, low_catch_n, boc_prop, ye_prop)) -> ye_rec_SPS_94_02
 
 # Bocaccio: Prorate, catch scenarios, estimate weight
@@ -1340,11 +1342,36 @@ rec_SPS_94_02 %>%
   mutate(., high_catch_n = (`Bocaccio` + total*boc_prop)*3) %>%
   mutate(., medium_catch_n = (`Bocaccio` + total*boc_prop)*2) %>%
   mutate(., low_catch_n = (`Bocaccio` + total*boc_prop)*1) %>%
-  mutate(., high_catch = high_catch_n*BOC_lbs_per_individual) %>% 
-  mutate(., medium_catch = medium_catch_n*BOC_lbs_per_individual) %>% 
-  mutate(., low_catch = low_catch_n*BOC_lbs_per_individual) %>% 
+  mutate(., high_catch_lbs = high_catch_n*BOC_lbs_per_individual) %>% 
+  mutate(., medium_catch_lbs = medium_catch_n*BOC_lbs_per_individual) %>% 
+  mutate(., low_catch_lbs = low_catch_n*BOC_lbs_per_individual) %>% 
   dplyr::select(-c(high_catch_n, medium_catch_n, low_catch_n, boc_prop, ye_prop)) -> boc_rec_SPS_94_02
   
+```
+
+
+```{r separate_HC_join_USDPS}
+ye_rec_SPS_94_02 %>% 
+  dplyr::select(high_catch_lbs, medium_catch_lbs, low_catch_lbs) -> ye_rec_HC_94_02
+
+ye_rec_HC_94_02 <- ye_rec_HC_94_02*0.12
+ye_rec_HC_94_02$year <- seq(1994, 2002, 1)
+
+ye_rec_SPS_94_02 %>% 
+  mutate(high_catch_lbs = 0.88 * high_catch_lbs) %>% 
+  mutate(medium_catch_lbs = 0.88 * medium_catch_lbs) %>% 
+  mutate(low_catch_lbs = 0.88 * low_catch_lbs) -> ye_rec_catch_SPS_noHC_94_02
+
+ye_rec_catch_SPS_noHC_94_02 %>% 
+  bind_rows(ye_rec_NPS_94_02) %>% 
+  group_by(year) %>% 
+  summarise_all(sum) -> ye_rec_catch_USDPS_94_02
+
+# Summarise bocaccio
+boc_rec_SPS_94_02 %>% 
+  bind_rows(boc_rec_NPS_94_02) %>% 
+  group_by(year) %>% 
+  summarise_all(sum) -> boc_rec_catch_USDPS_94_02
 ```
 
 
@@ -1414,9 +1441,9 @@ rec_NPS_70_93 %>%
   mutate(., high_catch_n = (`Yelloweye Rockfish` + total*ye_prop)*1) %>%
   mutate(., medium_catch_n = (`Yelloweye Rockfish` + total*ye_prop)*1) %>%
   mutate(., low_catch_n = (`Yelloweye Rockfish` + total*ye_prop)*1) %>%
-  mutate(., high_catch = high_catch_n*YE_lbs_per_individual) %>% 
-  mutate(., medium_catch = medium_catch_n*YE_lbs_per_individual) %>% 
-  mutate(., low_catch = low_catch_n*YE_lbs_per_individual) %>% 
+  mutate(., high_catch_lbs = high_catch_n*YE_lbs_per_individual) %>% 
+  mutate(., medium_catch_lbs = medium_catch_n*YE_lbs_per_individual) %>% 
+  mutate(., low_catch_lbs = low_catch_n*YE_lbs_per_individual) %>% 
   dplyr::select(-c(high_catch_n, medium_catch_n, low_catch_n, boc_prop, ye_prop)) -> ye_rec_NPS_70_93
 
 # Bocaccio: Prorate, catch scenarios, estimate weight
@@ -1425,9 +1452,9 @@ rec_NPS_70_93 %>%
   mutate(., high_catch_n = (`Bocaccio` + total*boc_prop)*1) %>%
   mutate(., medium_catch_n = (`Bocaccio` + total*boc_prop)*1) %>%
   mutate(., low_catch_n = (`Bocaccio` + total*boc_prop)*1) %>%
-  mutate(., high_catch = high_catch_n*BOC_lbs_per_individual) %>% 
-  mutate(., medium_catch = medium_catch_n*BOC_lbs_per_individual) %>% 
-  mutate(., low_catch = low_catch_n*BOC_lbs_per_individual) %>% 
+  mutate(., high_catch_lbs = high_catch_n*BOC_lbs_per_individual) %>% 
+  mutate(., medium_catch_lbs = medium_catch_n*BOC_lbs_per_individual) %>% 
+  mutate(., low_catch_lbs = low_catch_n*BOC_lbs_per_individual) %>% 
   dplyr::select(-c(high_catch_n, medium_catch_n, low_catch_n, boc_prop, ye_prop)) -> boc_rec_NPS_70_93
   
 
@@ -1446,9 +1473,9 @@ rec_SPS_70_93 %>%
   mutate(., high_catch_n = (`Yelloweye Rockfish` + total*ye_prop)*1) %>%
   mutate(., medium_catch_n = (`Yelloweye Rockfish` + total*ye_prop)*1) %>%
   mutate(., low_catch_n = (`Yelloweye Rockfish` + total*ye_prop)*1) %>%
-  mutate(., high_catch = high_catch_n*YE_lbs_per_individual) %>% 
-  mutate(., medium_catch = medium_catch_n*YE_lbs_per_individual) %>% 
-  mutate(., low_catch = low_catch_n*YE_lbs_per_individual) %>% 
+  mutate(., high_catch_lbs = high_catch_n*YE_lbs_per_individual) %>% 
+  mutate(., medium_catch_lbs = medium_catch_n*YE_lbs_per_individual) %>% 
+  mutate(., low_catch_lbs = low_catch_n*YE_lbs_per_individual) %>% 
   dplyr::select(-c(high_catch_n, medium_catch_n, low_catch_n, boc_prop, ye_prop)) -> ye_rec_SPS_70_93
 
 # Bocaccio: Prorate, catch scenarios, estimate weight
@@ -1457,13 +1484,37 @@ rec_SPS_70_93 %>%
   mutate(., high_catch_n = (`Bocaccio` + total*boc_prop)*1) %>%
   mutate(., medium_catch_n = (`Bocaccio` + total*boc_prop)*1) %>%
   mutate(., low_catch_n = (`Bocaccio` + total*boc_prop)*1) %>%
-  mutate(., high_catch = high_catch_n*BOC_lbs_per_individual) %>% 
-  mutate(., medium_catch = medium_catch_n*BOC_lbs_per_individual) %>% 
-  mutate(., low_catch = low_catch_n*BOC_lbs_per_individual) %>% 
+  mutate(., high_catch_lbs = high_catch_n*BOC_lbs_per_individual) %>% 
+  mutate(., medium_catch_lbs = medium_catch_n*BOC_lbs_per_individual) %>% 
+  mutate(., low_catch_lbs = low_catch_n*BOC_lbs_per_individual) %>% 
   dplyr::select(-c(high_catch_n, medium_catch_n, low_catch_n, boc_prop, ye_prop)) -> boc_rec_SPS_70_93
   
 ```
 
+
+```{r separate_HC_join_USDPS}
+ye_rec_SPS_70_93 %>% 
+  dplyr::select(high_catch_lbs, medium_catch_lbs, low_catch_lbs) -> ye_rec_HC_70_93
+
+ye_rec_HC_70_93 <- ye_rec_HC_70_93*0.12
+ye_rec_HC_70_93$year <- seq(1970, 1993, 1)
+
+ye_rec_SPS_70_93 %>% 
+  mutate(high_catch_lbs = 0.88 * high_catch_lbs) %>% 
+  mutate(medium_catch_lbs = 0.88 * medium_catch_lbs) %>% 
+  mutate(low_catch_lbs = 0.88 * low_catch_lbs) -> ye_rec_catch_SPS_noHC_70_93
+
+ye_rec_catch_SPS_noHC_70_93 %>% 
+  bind_rows(ye_rec_NPS_70_93) %>% 
+  group_by(year) %>% 
+  summarise_all(sum) -> ye_rec_catch_USDPS_70_93
+
+# Summarise bocaccio
+boc_rec_SPS_70_93 %>% 
+  bind_rows(boc_rec_NPS_70_93) %>% 
+  group_by(year) %>% 
+  summarise_all(sum) -> boc_rec_catch_USDPS_70_93
+```
 
 ## Pre-1970
 
@@ -1490,6 +1541,7 @@ Buckley (1967) - 1965 recreational bottomfish fishery:
 - "1965 was the first year State-wide bottomfish harvests were calculated"
 - "Bottomfish data were usually taken for species, but if this was not possible (perhaps due to insufficient time for positive identification) those fish in question were recorded on the family level."
   - This explains why sometimes rockfish are identified to the species level and sometimes only as "unclassified rockfish".
+  - If we assume that identification was done randomly (no bias towards not identifying certain species), then we can use the comps for the identified species to identify the unidentified species
 
 
 Buckley and Sattherwhaite (1970) - 1967 recreational bottomfish fishery:
@@ -1528,9 +1580,11 @@ From page 27 of the 1948 annual bulletin (this is about the recreational salmon 
 - Increased recreational effort, and these statistics are an underestimate (these surveys only of boathouses).
 
 Page 43 of the 1949 report: 
-"Surveys of the number fishermen using Puget Sound have been made by the department since 1938 but never such scale 1949 when evaluation of private fishing parties was attempted along with the usual boathouse count . It is calculated that a minimum of 684,814 fisherman trips occurred, compared with the previous high of 343,000 in 1947. There are about 150 boathouses renting 4,000 small fishing craft on the Sound . Another 2,000 private boats are moored at the boathouses exclusive of public moorage facilities. A total of 15,000 outboard motorboats is registered with the coast guard . Boat counts in the sports fishing areas showed an average of about 30 private craft for every 100 rented boats during the busiest part of the 1949 season . The average in the winter months, from November through February, was about 7 for every 100. In arriving at the total number of fishermen , boathouse catches were increased in these proportions to allow for fish landed by private boats . During the winter , as many as 100 fishermen a day fished from Seattle docks . Their take of salmon , often as great as that of the boat fishermen , also is included in the sports total."
+"Surveys of the number fishermen using **Puget Sound** have been made by the department since 1938 but never such scale 1949 when evaluation of private fishing parties was attempted along with the usual boathouse count . It is calculated that a minimum of 684,814 fisherman trips occurred, compared with the previous high of 343,000 in 1947. There are about 150 boathouses renting 4,000 small fishing craft on the Sound . Another 2,000 private boats are moored at the boathouses exclusive of public moorage facilities. A total of 15,000 outboard motorboats is registered with the coast guard . Boat counts in the sports fishing areas showed an average of about 30 private craft for every 100 rented boats during the busiest part of the 1949 season . The average in the winter months, from November through February, was about 7 for every 100. In arriving at the total number of fishermen , boathouse catches were increased in these proportions to allow for fish landed by private boats . During the winter , as many as 100 fishermen a day fished from Seattle docks . Their take of salmon , often as great as that of the boat fishermen , also is included in the sports total."
 - They stopped monitoring the bottomfish fishery it seems, but there are at least records of fisherman trips/fishermen days.
 - I think a reasonable estimate would be a ramp up from the original estimates in 1938 through when we have data starting in 1965? Not sure what sort of ramp though.
+  - Constant ramp of +25,000 fishermen days/year would get reasonably close to 1965 values
+  - Annual growth rate of 4-5% also is fairly good
 
 Page 66 of the 1962 report (of the recreational salmon fishery):
 For all of Washington: "The estimated number of angler trips was a new record jumping to 1,130,800, an increase of nearly 100,000 over the previous high set in 1961."
@@ -1543,9 +1597,15 @@ Page 16-D of the 1965 report:
 - This same information is in the Buckley (1967) report on the 1965 bottomfish sport fishery.
 
 Page 16-A of the 1965 report has angler trips by area
+- "The 1,278,000 angler trips expended... were only below the 1,432,000 trips recorded for 1963".
 - 1,278,000 total in Washington
 - 125,000 in Ilwaco, 170,000 in Westport, 22,000 in LaPush, 46,000 in Neah Bay (I believe these are the coastal marine waters), then 98,000 in Sekiu-Pillar Point.
 
+**Information on Boathouses**
+https://cwbblog.wordpress.com/2012/12/18/new-exhibit-fish-on-opening-at-the-center-for-wooden-boats-december-29th-explores-the-history-of-boathouses-and-fishing-resorts-of-puget-sound/
+https://www.cwb.org/fish-on
+
+Maybe 15% of boathouses in 1957 were in Hood Canal, 15% North of Admiralty Inlet, and the other 70% in "South Puget Sound" (south of Admiralty)
 
 ### Bargmann (1968-1969)
 Sheets are numbered according to the table numbers in the document.
@@ -1798,6 +1858,9 @@ JDF_inc  %>%
 buck65_data %>% 
   dplyr::rename(catch_individuals = Totals) -> buck65_data
 
+# Save data for species comps
+buck65_data_2 <- buck65_data
+
 unique(buck65_data$Species)
 # Remove the irrelevant species
 buck65_data %>% 
@@ -1811,52 +1874,6 @@ buck65_data %>%
                         ifelse(area == 12, "Hood Canal",  "North Puget Sound"))) -> buck65_data
 ```
 
-
-```{r summarise_data}
-# Summarise across regions
-buck65_data %>% 
-  group_by(Species, PS) %>% 
-  summarise(total_catch = sum(catch_individuals)) -> buck65_annual_sums
-
-# Prorate catch according to 1965-1967 comp data
-# Add the catch composition data
-# Note: is it better to use these estimates, or use the same year and use only the species-level identifications to prorate catch of the unclassified rockfish group?
-
-# Here we are using the South Puget Sound comps for the Hood Canal catches
-buck65_annual_sums %>% 
-  mutate(boc_prop = ifelse(PS == "North Puget Sound", subset(rec_mean_spp_comp_NPS, Species == "Bocaccio")$`1965-1967a`/100, subset(rec_mean_spp_comp_SPS, Species == "Bocaccio")$`1965-1967a`/100)) %>% 
-  mutate(ye_prop = ifelse(PS == "North Puget Sound", subset(rec_mean_spp_comp_NPS, Species == "Yelloweye")$`1965-1967a`/100, subset(rec_mean_spp_comp_SPS, Species == "Yelloweye")$`1965-1967a`/100)) -> buck65_annual_sums
-
-# U.S. DPS minus Hood canal
-buck65_annual_sums %>% 
-  subset(Species %in% c("Rockfishes", "Yelloweye rockfish")) %>% 
-  mutate(., catch = ifelse(Species == "Yelloweye rockfish", total_catch, ye_prop*total_catch)) %>% 
-  subset(PS != "Hood Canal") %>% 
-  ungroup() %>% 
-  summarise(catch = sum(catch)) %>% 
-  mutate(year = 1965) %>% 
-  mutate(catch_lbs = catch*YE_lbs_per_individual) -> ye_catch_buck65_USDPS
-
-# Hood Canal
-buck65_annual_sums %>% 
-  subset(Species %in% c("Rockfishes", "Yelloweye rockfish")) %>% 
-  mutate(., catch = ifelse(Species == "Yelloweye rockfish", total_catch, ye_prop*total_catch)) %>% 
-  subset(PS == "Hood Canal") %>% 
-  ungroup() %>% 
-  summarise(catch = sum(catch)) %>% 
-  mutate(year = 1965) %>% 
-  mutate(catch_lbs = catch*YE_lbs_per_individual) -> ye_catch_buck65_HC
-
-# Prorate and summarise for bocaccio
-buck65_annual_sums %>% 
-  subset(Species %in% c("Rockfishes", "Bocaccio")) %>% 
-  mutate(., catch = ifelse(Species == "Bocaccio", total_catch, boc_prop*total_catch)) %>% 
-  ungroup() %>% 
-  summarise(catch = sum(catch)) %>% 
-  mutate(year = 1965) %>% 
-  mutate(catch_lbs = catch*BOC_lbs_per_individual) -> boc_catch_buck65
-  
-```
 Note: Yelloweye catchces from this time period are crazy high, mostly owing to a super high incidental take in area 11 (South Puget Sound) - 3450 individuals, with 2,429 in the month of June.
 
 
@@ -1942,6 +1959,9 @@ JDF_inc  %>%
 buck66_data %>% 
   dplyr::rename(catch_individuals = Totals) -> buck66_data
 
+# Save data for species comps
+buck66_data_2 <- buck66_data
+
 unique(buck66_data$Species)
 # Remove the irrelevant species
 buck66_data %>% 
@@ -1954,54 +1974,6 @@ buck66_data %>%
   mutate(., PS = ifelse(area %in% c(8,9,10,11), "South Puget Sound", 
                         ifelse(area == 12, "Hood Canal",  "North Puget Sound"))) -> buck66_data
 ```
-
-
-```{r summarise_data}
-# Summarise across regions
-buck66_data %>% 
-  group_by(Species, PS) %>% 
-  summarise(total_catch = sum(catch_individuals)) -> buck66_annual_sums
-
-# Prorate catch according to 1965-1967 comp data
-# Add the catch composition data
-# Note: is it better to use these estimates, or use the same year and use only the species-level identifications to prorate catch of the unclassified rockfish group?
-
-# Here we are using the South Puget Sound comps for the Hood Canal catches
-buck66_annual_sums %>% 
-  mutate(boc_prop = ifelse(PS == "North Puget Sound", subset(rec_mean_spp_comp_NPS, Species == "Bocaccio")$`1965-1967a`/100, subset(rec_mean_spp_comp_SPS, Species == "Bocaccio")$`1965-1967a`/100)) %>% 
-  mutate(ye_prop = ifelse(PS == "North Puget Sound", subset(rec_mean_spp_comp_NPS, Species == "Yelloweye")$`1965-1967a`/100, subset(rec_mean_spp_comp_SPS, Species == "Yelloweye")$`1965-1967a`/100)) -> buck66_annual_sums
-
-# U.S. DPS minus Hood canal
-buck66_annual_sums %>% 
-  subset(Species %in% c("Rockfishes", "Yelloweye rockfish")) %>% 
-  mutate(., catch = ifelse(Species == "Yelloweye rockfish", total_catch, ye_prop*total_catch)) %>% 
-  subset(PS != "Hood Canal") %>% 
-  ungroup() %>% 
-  summarise(catch = sum(catch)) %>% 
-  mutate(year = 1966) %>% 
-  mutate(catch_lbs = catch*YE_lbs_per_individual) -> ye_catch_buck66_USDPS
-
-# Hood Canal
-buck66_annual_sums %>% 
-  subset(Species %in% c("Rockfishes", "Yelloweye rockfish")) %>% 
-  mutate(., catch = ifelse(Species == "Yelloweye rockfish", total_catch, ye_prop*total_catch)) %>% 
-  subset(PS == "Hood Canal") %>% 
-  ungroup() %>% 
-  summarise(catch = sum(catch)) %>% 
-  mutate(year = 1966) %>% 
-  mutate(catch_lbs = catch*YE_lbs_per_individual) -> ye_catch_buck66_HC
-
-# Prorate and summarise for bocaccio
-buck66_annual_sums %>% 
-  subset(Species %in% c("Rockfishes", "Bocaccio")) %>% 
-  mutate(., catch = ifelse(Species == "Bocaccio", total_catch, boc_prop*total_catch)) %>% 
-  ungroup() %>% 
-  summarise(catch = sum(catch)) %>% 
-  mutate(year = 1966) %>% 
-  mutate(catch_lbs = catch*BOC_lbs_per_individual) -> boc_catch_buck66
-  
-```
-
 
 ```{r load_buckley_1967_data}
 buck67_path <- here("catch_reconstruction_data", "recreational", "pre_1970", "buckley 1967 tables.xls")
@@ -2099,6 +2071,9 @@ JDF_inc  %>%
 buck67_data %>% 
   dplyr::rename(catch_individuals = Totals) -> buck67_data
 
+# Save data for species comps
+buck67_data_2 <- buck67_data
+
 unique(buck67_data$Species)
 # Remove the irrelevant species
 buck67_data %>% 
@@ -2112,107 +2087,691 @@ buck67_data %>%
                         ifelse(area == 12, "Hood Canal",  "North Puget Sound"))) -> buck67_data
 ```
 
+#### Recalculate Buckley compositions
+Here we will recalculate the Buckley species compositions so that we can get comps on a finer scale than "North Puget Sound" and "South Puget Sound".
 
-```{r summarise_data}
-# Summarise across regions
-buck67_data %>% 
-  group_by(Species, PS) %>% 
-  summarise(total_catch = sum(catch_individuals)) -> buck67_annual_sums
+South Puget Sound = areas 8, 9, 10, 11, 12
+Hood Canal = area 12
+North Puget Sound = areas 5, 6, 7
+```{r buckley_comps}
+unique(buck65_data_2$Species)
+buck65_data_2 %>% 
+  mutate(year = 1965) %>% 
+  # Remove the non-informative "Species"
+  subset(., !(Species %in% c("Rockfishes", "Total Catch", "% Total",   "Total angler\ntrips",   "Catch per\nangler trip"))) -> buck65_data_2
 
-# Prorate catch according to 1965-1967 comp data
-# Add the catch composition data
-# Note: is it better to use these estimates, or use the same year and use only the species-level identifications to prorate catch of the unclassified rockfish group?
 
-# Here we are using the South Puget Sound comps for the Hood Canal catches
-buck67_annual_sums %>% 
-  mutate(boc_prop = ifelse(PS == "North Puget Sound", subset(rec_mean_spp_comp_NPS, Species == "Bocaccio")$`1965-1967a`/100, subset(rec_mean_spp_comp_SPS, Species == "Bocaccio")$`1965-1967a`/100)) %>% 
-  mutate(ye_prop = ifelse(PS == "North Puget Sound", subset(rec_mean_spp_comp_NPS, Species == "Yelloweye")$`1965-1967a`/100, subset(rec_mean_spp_comp_SPS, Species == "Yelloweye")$`1965-1967a`/100)) -> buck67_annual_sums
+unique(buck66_data_2$Species)
+buck66_data_2 %>% 
+  mutate(year = 1966) %>% 
+  # Remove the non-informative "Species"
+  subset(., !(Species %in% c("Rockfishes", "Total Catch", "Percent of Total",   "Total angler trips",   "Catch per angler trip"))) -> buck66_data_2
 
-# U.S. DPS minus Hood canal
-buck67_annual_sums %>% 
-  subset(Species %in% c("Rockfishes", "Yelloweye rockfish")) %>% 
-  mutate(., catch = ifelse(Species == "Yelloweye rockfish", total_catch, ye_prop*total_catch)) %>% 
-  subset(PS != "Hood Canal") %>% 
-  ungroup() %>% 
-  summarise(catch = sum(catch)) %>% 
+unique(buck67_data_2$Species)
+buck67_data_2 %>% 
   mutate(year = 1967) %>% 
-  mutate(catch_lbs = catch*YE_lbs_per_individual) -> ye_catch_buck67_USDPS
+  # Remove the non-informative "Species"
+  subset(., !(Species %in% c("Rockfishes", "Total Catch", "% of Total",   "Angler trips",   "Catch per\n angler trip"))) -> buck67_data_2
 
-# Hood Canal
-buck67_annual_sums %>% 
-  subset(Species %in% c("Rockfishes", "Yelloweye rockfish")) %>% 
-  mutate(., catch = ifelse(Species == "Yelloweye rockfish", total_catch, ye_prop*total_catch)) %>% 
-  subset(PS == "Hood Canal") %>% 
-  ungroup() %>% 
-  summarise(catch = sum(catch)) %>% 
-  mutate(year = 1967) %>% 
-  mutate(catch_lbs = catch*YE_lbs_per_individual) -> ye_catch_buck67_HC
+# Let's try to reproduce Wayne's comp estimates
 
-# Prorate and summarise for bocaccio
-buck67_annual_sums %>% 
-  subset(Species %in% c("Rockfishes", "Bocaccio")) %>% 
-  mutate(., catch = ifelse(Species == "Bocaccio", total_catch, boc_prop*total_catch)) %>% 
+# South Puget Sound
+buck65_data_2 %>% 
+  bind_rows(., buck66_data_2) %>% 
+  bind_rows(., buck67_data_2) %>% 
+  # Change "Rasphead" to "Yelloweye rockfish"
+  mutate(Species = ifelse(Species == "Rasphead rockfish", "Yelloweye rockfish", Species)) %>% 
+  # Change "Yellowtail rockfishes" to "Yellowtail rockfish"
+  mutate(Species = ifelse(Species == "Yellowtail rockfishes", "Yellowtail rockfish", Species)) %>% 
+  # Change "Brown Rockfish" to "Brown rockfish"
+  mutate(Species = ifelse(Species == "Brown Rockfish", "Brown rockfish", Species)) %>% 
+  subset(area %in% c(8, 9, 10, 11, 12)) %>% 
+  # Sum across regions and years
+  group_by(Species) %>% 
+  summarise(total = sum(catch_individuals)) %>% 
+  # Calculate proportions
   ungroup() %>% 
-  summarise(catch = sum(catch)) %>% 
-  mutate(year = 1967) %>% 
-  mutate(catch_lbs = catch*BOC_lbs_per_individual) -> boc_catch_buck67
+  mutate(prop = total/sum(.$total))-> buck65_67_SPS
+
+# Very similar but not identical to Wayne's calculations...
+
+
+# Calculate proportions for each area separately
+buck65_data_2 %>% 
+  bind_rows(., buck66_data_2) %>% 
+  bind_rows(., buck67_data_2) %>% 
+  # Change "Rasphead" to "Yelloweye rockfish"
+  mutate(Species = ifelse(Species == "Rasphead rockfish", "Yelloweye rockfish", Species)) %>% 
+  # Change "Yellowtail rockfishes" to "Yellowtail rockfish"
+  mutate(Species = ifelse(Species == "Yellowtail rockfishes", "Yellowtail rockfish", Species)) %>% 
+  # Change "Brown Rockfish" to "Brown rockfish"
+  mutate(Species = ifelse(Species == "Brown Rockfish", "Brown rockfish", Species)) %>% 
+  group_by(Species,area) %>% 
+  summarise(total = sum(catch_individuals)) %>% 
+  group_by(area) %>% 
+  mutate(prop = total/sum(total)) -> buck65_67_comps_by_area
+
+# Sanity check
+# buck65_67_comps_by_area %>% 
+#   group_by(area) %>% 
+#   summarise(sum(prop))
+
+# Calculate just bocaccio and yelloweye proportions by area
+buck65_67_comps_by_area %>% 
+  subset(Species %in% c("Bocaccio", "Yelloweye rockfish")) %>% 
+  mutate(ye_prop = ifelse(Species == "Yelloweye rockfish", prop, NA)) %>% 
+  mutate(boc_prop = ifelse(Species == "Bocaccio", prop, NA)) %>% 
+  dplyr::select(area, ye_prop, boc_prop) %>% 
+  group_by(area) %>% 
+  summarise_all(sum, na.rm = TRUE) %>% 
+  # Add zeros for years where there was no catch using tidyverse::complete
+  complete(., area = seq(6,12,1), fill = list(ye_prop = 0, boc_prop = 0)) -> buck65_67_ESA_comps_by_area
+
+# Calculate bocaccio and yelloweye proportions by area, separately for each year
+buck65_data_2 %>% 
+  bind_rows(., buck66_data_2) %>% 
+  bind_rows(., buck67_data_2) %>% 
+  # Change "Rasphead" to "Yelloweye rockfish"
+  mutate(Species = ifelse(Species == "Rasphead rockfish", "Yelloweye rockfish", Species)) %>% 
+  # Change "Yellowtail rockfishes" to "Yellowtail rockfish"
+  mutate(Species = ifelse(Species == "Yellowtail rockfishes", "Yellowtail rockfish", Species)) %>% 
+  # Change "Brown Rockfish" to "Brown rockfish"
+  mutate(Species = ifelse(Species == "Brown Rockfish", "Brown rockfish", Species)) %>% 
+  group_by(year, Species,area) %>% 
+  summarise(total = sum(catch_individuals)) %>% 
+  group_by(area, year) %>% 
+  mutate(prop = total/sum(total)) %>%
+  subset(Species %in% c("Bocaccio", "Yelloweye rockfish")) %>% 
+  mutate(ye_prop = ifelse(Species == "Yelloweye rockfish", prop, NA)) %>% 
+  mutate(boc_prop = ifelse(Species == "Bocaccio", prop, NA)) %>% 
+  dplyr::select(year, area, ye_prop, boc_prop) %>% 
+  group_by(year, area) %>% 
+  summarise_all(sum, na.rm = TRUE) %>% 
+  # Add zeros for years where there was no catch using tidyverse::complete
+  complete(., area = seq(6,12,1), fill = list(ye_prop = 0, boc_prop = 0)) -> buck65_67_ESA_comps_by_area_year
+
+# Find minimum and maximum proportions for each year and area
+buck65_67_ESA_comps_by_area_year %>% 
+  group_by(area) %>% 
+  summarise(max_ye_prop = max(ye_prop), min_ye_prop = min(ye_prop)) -> buck_ye_prop_ranges
+
+buck65_67_ESA_comps_by_area_year %>% 
+  group_by(area) %>% 
+  summarise(max_boc_prop = max(boc_prop), min_boc_prop = min(boc_prop)) -> buck_boc_prop_ranges
+
 
 ```
 
 
+#### Prorate catches, summarise
+
+```{r summarise_buck65_data}
+# Summarise across regions
+buck65_data %>% 
+  group_by(Species, area) %>% 
+  summarise(total_catch = sum(catch_individuals)) -> buck65_annual_sums
+
+# Prorate catch according to 1965-1967 comp data
+# Add the catch composition data and prorate
+buck65_annual_sums %>% 
+  ungroup() %>% 
+  left_join(., buck65_67_ESA_comps_by_area, by = "area") %>% 
+  subset(Species == "Rockfishes") %>% 
+  mutate(ye_est_catch = ye_prop*total_catch) %>% 
+  mutate(boc_est_catch = boc_prop*total_catch) %>% 
+  dplyr::select(area, ye_est_catch, boc_est_catch) -> buck65_prorated_catches
+
+buck65_annual_sums %>% 
+  ungroup() %>% 
+  mutate(boc_catch = ifelse(Species == "Bocaccio", total_catch, 0)) %>% 
+  mutate(ye_catch = ifelse(Species == "Yelloweye rockfish", total_catch, 0)) %>% 
+  dplyr::select(area, boc_catch, ye_catch) %>% 
+  group_by(area) %>% 
+  summarise_all(sum) %>% 
+  # subset(Species %in% c("Bocaccio", "Yelloweye rockfish")) %>% 
+  left_join(., buck65_prorated_catches, by = "area") %>% 
+  group_by(area) %>% 
+  mutate(ye_catch_total = sum(ye_catch, ye_est_catch)) %>% 
+  mutate(boc_catch_total = sum(boc_catch, boc_est_catch)) -> buck65_ESA_sums
+
+# Yelloweye: US DPS (no Hood Canal)
+buck65_ESA_sums %>% 
+  subset(area != 12) %>% 
+  ungroup() %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(year = 1965) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) -> ye_catch_buck65_USDPS
+
+# Yelloweye: Subset Hood Canal
+buck65_ESA_sums %>% 
+  subset(area == 12) %>% 
+  ungroup() %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(year = 1965) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) -> ye_catch_buck65_HC
+
+# Bocaccio: US DPS (all areas)
+buck65_ESA_sums %>% 
+  ungroup() %>% 
+  summarise(catch_n = sum(boc_catch_total)) %>% 
+  mutate(year = 1965) %>% 
+  mutate(catch_lbs = catch_n*BOC_lbs_per_individual) -> boc_catch_buck65_USDPS
+```
+
+
+
+```{r summarise_buck66_data}
+# Summarise across regions
+buck66_data %>% 
+  group_by(Species, area) %>% 
+  summarise(total_catch = sum(catch_individuals)) -> buck66_annual_sums
+
+# Prorate catch according to 1966-1967 comp data
+# Add the catch composition data and prorate
+buck66_annual_sums %>% 
+  ungroup() %>% 
+  left_join(., buck65_67_ESA_comps_by_area, by = "area") %>% 
+  subset(Species == "Rockfishes") %>% 
+  mutate(ye_est_catch = ye_prop*total_catch) %>% 
+  mutate(boc_est_catch = boc_prop*total_catch) %>% 
+  dplyr::select(area, ye_est_catch, boc_est_catch) -> buck66_prorated_catches
+
+buck66_annual_sums %>% 
+  ungroup() %>% 
+  mutate(boc_catch = ifelse(Species == "Bocaccio", total_catch, 0)) %>% 
+  mutate(ye_catch = ifelse(Species == "Yelloweye rockfish", total_catch, 0)) %>% 
+  dplyr::select(area, boc_catch, ye_catch) %>% 
+  group_by(area) %>% 
+  summarise_all(sum) %>% 
+  # subset(Species %in% c("Bocaccio", "Yelloweye rockfish")) %>% 
+  left_join(., buck66_prorated_catches, by = "area") %>% 
+  group_by(area) %>% 
+  mutate(ye_catch_total = sum(ye_catch, ye_est_catch)) %>% 
+  mutate(boc_catch_total = sum(boc_catch, boc_est_catch)) -> buck66_ESA_sums
+
+# Yelloweye: US DPS (no Hood Canal)
+buck66_ESA_sums %>% 
+  subset(area != 12) %>% 
+  ungroup() %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(year = 1966) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) -> ye_catch_buck66_USDPS
+
+# Yelloweye: Subset Hood Canal
+buck66_ESA_sums %>% 
+  subset(area == 12) %>% 
+  ungroup() %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(year = 1966) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) -> ye_catch_buck66_HC
+
+# Bocaccio: US DPS (all areas)
+buck66_ESA_sums %>% 
+  ungroup() %>% 
+  summarise(catch_n = sum(boc_catch_total)) %>% 
+  mutate(year = 1966) %>% 
+  mutate(catch_lbs = catch_n*BOC_lbs_per_individual) -> boc_catch_buck66_USDPS
+```
+
+
+```{r summarise_buck67_data}
+# Summarise across regions
+buck67_data %>% 
+  group_by(Species, area) %>% 
+  summarise(total_catch = sum(catch_individuals)) -> buck67_annual_sums
+
+# Prorate catch according to 1967-1967 comp data
+# Add the catch composition data and prorate
+buck67_annual_sums %>% 
+  ungroup() %>% 
+  left_join(., buck65_67_ESA_comps_by_area, by = "area") %>% 
+  subset(Species == "Rockfishes") %>% 
+  mutate(ye_est_catch = ye_prop*total_catch) %>% 
+  mutate(boc_est_catch = boc_prop*total_catch) %>% 
+  dplyr::select(area, ye_est_catch, boc_est_catch) -> buck67_prorated_catches
+
+buck67_annual_sums %>% 
+  ungroup() %>% 
+  mutate(boc_catch = ifelse(Species == "Bocaccio", total_catch, 0)) %>% 
+  mutate(ye_catch = ifelse(Species == "Yelloweye rockfish", total_catch, 0)) %>% 
+  dplyr::select(area, boc_catch, ye_catch) %>% 
+  group_by(area) %>% 
+  summarise_all(sum) %>% 
+  # subset(Species %in% c("Bocaccio", "Yelloweye rockfish")) %>% 
+  left_join(., buck67_prorated_catches, by = "area") %>% 
+  group_by(area) %>% 
+  mutate(ye_catch_total = sum(ye_catch, ye_est_catch)) %>% 
+  mutate(boc_catch_total = sum(boc_catch, boc_est_catch)) -> buck67_ESA_sums
+
+# Yelloweye: US DPS (no Hood Canal)
+buck67_ESA_sums %>% 
+  subset(area != 12) %>% 
+  ungroup() %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(year = 1967) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) -> ye_catch_buck67_USDPS
+
+# Yelloweye: Subset Hood Canal
+buck67_ESA_sums %>% 
+  subset(area == 12) %>% 
+  ungroup() %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(year = 1967) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) -> ye_catch_buck67_HC
+
+# Bocaccio: US DPS (all areas)
+buck67_ESA_sums %>% 
+  ungroup() %>% 
+  summarise(catch_n = sum(boc_catch_total)) %>% 
+  mutate(year = 1967) %>% 
+  mutate(catch_lbs = catch_n*BOC_lbs_per_individual) -> boc_catch_buck67_USDPS
+```
+
+
 ### 1965-1969: Combine Buckley and Bargmann
+
+#### Yelloweye and bocaccio catch scenarios
+Single estimate for both species for this time period
+
 ```{r combine_buckley_bargmann}
 ye_catch_bargmann_HC %>% 
+  dplyr::rename(catch_n = catch) %>% 
   mutate(year = as.numeric(year)) %>% 
   bind_rows(., ye_catch_buck67_HC) %>% 
   bind_rows(., ye_catch_buck66_HC) %>% 
-  bind_rows(., ye_catch_buck65_HC) -> ye_catch_65_69_HC
+  bind_rows(., ye_catch_buck65_HC) %>% 
+  # Single catch scenario
+  mutate(high_catch_lbs = catch_lbs, medium_catch_lbs = catch_lbs, low_catch_lbs = catch_lbs) -> ye_rec_catch_65_69_HC
 
 ye_catch_bargmann_USDPS %>% 
+  dplyr::rename(catch_n = catch) %>% 
   mutate(year = as.numeric(year)) %>% 
   bind_rows(., ye_catch_buck67_USDPS) %>% 
   bind_rows(., ye_catch_buck66_USDPS) %>% 
-  bind_rows(., ye_catch_buck65_USDPS) -> ye_catch_65_69_USDPS
+  bind_rows(., ye_catch_buck65_USDPS) %>% 
+  # Single catch scenario
+  mutate(high_catch_lbs = catch_lbs, medium_catch_lbs = catch_lbs, low_catch_lbs = catch_lbs)-> ye_rec_catch_65_69_USDPS
 
 boc_catch_bargmann %>% 
+  dplyr::rename(catch_n = catch) %>% 
   mutate(year = as.numeric(year)) %>% 
-  bind_rows(., boc_catch_buck67) %>% 
-  bind_rows(., boc_catch_buck66) %>% 
-  bind_rows(., boc_catch_buck65) -> boc_catch_65_69
+  bind_rows(., boc_catch_buck67_USDPS) %>% 
+  bind_rows(., boc_catch_buck66_USDPS) %>% 
+  bind_rows(., boc_catch_buck65_USDPS) %>% 
+  # Single catch scenario
+  mutate(high_catch_lbs = catch_lbs, medium_catch_lbs = catch_lbs, low_catch_lbs = catch_lbs)-> boc_rec_catch_65_69
 
 
 ```
 
 ### 1938-1942 WDFW Annual Bulletins
 
-```{r 1938_1941_rec_data}
-WDFW_38_41_path <- here("catch_reconstruction_data", "recreational", "pre_1970", "1938_1941_sportcatch.xlsx")
 
-read_excel(WDFW_38_41_path, sheet = "1938") %>% 
+#### Yelloweye catch scenarios
+Main questions here are 1) how to deal with prorating rockfish category if there is also a "red snapper" category and 2) what species proportions to use
+1. High catch scenario: In years where "red snapper" is listed, 2% of the other rockfish catch is red snapper. In years where no red snapper is listed (1938 and 1939), 4% of the rockfish catch is red snapper.
+2. Medium catch scenario: In years where "red snapper" is listed, 1% of the other rockfish catch is red snapper. In years where no red snapper is listed (1938 and 1939), 2% of the rockfish catch is red snapper.
+3. Low catch scenario: In years where "red snapper" is listed, it is the only yelloweye catch. In years where no red snapper is listed (1938 and 1939), prorate catch based on mean proportion of total rockfishes that are "red snapper" from the years 1940-42.
+
+#### Bocaccio catch scenarios
+Question for bocaccio is how to prorate the general rockfishes category
+1. High catch scenario: 2% of the rockfish catch is bocaccio
+2. Medium catch scenario: 1% of the rockfish catch is bocaccio
+3. Low catch scenario: No bocaccio were caught (0%)
+
+```{r 1938_1941_rec_data}
+WDFW_38_42_path <- here("catch_reconstruction_data", "recreational", "pre_1970", "1938_1942_sportcatch.xlsx")
+
+read_excel(WDFW_38_42_path, sheet = "1938") %>% 
   mutate(year = 1938) %>% 
   mutate(red_snapper = as.numeric(red_snapper)) -> rec_38
-read_excel(WDFW_38_41_path, sheet = "1939") %>% 
+read_excel(WDFW_38_42_path, sheet = "1939") %>% 
   mutate(year = 1939) %>% 
   mutate(red_snapper = as.numeric(red_snapper)) -> rec_39
-read_excel(WDFW_38_41_path, sheet = "1940") %>% 
+read_excel(WDFW_38_42_path, sheet = "1940") %>% 
   mutate(year = 1940) -> rec_40
-read_excel(WDFW_38_41_path, sheet = "1941") %>% 
+read_excel(WDFW_38_42_path, sheet = "1941") %>% 
   mutate(year = 1941) -> rec_41
+read_excel(WDFW_38_42_path, sheet = "1942") %>% 
+  mutate(year = 1942) %>% 
+  mutate(total_boathouses = as.numeric(total_boathouses))-> rec_42
 
 rec_38 %>% 
   bind_rows(., rec_39) %>%
   bind_rows(., rec_40) %>% 
-  bind_rows(., rec_41) -> rec_38_41
+  bind_rows(., rec_41) %>% 
+  bind_rows(., rec_42) -> rec_38_42
 
 
 
 # Plot mean catches by month
-ggplot(rec_38_41, aes(x = factor(month, levels = c("February", "March", "April", "May", "June", "July", "August", "September", "October", "November")), y = rock_cod/no_boathouses, color = factor(year)))+
+ggplot(rec_38_42, aes(x = factor(month, levels = c("February", "March", "April", "May", "June", "July", "August", "September", "October", "November")), y = rock_cod/no_boathouses, color = factor(year)))+
+  geom_point()
+
+# Plot CPUE by month
+ggplot(rec_38_42, aes(x = factor(month, levels = c("February", "March", "April", "May", "June", "July", "August", "September", "October", "November")), y = rock_cod/fisherman_days, color = factor(year)))+
+  geom_point()
+
+# Plot fisherman days per boathouse by month (indication of the busiest seasons)
+ggplot(rec_38_42, aes(x = factor(month, levels = c("February", "March", "April", "May", "June", "July", "August", "September", "October", "November")), y = fisherman_days/no_boathouses, color = factor(year)))+
   geom_point()
 
 # Peak catches are in the summer, so I don't think that the fact that we're missing December-March is a big deal.
 ```
 
+```{r estimate_total_catch_effort}
+# Add total_boathouses = 130 for 1942; given that total boathouses was 101 in 1939, 130 in 1940, 128 in 1941, and then there were "about 150" in 1949 indicates slow growth
+rec_38_42 %>% 
+  mutate(total_boathouses = ifelse(year == 1942, 130, total_boathouses)) -> rec_38_42
+
+# For each month, calculate fisherman_days per boathouse, then use this to estimate total fisherman_days across all boathouses.
+rec_38_42 %>% 
+  mutate(days_per_boathouse = fisherman_days/no_boathouses) %>% 
+  mutate(est_days = days_per_boathouse * total_boathouses) -> rec_38_42
+```
+
+How to estimate private boat (non-boathouse) effort? The best indication we have is from the 1949 annual report (which is the first time that they tried to estimate private effort in the recreational (salmon) fishery):
+
+"Boat counts in the sports fishing areas showed an average of about 30 private craft for every 100 rented boats during the busiest part of the 1949 season . The average in the winter months, from November through February, was about 7 for every 100."
+
+Based on a plot of fisherman days per boathouse by month, the peak month is August. So to get from 7 in February to 30 in August, the growth rate is 1.2744. To get from 30 in August to 7 in November, the growth rate is 0.6156.
+
+```{r est_private_effort}
+# Calculate multipliers of boathouse fisherman days
+private_boats <- data.frame(month = c("February", "March", "April", "May", "June", "July", "August", "September", "October", "November"), multiplier = rep(0, 10))
+# Add value February
+# private_boats[private_boats$month %in% c("February", "November"),]$multiplier <- 7
+private_boats[private_boats$month == "February",]$multiplier <- 7
+
+for (i in 2:7){
+  private_boats$multiplier[i] <- private_boats$multiplier[i-1]*1.2744
+}
+for (i in 8:10){
+  private_boats$multiplier[i] <- private_boats$multiplier[i-1]*0.6156
+}
+
+private_boats %>% 
+  mutate(multiplier = 1+multiplier/100) -> private_boats
+
+# Add private boat effort estimates to estimates of fisherman days
+rec_38_42 %>% 
+  left_join(., private_boats, by = "month") %>% 
+  mutate(est_days = est_days*multiplier) -> rec_38_42
+  
+  
+# Estimate total rock_cod and red_snapper by multiplying catch by est_days/fisherman_days
+rec_38_42 %>% 
+  mutate(., est_RF = rock_cod * est_days/fisherman_days) %>% 
+  mutate(., est_RS = red_snapper * est_days/fisherman_days) -> rec_38_42
+
+# Calculate rock cod CPUE by fisherman day
+rec_38_42 %>% 
+  group_by(year) %>% 
+  dplyr::select(fisherman_days, rock_cod, year) %>% 
+  summarise_all(sum) %>% 
+  mutate(CPUE = rock_cod/fisherman_days) -> rec_38_42_CPUE
+
+mean_CPUE_38_42 <- mean(rec_38_42_CPUE$CPUE)
+
+# Calculate annual sums
+rec_38_42 %>% 
+  group_by(year) %>% 
+  dplyr::select(est_RF, est_RS, est_days) %>% 
+  summarise_all(sum) -> rec_38_42_annual_sums
+
+# Prorate, generate catch scenarios
+
+# Determine red snapper as proportion of total catch comp
+subset(rec_38_42_annual_sums, !is.na(est_RS)) %>% 
+  mutate(total_RF = est_RF + est_RS) -> RF_RS_38_42
+
+RS_prop <- sum(RF_RS_38_42$est_RS)/ sum(RF_RS_38_42$total_RF)
+
+# Prorate yelloweye
+rec_38_42_annual_sums %>% 
+  mutate(low_ye_n = ifelse(is.na(est_RS), est_RF * RS_prop, est_RS)) %>% 
+  mutate(medium_ye_n = ifelse(is.na(est_RS), est_RF * 0.02, est_RS + est_RF * 0.01)) %>% 
+  mutate(high_ye_n = ifelse(is.na(est_RS), est_RF * 0.04, est_RS + est_RF * 0.02)) %>% 
+  mutate(low_catch_lbs = low_ye_n*YE_lbs_per_individual) %>% 
+  mutate(medium_catch_lbs = medium_ye_n*YE_lbs_per_individual) %>% 
+  mutate(high_catch_lbs = high_ye_n*YE_lbs_per_individual) -> YE_rec_38_42
+
+# Subset yelloweye into US DPS and Hood Canal, based on the assumption that 15% of catch was from Hood Canal
+YE_rec_38_42 %>% 
+  dplyr::select(year, low_catch_lbs, medium_catch_lbs, high_catch_lbs, low_ye_n, medium_ye_n, high_ye_n) -> YE_rec_38_42_int
+  
+# Hood Canal
+YE_rec_38_42_int*0.15 -> YE_rec_38_42_HC
+
+YE_rec_38_42_HC %>% 
+  mutate(year = year/0.15) -> YE_rec_38_42_HC
+
+# US DPS
+YE_rec_38_42_int*0.85 -> YE_rec_38_42_USDPS
+
+YE_rec_38_42_USDPS %>% 
+  mutate(year = year/0.85) -> YE_rec_38_42_USDPS
+
+# Prorate bocaccio
+rec_38_42_annual_sums %>% 
+  mutate(low_boc_n = est_RF * 0) %>% 
+  mutate(medium_boc_n = est_RF * 0.01) %>% 
+  mutate(high_boc_n = est_RF * 0.02) %>% 
+  mutate(low_catch_lbs = low_boc_n*BOC_lbs_per_individual) %>% 
+  mutate(medium_catch_lbs = medium_boc_n*BOC_lbs_per_individual) %>% 
+  mutate(high_catch_lbs = high_boc_n*BOC_lbs_per_individual) -> BOC_rec_38_42
+
+```
+
+
+## 1943-1964: Use information from Buckley and 1938-1942 WDFW annual bulletins
+
+Here we are estimating proportions of the rock_cod catch that we think is yelloweye or bocaccio.
+1. Question 1: Do we think that for years where "red snapper" was recorded, there is still some yelloweye in the "rock cod" catch?
+  -I think that the most likely case is that some boathouses did record all yelloweye as "red snapper", while other boathouses didn't make the distinction at all, since these catch records were all voluntarily filled out and submitted. Great!
+  - We can say that 50% of boathouses reported red snapper catch separately and 50% didn't, so we can multiply the proportion by 0.5.
+2. Question 2: What catch proportions are reasonable to use? The 1965-1967 Buckley values?
+  - These are the closest recorded catch compositions temporally, but obviously they're not great...
+3. Where do we think that the boathouses are? Hopefully we can get some more information from the Center for Wooden Boats... But for now our best guess is: 
+  - Maybe 15% of boathouses in 1957 were in Hood Canal, 15% North of Admiralty Inlet, and the other 70% in "South Puget Sound" (south of Admiralty).
+  - At a finer scale: 
+  - Based on this map: https://cwbblog.wordpress.com/2012/12/18/new-exhibit-fish-on-opening-at-the-center-for-wooden-boats-december-29th-explores-the-history-of-boathouses-and-fishing-resorts-of-puget-sound/
+  
+Okay, let's divide effort by area by # of boathouses (approx - based on map, looks to be about 135 boathouses in Puget Sound)
+- Area 6: 4% (~5 boathouses)
+- Area 7: 10% (~13 boathouses)
+- Area 8: 18% (~25 boathouses)
+- Area 9: 22% (~30 boathouses)
+- Area 10: 15% (~20 boathouses)
+- Area 11: 15% (~20 boathouses)
+- Area 12:  16% (~22 boathouses)
+
+
+#### Yelloweye and Bocaccio catch scenarios
+1. High catch scenario: Use max annual Buckley (1965-1967) catch proportions
+2. Medium catch scenario: Use mean Buckley (1965-1967) catch proportions
+3. Low catch scenario: Use min annual Buckley (1965-1967) catch proportions
+
+```{r estimate_43_64}
+rec_43_64_est <- data.frame(year = seq(1943, 1964, 1),est_days = rep(0, 22), est_RF = rep(0,22), est_RS = rep(0,22))
+
+# Estimate effort (est_days); use 6% annual growth
+# Add first year value
+rec_43_64_est$est_days[1] <- subset(rec_38_42_annual_sums, year == 1942)$est_days
+for (i in 2:dim(rec_43_64_est)[1]){
+  rec_43_64_est$est_days[i] <- rec_43_64_est$est_days[i-1]+ rec_43_64_est$est_days[i-1]*0.06
+}
+
+# Calculate estimated rockfish catch using mean CPUE from 1938-1942
+rec_43_64_est %>% 
+  mutate(., est_RF = est_days * mean_CPUE_38_42) -> rec_43_64_est
+
+# Compare these values to sums from 1965-1967 from Buckley
+RF_sums_buckley <- data.frame(year = c(1965, 1966, 1967), total = c(sum(buck65_data_2$catch_individuals), sum(buck66_data_2$catch_individuals), sum(buck67_data_2$catch_individuals)))
+
+rec_43_64_est
+RF_sums_buckley
+# These values seem totally plausible based on the ramps... there isn't a noticeable discontinuity between the interpolated and actual values.
+# Catches in 1970 are around 50k
+
+# Prorate catches
+effort_by_area <- data.frame(area = c(6,7,8,9,10,11,12), prop_effort = c(0.04, 0.1, 0.18, 0.22, 0.15, 0.15, 0.16))
+
+# Yelloweye USDPS
+rec_43_64_est %>% 
+  # Medium catch estimate (best guess)
+  mutate(medium_ye_n = 
+           # Area 6
+           subset(buck65_67_ESA_comps_by_area, area == 6)$ye_prop * subset(effort_by_area, area ==6)$prop_effort*est_RF +
+           # Area 7
+           subset(buck65_67_ESA_comps_by_area, area == 7)$ye_prop * subset(effort_by_area, area ==7)$prop_effort*est_RF +
+           # Area 8
+           subset(buck65_67_ESA_comps_by_area, area == 8)$ye_prop * subset(effort_by_area, area ==8)$prop_effort*est_RF +
+           # Area 9
+           subset(buck65_67_ESA_comps_by_area, area == 9)$ye_prop * subset(effort_by_area, area ==9)$prop_effort*est_RF +
+           # Area 10
+           subset(buck65_67_ESA_comps_by_area, area == 10)$ye_prop * subset(effort_by_area, area ==10)$prop_effort*est_RF +
+           # Area 11
+           subset(buck65_67_ESA_comps_by_area, area == 11)$ye_prop * subset(effort_by_area, area ==11)$prop_effort*est_RF
+           ) %>% 
+  mutate(medium_catch_lbs = medium_ye_n * YE_lbs_per_individual) %>% 
+  # Low catch estimate
+  mutate(low_ye_n = 
+           # Area 6
+           subset(buck_ye_prop_ranges, area == 6)$min_ye_prop * subset(effort_by_area, area ==6)$prop_effort*est_RF +
+           # Area 7
+           subset(buck_ye_prop_ranges, area == 7)$min_ye_prop * subset(effort_by_area, area ==7)$prop_effort*est_RF +
+           # Area 8
+           subset(buck_ye_prop_ranges, area == 8)$min_ye_prop * subset(effort_by_area, area ==8)$prop_effort*est_RF +
+           # Area 9
+           subset(buck_ye_prop_ranges, area == 9)$min_ye_prop * subset(effort_by_area, area ==9)$prop_effort*est_RF +
+           # Area 10
+           subset(buck_ye_prop_ranges, area == 10)$min_ye_prop * subset(effort_by_area, area ==10)$prop_effort*est_RF +
+           # Area 11
+           subset(buck_ye_prop_ranges, area == 11)$min_ye_prop * subset(effort_by_area, area ==11)$prop_effort*est_RF
+           ) %>% 
+  mutate(low_catch_lbs = low_ye_n * YE_lbs_per_individual) %>% 
+  # High catch estimate
+  mutate(high_ye_n = 
+           # Area 6
+           subset(buck_ye_prop_ranges, area == 6)$max_ye_prop * subset(effort_by_area, area ==6)$prop_effort*est_RF +
+           # Area 7
+           subset(buck_ye_prop_ranges, area == 7)$max_ye_prop * subset(effort_by_area, area ==7)$prop_effort*est_RF +
+           # Area 8
+           subset(buck_ye_prop_ranges, area == 8)$max_ye_prop * subset(effort_by_area, area ==8)$prop_effort*est_RF +
+           # Area 9
+           subset(buck_ye_prop_ranges, area == 9)$max_ye_prop * subset(effort_by_area, area ==9)$prop_effort*est_RF +
+           # Area 10
+           subset(buck_ye_prop_ranges, area == 10)$max_ye_prop * subset(effort_by_area, area ==10)$prop_effort*est_RF +
+           # Area 11
+           subset(buck_ye_prop_ranges, area == 11)$max_ye_prop * subset(effort_by_area, area ==11)$prop_effort*est_RF
+           ) %>% 
+  mutate(high_catch_lbs = high_ye_n * YE_lbs_per_individual)-> ye_rec_catch_USDPS_43_64
+
+# Yelloweye Hood Canal
+rec_43_64_est %>% 
+  mutate(medium_ye_n = 
+           # Area 12
+           subset(buck65_67_ESA_comps_by_area, area == 12)$ye_prop * subset(effort_by_area, area ==12)$prop_effort*est_RF
+           ) %>% 
+  mutate(medium_catch_lbs = medium_ye_n * YE_lbs_per_individual) %>% 
+  # High catch estimate
+  mutate(high_ye_n = 
+           # Area 6
+           subset(buck_ye_prop_ranges, area == 12)$max_ye_prop * subset(effort_by_area, area ==12)$prop_effort*est_RF) %>% 
+  mutate(high_catch_lbs = high_ye_n * YE_lbs_per_individual) %>% 
+  # Low catch estimate
+  mutate(low_ye_n = 
+           # Area 6
+           subset(buck_ye_prop_ranges, area == 12)$min_ye_prop * subset(effort_by_area, area ==12)$prop_effort*est_RF) %>% 
+  mutate(low_catch_lbs = low_ye_n * YE_lbs_per_individual)-> ye_rec_catch_HC_43_64
+
+# Bocaccio, USDPS
+rec_43_64_est %>% 
+  mutate(medium_boc_n = 
+           # Area 6
+           subset(buck65_67_ESA_comps_by_area, area == 6)$boc_prop * subset(effort_by_area, area ==6)$prop_effort*est_RF +
+           # Area 7
+           subset(buck65_67_ESA_comps_by_area, area == 7)$boc_prop * subset(effort_by_area, area ==7)$prop_effort*est_RF +
+           # Area 8
+           subset(buck65_67_ESA_comps_by_area, area == 8)$boc_prop * subset(effort_by_area, area ==8)$prop_effort*est_RF +
+           # Area 9
+           subset(buck65_67_ESA_comps_by_area, area == 9)$boc_prop * subset(effort_by_area, area ==9)$prop_effort*est_RF +
+           # Area 10
+           subset(buck65_67_ESA_comps_by_area, area == 10)$boc_prop * subset(effort_by_area, area ==10)$prop_effort*est_RF +
+           # Area 11
+           subset(buck65_67_ESA_comps_by_area, area == 11)$boc_prop * subset(effort_by_area, area ==11)$prop_effort*est_RF +
+           # Area 12
+           subset(buck65_67_ESA_comps_by_area, area == 12)$boc_prop * subset(effort_by_area, area ==12)$prop_effort*est_RF
+           ) %>% 
+  mutate(medium_catch_lbs = medium_boc_n * BOC_lbs_per_individual) %>% 
+  # Low catch estimate
+  mutate(low_boc_n = 
+           # Area 6
+           subset(buck_boc_prop_ranges, area == 6)$min_boc_prop * subset(effort_by_area, area ==6)$prop_effort*est_RF +
+           # Area 7
+           subset(buck_boc_prop_ranges, area == 7)$min_boc_prop * subset(effort_by_area, area ==7)$prop_effort*est_RF +
+           # Area 8
+           subset(buck_boc_prop_ranges, area == 8)$min_boc_prop * subset(effort_by_area, area ==8)$prop_effort*est_RF +
+           # Area 9
+           subset(buck_boc_prop_ranges, area == 9)$min_boc_prop * subset(effort_by_area, area ==9)$prop_effort*est_RF +
+           # Area 10
+           subset(buck_boc_prop_ranges, area == 10)$min_boc_prop * subset(effort_by_area, area ==10)$prop_effort*est_RF +
+           # Area 11
+           subset(buck_boc_prop_ranges, area == 11)$min_boc_prop * subset(effort_by_area, area ==11)$prop_effort*est_RF +
+           # Area 12
+           subset(buck_boc_prop_ranges, area == 12)$min_boc_prop * subset(effort_by_area, area ==12)$prop_effort*est_RF
+           ) %>% 
+  mutate(low_catch_lbs = low_boc_n * BOC_lbs_per_individual) %>% 
+  # High catch estimate
+  mutate(high_boc_n = 
+           # Area 6
+           subset(buck_boc_prop_ranges, area == 6)$max_boc_prop * subset(effort_by_area, area ==6)$prop_effort*est_RF +
+           # Area 7
+           subset(buck_boc_prop_ranges, area == 7)$max_boc_prop * subset(effort_by_area, area ==7)$prop_effort*est_RF +
+           # Area 8
+           subset(buck_boc_prop_ranges, area == 8)$max_boc_prop * subset(effort_by_area, area ==8)$prop_effort*est_RF +
+           # Area 9
+           subset(buck_boc_prop_ranges, area == 9)$max_boc_prop * subset(effort_by_area, area ==9)$prop_effort*est_RF +
+           # Area 10
+           subset(buck_boc_prop_ranges, area == 10)$max_boc_prop * subset(effort_by_area, area ==10)$prop_effort*est_RF +
+           # Area 11
+           subset(buck_boc_prop_ranges, area == 11)$max_boc_prop * subset(effort_by_area, area ==11)$prop_effort*est_RF  +
+           # Area 12
+           subset(buck_boc_prop_ranges, area == 12)$max_boc_prop * subset(effort_by_area, area ==12)$prop_effort*est_RF
+           ) %>% 
+  mutate(high_catch_lbs = high_boc_n * BOC_lbs_per_individual)-> boc_rec_catch_USDPS_43_64
+```
+
+## Join all recreational catch sources
+```{r combine_rec_catch_ye_boc}
+# Yelloweye, US DPS
+YE_rec_38_42_USDPS %>% 
+  bind_rows(., ye_rec_catch_USDPS_43_64) %>% 
+  bind_rows(., ye_rec_catch_65_69_USDPS) %>% 
+  bind_rows(., ye_rec_catch_USDPS_70_93) %>% 
+  bind_rows(., ye_rec_catch_USDPS_94_02) %>% 
+  bind_rows(., YE_USDPS_rec_2003_2019) %>% 
+  dplyr::select(year, low_catch_lbs, medium_catch_lbs, high_catch_lbs) -> YE_USDPS_rec_complete
+
+# Yelloweye, Hood Canal
+YE_rec_38_42_HC %>% 
+  bind_rows(., ye_rec_catch_HC_43_64) %>% 
+  bind_rows(., ye_rec_catch_65_69_HC) %>% 
+  bind_rows(., ye_rec_HC_70_93) %>% 
+  bind_rows(., ye_rec_HC_94_02) %>% 
+  bind_rows(., YE_HC_rec_2003_2019) %>% 
+  dplyr::select(year, low_catch_lbs, medium_catch_lbs, high_catch_lbs) -> YE_HC_rec_complete
+
+# Bocaccio, US DPS
+BOC_rec_38_42 %>% 
+  bind_rows(., boc_rec_catch_USDPS_43_64) %>% 
+  bind_rows(., boc_rec_catch_65_69) %>% 
+  bind_rows(., boc_rec_catch_USDPS_70_93) %>% 
+  bind_rows(., boc_rec_catch_USDPS_94_02) %>% 
+  bind_rows(., BOC_USDPS_rec_2003_2019) %>% 
+  dplyr::select(year, low_catch_lbs, medium_catch_lbs, high_catch_lbs) -> BOC_USDPS_rec_complete
+```
 
 
 

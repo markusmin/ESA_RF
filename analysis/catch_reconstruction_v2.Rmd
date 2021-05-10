@@ -1033,6 +1033,36 @@ boc_comm_21_33 %>%
 ```
 
 
+
+## DFO Data for Canadian portion of Yelloweye rockfish
+```{r load_catch_reconstruction_DFO}
+DFO_recons_path <- here("catch_reconstruction_data", "canada", "catch-reconstructed.csv")
+DFO_recons <- read.csv(DFO_recons_path)
+
+# Create new field to add all catch sources
+DFO_recons %>% 
+  mutate(total_catch = Rec + FSC + Comm) -> DFO_recons
+
+DFO_raw_path <- here("catch_reconstruction_data", "canada", "catch.csv")
+DFO_raw <- read.csv(DFO_raw_path)
+
+# Create new field to add all catch sources
+DFO_raw %>% 
+  mutate(total_catch = Rec + FSC + Comm) -> DFO_raw
+
+# Reformat DFO data to join with PS data
+DFO_recons %>% 
+  dplyr::rename(year = Year) %>% 
+  # convert metric tons to pounds
+  mutate(., total_catch_lbs = total_catch * 2204.62) %>% 
+  mutate(., rec_catch_lbs = Rec * 2204.62) %>% 
+  mutate(., comm_catch_lbs = Comm * 2204.62) %>% 
+  mutate(., FSC_catch_lbs = FSC * 2204.62) %>% 
+  mutate(., country = "Canada") %>% 
+  dplyr::select(c(year, total_catch_lbs, rec_catch_lbs, comm_catch_lbs, FSC_catch_lbs, country)) -> canadian_yelloweye_catch
+```
+
+
 # Recreational data
 
 ### Notes
@@ -2589,6 +2619,8 @@ Okay, let's divide effort by area by # of boathouses (approx - based on map, loo
 
 #### Yelloweye and Bocaccio catch scenarios
 1. High catch scenario: Use max annual Buckley (1965-1967) catch proportions
+  - The issue with this is that there are some crazy high proportions - e.g. 22% of rockfish catch in Hood canal in 1965 was yelloweye. That leads to some ridiculously high values in the high catch scenario.
+  - Maybe instead we should use the 1970-1987 proportions? These values look to be more like 1% of total rockfish catch, which would lead to values more in line with the later catches.
 2. Medium catch scenario: Use mean Buckley (1965-1967) catch proportions
 3. Low catch scenario: Use min annual Buckley (1965-1967) catch proportions
 
@@ -2651,8 +2683,8 @@ rec_43_64_est %>%
            subset(buck_ye_prop_ranges, area == 11)$min_ye_prop * subset(effort_by_area, area ==11)$prop_effort*est_RF
            ) %>% 
   mutate(low_catch_lbs = low_ye_n * YE_lbs_per_individual) %>% 
-  # High catch estimate
-  mutate(high_ye_n = 
+  # High catch estimate - v1 with max proportions from Buckley (clearly not an accurate estimate)
+  mutate(high_ye_n =
            # Area 6
            subset(buck_ye_prop_ranges, area == 6)$max_ye_prop * subset(effort_by_area, area ==6)$prop_effort*est_RF +
            # Area 7
@@ -2665,7 +2697,7 @@ rec_43_64_est %>%
            subset(buck_ye_prop_ranges, area == 10)$max_ye_prop * subset(effort_by_area, area ==10)$prop_effort*est_RF +
            # Area 11
            subset(buck_ye_prop_ranges, area == 11)$max_ye_prop * subset(effort_by_area, area ==11)$prop_effort*est_RF
-           ) %>% 
+           ) %>%
   mutate(high_catch_lbs = high_ye_n * YE_lbs_per_individual)-> ye_rec_catch_USDPS_43_64
 
 # Yelloweye Hood Canal
@@ -2675,10 +2707,15 @@ rec_43_64_est %>%
            subset(buck65_67_ESA_comps_by_area, area == 12)$ye_prop * subset(effort_by_area, area ==12)$prop_effort*est_RF
            ) %>% 
   mutate(medium_catch_lbs = medium_ye_n * YE_lbs_per_individual) %>% 
-  # High catch estimate
-  mutate(high_ye_n = 
+  # High catch estimate - v1 with max proportion (which is 22% and thus not realistic)
+  # mutate(high_ye_n = 
+  #          # Area 6
+  #          subset(buck_ye_prop_ranges, area == 12)$max_ye_prop * subset(effort_by_area, area ==12)$prop_effort*est_RF) %>% 
+  # High catch estiamte - v2 with 1.5x mean proportion
+    mutate(high_ye_n = 
            # Area 6
-           subset(buck_ye_prop_ranges, area == 12)$max_ye_prop * subset(effort_by_area, area ==12)$prop_effort*est_RF) %>% 
+           subset(buck65_67_ESA_comps_by_area, area == 12)$ye_prop*1.5 * subset(effort_by_area, area ==12)$prop_effort*est_RF
+           ) %>% 
   mutate(high_catch_lbs = high_ye_n * YE_lbs_per_individual) %>% 
   # Low catch estimate
   mutate(low_ye_n = 
@@ -2774,7 +2811,165 @@ BOC_rec_38_42 %>%
 ```
 
 
+# Combine recreational and commercial catch, make some plots
 
+Create separate data frames for each catch scenario. Each data frame should have columns for each separate data source (rec/commercial/FSC, USA or Canada) and a column for total catch.
+```{r comb_rec_comm_catch_yelloweye}
+# USDPS only: High catch scenario
+YE_comm_complete %>% 
+  subset(., DPS == "U.S. DPS except Hood Canal") %>% 
+  dplyr::select(year, high_catch) %>% 
+  dplyr::rename(US_comm_catch_lbs = high_catch) %>% 
+  left_join(., YE_USDPS_rec_complete, by = "year") %>% 
+  dplyr::select(year, US_comm_catch_lbs, high_catch_lbs) %>% 
+  dplyr::rename(US_rec_catch_lbs = high_catch_lbs) %>% 
+  mutate(total_catch_lbs = sum(US_comm_catch_lbs, US_rec_catch_lbs, na.rm = TRUE)) -> YE_high_catch_USDPS
+
+# USDPS only: medium catch scenario
+YE_comm_complete %>% 
+  subset(., DPS == "U.S. DPS except Hood Canal") %>% 
+  dplyr::select(year, medium_catch) %>% 
+  dplyr::rename(US_comm_catch_lbs = medium_catch) %>% 
+  left_join(., YE_USDPS_rec_complete, by = "year") %>% 
+  dplyr::select(year, US_comm_catch_lbs, medium_catch_lbs) %>% 
+  dplyr::rename(US_rec_catch_lbs = medium_catch_lbs) %>% 
+  mutate(total_catch_lbs = sum(US_comm_catch_lbs, US_rec_catch_lbs, na.rm = TRUE)) -> YE_medium_catch_USDPS
+  
+# USDPS only: low catch scenario
+YE_comm_complete %>% 
+  subset(., DPS == "U.S. DPS except Hood Canal") %>% 
+  dplyr::select(year, low_catch) %>% 
+  dplyr::rename(US_comm_catch_lbs = low_catch) %>% 
+  left_join(., YE_USDPS_rec_complete, by = "year") %>% 
+  dplyr::select(year, US_comm_catch_lbs, low_catch_lbs) %>% 
+  dplyr::rename(US_rec_catch_lbs = low_catch_lbs) %>% 
+  mutate(total_catch_lbs = sum(US_comm_catch_lbs, US_rec_catch_lbs, na.rm = TRUE)) -> YE_low_catch_USDPS
+
+# Hood Canal: High catch scenario
+YE_comm_complete %>% 
+  subset(., DPS == "Hood Canal") %>% 
+  dplyr::select(year, high_catch) %>% 
+  dplyr::rename(US_comm_catch_lbs = high_catch) %>% 
+  left_join(., YE_HC_rec_complete, by = "year") %>% 
+  dplyr::select(year, US_comm_catch_lbs, high_catch_lbs) %>% 
+  dplyr::rename(US_rec_catch_lbs = high_catch_lbs) %>% 
+  mutate(total_catch_lbs = sum(US_comm_catch_lbs, US_rec_catch_lbs, na.rm = TRUE)) -> YE_high_catch_HC
+
+# Hood Canal: Medium catch scenario
+YE_comm_complete %>% 
+  subset(., DPS == "Hood Canal") %>% 
+  dplyr::select(year, medium_catch) %>% 
+  dplyr::rename(US_comm_catch_lbs = medium_catch) %>% 
+  left_join(., YE_HC_rec_complete, by = "year") %>% 
+  dplyr::select(year, US_comm_catch_lbs, medium_catch_lbs) %>% 
+  dplyr::rename(US_rec_catch_lbs = medium_catch_lbs) %>% 
+  mutate(total_catch_lbs = sum(US_comm_catch_lbs, US_rec_catch_lbs, na.rm = TRUE)) -> YE_medium_catch_HC
+
+# Hood Canal: Low catch scenario
+YE_comm_complete %>% 
+  subset(., DPS == "Hood Canal") %>% 
+  dplyr::select(year, low_catch) %>% 
+  dplyr::rename(US_comm_catch_lbs = low_catch) %>% 
+  left_join(., YE_HC_rec_complete, by = "year") %>% 
+  dplyr::select(year, US_comm_catch_lbs, low_catch_lbs) %>% 
+  dplyr::rename(US_rec_catch_lbs = low_catch_lbs) %>% 
+  mutate(total_catch_lbs = sum(US_comm_catch_lbs, US_rec_catch_lbs, na.rm = TRUE)) -> YE_low_catch_HC
+
+# USDPS + Canada - high US catch scenario
+canadian_yelloweye_catch %>% 
+  dplyr::select(-c(total_catch_lbs, country)) %>% 
+  left_join(., YE_high_catch_USDPS, by = "year") %>% 
+  dplyr::rename(CAN_rec_catch_lbs = rec_catch_lbs, CAN_comm_catch_lbs = comm_catch_lbs, CAN_FSC_catch_lbs = FSC_catch_lbs) %>% 
+  mutate(total_catch_lbs = rowSums(.[2:6], na.rm = TRUE)) -> YE_high_catch_CAN_USA
+
+# USDPS + Canada - medium US catch scenario
+canadian_yelloweye_catch %>% 
+  dplyr::select(-c(total_catch_lbs, country)) %>% 
+  left_join(., YE_medium_catch_USDPS, by = "year") %>% 
+  dplyr::rename(CAN_rec_catch_lbs = rec_catch_lbs, CAN_comm_catch_lbs = comm_catch_lbs, CAN_FSC_catch_lbs = FSC_catch_lbs) %>% 
+  mutate(total_catch_lbs = rowSums(.[2:6], na.rm = TRUE)) -> YE_medium_catch_CAN_USA
+
+# USDPS + Canada - low US catch scenario
+canadian_yelloweye_catch %>% 
+  dplyr::select(-c(total_catch_lbs, country)) %>% 
+  left_join(., YE_low_catch_USDPS, by = "year") %>% 
+  dplyr::rename(CAN_rec_catch_lbs = rec_catch_lbs, CAN_comm_catch_lbs = comm_catch_lbs, CAN_FSC_catch_lbs = FSC_catch_lbs) %>% 
+  mutate(total_catch_lbs = rowSums(.[2:6], na.rm = TRUE)) -> YE_low_catch_CAN_USA
+```
+
+```{r comb_rec_comm_catch_bocaccio}
+# High catch scenario
+BOC_comm_complete %>% 
+  subset(., DPS == "U.S. DPS") %>% 
+  dplyr::select(year, high_catch) %>% 
+  dplyr::rename(US_comm_catch_lbs = high_catch) %>% 
+  left_join(., BOC_USDPS_rec_complete, by = "year") %>% 
+  dplyr::select(year, US_comm_catch_lbs, high_catch_lbs) %>% 
+  dplyr::rename(US_rec_catch_lbs = high_catch_lbs) %>% 
+  mutate(total_catch_lbs = sum(US_comm_catch_lbs, US_rec_catch_lbs, na.rm = TRUE)) -> BOC_high_catch_USDPS
+
+
+# Medium catch scenario
+BOC_comm_complete %>% 
+  subset(., DPS == "U.S. DPS") %>% 
+  dplyr::select(year, medium_catch) %>% 
+  dplyr::rename(US_comm_catch_lbs = medium_catch) %>% 
+  left_join(., BOC_USDPS_rec_complete, by = "year") %>% 
+  dplyr::select(year, US_comm_catch_lbs, medium_catch_lbs) %>% 
+  dplyr::rename(US_rec_catch_lbs = medium_catch_lbs) %>% 
+  mutate(total_catch_lbs = sum(US_comm_catch_lbs, US_rec_catch_lbs, na.rm = TRUE)) -> BOC_medium_catch_USDPS
+
+
+# Low catch scenario
+BOC_comm_complete %>% 
+  subset(., DPS == "U.S. DPS") %>% 
+  dplyr::select(year, low_catch) %>% 
+  dplyr::rename(US_comm_catch_lbs = low_catch) %>% 
+  left_join(., BOC_USDPS_rec_complete, by = "year") %>% 
+  dplyr::select(year, US_comm_catch_lbs, low_catch_lbs) %>% 
+  dplyr::rename(US_rec_catch_lbs = low_catch_lbs) %>% 
+  mutate(total_catch_lbs = sum(US_comm_catch_lbs, US_rec_catch_lbs, na.rm = TRUE)) -> BOC_low_catch_USDPS
+
+```
+## Export all data as CSV for stock status modeling
+```{r export_catch_histories}
+# Yelloweye high catch scenario, US DPS only
+write.csv(YE_high_catch_USDPS, here("catch_reconstruction_data", "complete_catch_histories", "yelloweye_USDPS_catch_scenario_high.csv"), row.names=FALSE)
+
+# Yelloweye medium catch scenario, US DPS only
+write.csv(YE_medium_catch_USDPS, here("catch_reconstruction_data", "complete_catch_histories", "yelloweye_USDPS_catch_scenario_medium.csv"), row.names=FALSE)
+
+# Yelloweye low catch scenario, US DPS only
+write.csv(YE_low_catch_USDPS, here("catch_reconstruction_data", "complete_catch_histories", "yelloweye_USDPS_catch_scenario_low.csv"), row.names=FALSE)
+
+# Yelloweye high catch scenario, Hood Canal
+write.csv(YE_high_catch_HC, here("catch_reconstruction_data", "complete_catch_histories", "yelloweye_HC_catch_scenario_high.csv"), row.names=FALSE)
+
+# Yelloweye medium catch scenario, Hood Canal
+write.csv(YE_medium_catch_HC, here("catch_reconstruction_data", "complete_catch_histories", "yelloweye_HC_catch_scenario_medium.csv"), row.names=FALSE)
+
+# Yelloweye low catch scenario, Hood Canal
+write.csv(YE_low_catch_HC, here("catch_reconstruction_data", "complete_catch_histories", "yelloweye_HC_catch_scenario_low.csv"), row.names=FALSE)
+
+# Yelloweye high catch scenario, US DPS + Canada (everything except Hood Canal)
+write.csv(YE_high_catch_CAN_USA, here("catch_reconstruction_data", "complete_catch_histories", "yelloweye_CAN_USA_catch_scenario_high.csv"), row.names=FALSE)
+
+# Yelloweye medium catch scenario, US DPS + Canada (everything except Hood Canal)
+write.csv(YE_medium_catch_CAN_USA, here("catch_reconstruction_data", "complete_catch_histories", "yelloweye_CAN_USA_catch_scenario_medium.csv"), row.names=FALSE)
+
+# Yelloweye low catch scenario, US DPS + Canada (everything except Hood Canal)
+write.csv(YE_low_catch_CAN_USA, here("catch_reconstruction_data", "complete_catch_histories", "yelloweye_CAN_USA_catch_scenario_low.csv"), row.names=FALSE)
+
+# Bocaccio high catch scenario, US DPS only
+write.csv(BOC_high_catch_USDPS, here("catch_reconstruction_data", "complete_catch_histories", "bocaccio_USDPS_catch_scenario_high.csv"), row.names=FALSE)
+
+# Bocaccio medium catch scenario, US DPS only
+write.csv(BOC_medium_catch_USDPS, here("catch_reconstruction_data", "complete_catch_histories", "bocaccio_USDPS_catch_scenario_medium.csv"), row.names=FALSE)
+
+# Bocaccio low catch scenario, US DPS only
+write.csv(BOC_low_catch_USDPS, here("catch_reconstruction_data", "complete_catch_histories", "bocaccio_USDPS_catch_scenario_low.csv"), row.names=FALSE)
+
+```
 
 
 

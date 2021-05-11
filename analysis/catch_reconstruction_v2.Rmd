@@ -1,5 +1,5 @@
 ---
-title: "ESA Rockfishes - Catch Reconstruction"
+title: "ESA-listed Rockfishes in Puget Sound: Catch Reconstruction"
 author: "Markus Min"
 date: "`r format(Sys.time(), '%B %d %Y')`"
 toc: TRUE
@@ -23,9 +23,10 @@ urlcolor: blue
 \fancyfoot[C]{\thepage}
 
 ### Description
-This R markdown file will go through the catch reconstruction of yelloweye rockfish and bocaccio catch in Puget Sound. This document will generate different plausible catch scenarios and address the uncertainty at each step of the analysis. This analysis will go in reverse chronological order and go through commercial catch first and then recreational catch.. For more notes on the catch reconstruction, please see "catch_reconstruction.Rmd" in the same "analysis" folder.
+This R markdown file goes through the catch reconstruction of yelloweye rockfish and bocaccio in Puget Sound. This document will generate different plausible catch scenarios and address the sources of uncertainty at each step of the analysis. This document is organized in reverse chronological order, beginning with the commercial catch and then going through the recreational catch.
 
-Additionally, in accordance with the [2017 Rockfish Recovery Plan](https://www.fisheries.noaa.gov/resource/document/yelloweye-rockfish-and-bocaccio-recovery-plan), catches for three different geographic areas will be constructed:
+Additionally, in accordance with the [2017 Rockfish Recovery Plan](https://www.fisheries.noaa.gov/resource/document/yelloweye-rockfish-and-bocaccio-recovery-plan), catch histories for three different geographic areas are constructed:
+
 1. The entire DPS (Canada and United States), minus the Hood Canal population
 2. The Hood Canal population
 3. The United States side of the DPS, excluding Hood Canal
@@ -431,8 +432,9 @@ BOC_HISCOM_USDPS_low %>%
 This data was provided by Wayne Palsson. For this time period, we have three categories for rockfish: "general rockfish", "red snapper", and "black rockfish". We do not have any catch composition data for this time period.
 
 There are two main decisions to make regarding this time period:
-1) Are yelloweye catches for this time period limited to "red snapper", or is it possible that in addition to "red snapper" there are actually yelloweye in the "general rockfish" category?
-2) Should catches from the Strait of Juan de Fuca be included?
+
+1. Are yelloweye catches for this time period limited to "red snapper", or is it possible that in addition to "red snapper" there are actually yelloweye in the "general rockfish" category?
+2. Should catches from the Strait of Juan de Fuca be included?
 
 For now, we will assume that yelloweye catch is only the "red snapper" catch. Bocaccio catch will be prorated based on the 1970-1987 catch composition data from Schmitt 1991.
 
@@ -1034,7 +1036,7 @@ boc_comm_21_33 %>%
 
 
 
-## DFO Data for Canadian portion of Yelloweye rockfish
+## DFO Data for Canadian portion of Yelloweye Rockfish DPS
 ```{r load_catch_reconstruction_DFO}
 DFO_recons_path <- here("catch_reconstruction_data", "canada", "catch-reconstructed.csv")
 DFO_recons <- read.csv(DFO_recons_path)
@@ -1083,7 +1085,7 @@ BOC_lbs_per_individual <- recreational_weight_conversion[recreational_weight_con
 RF_lbs_per_individual <- recreational_weight_conversion[recreational_weight_conversion$species == "Misc. rockfish",]$lbs
 ```
 
-### 2003-2019
+## 2003-2019
 
 #### Notes
 This data was based on a creel survey of anglers. Catches are overall very low, but there are also high variances in the estimates. Yelloweye and Bocaccio catch scenarios are the same. Of additional note: there is a general rockfish category. Is it possible that some yelloweye or bocaccio are part of this category, despite them also having their own unique categories?
@@ -1380,7 +1382,7 @@ rec_SPS_94_02 %>%
 ```
 
 
-```{r separate_HC_join_USDPS}
+```{r separate_HC_join_USDPS_94_02}
 ye_rec_SPS_94_02 %>% 
   dplyr::select(high_catch_lbs, medium_catch_lbs, low_catch_lbs) -> ye_rec_HC_94_02
 
@@ -1522,7 +1524,7 @@ rec_SPS_70_93 %>%
 ```
 
 
-```{r separate_HC_join_USDPS}
+```{r separate_HC_join_USDPS_70_93}
 ye_rec_SPS_70_93 %>% 
   dplyr::select(high_catch_lbs, medium_catch_lbs, low_catch_lbs) -> ye_rec_HC_70_93
 
@@ -1603,6 +1605,7 @@ A quote from page 11 of the 1946 annual bulletin:
 
 "The Puget Sound salmon investigation was extended in 1946 to include a study of the magnitude of the sport fishery. **A similar study had been carried on for several years before the war** and had demonstrated the necessity for determining the number of fish which is taken each year by Puget Sound sportsmen. Daily catch report blanks were distributed to boathouse operators throughout the Puget Sound area and sport-catch statistics were received from more than one half of the boathouses contacted."
 - So clearly there was a sport fishery, but they seem to have stopped monitoring it during the war and didn't pick it up again.
+- Nothing from 1943-1945, then they started again in 1946
 
 From page 27 of the 1948 annual bulletin (this is about the recreational salmon fishery):
 
@@ -1615,6 +1618,12 @@ Page 43 of the 1949 report:
 - I think a reasonable estimate would be a ramp up from the original estimates in 1938 through when we have data starting in 1965? Not sure what sort of ramp though.
   - Constant ramp of +25,000 fishermen days/year would get reasonably close to 1965 values
   - Annual growth rate of 4-5% also is fairly good
+  
+  
+Page 101 of the 1949 report:
+"Bottom Fish Management
+It is fallacious to believe that stocks of fish may be saved for future use merely through extended closures . Unless the fish are cropped annually by as many pounds as the stock can produce , wealth in the form of fish food and payroll is irretrievably lost. A given area will produce fish only within the limits of its food supply . Once a protected stock reaches this limit , it becomes stable with mutual mortality offsetting the spawning increment. Amid the population exist many fish whose growth has ceased , either from age or lack of food , and they continue to consume food in direct competition with their own young , even to the point of utilizing them as food. Chinook and silver salmon compete for food supply with dogfish , rockfish , true cod , black cod , pollack , ratfish and some species of sole. The young salmon and bottom fish feed on planktonic crustaceans such as amphipods , mysids, euphasids and other larval crustacean and fish forms. Other salmon and bottom fish forage on such small fishes as herring , sand lances , pilchards and anchovies . To insure a greater productivity of food fish it is first neces sary to eliminate the pressure of undesirable scrap fish whose sport and com mercial value is negligible. This can be achieved through an extensive bottom fishery , since dragging is an effective means controlling worm infes tations and thwarting the tendency of scrap fish to dominate the food supply of a fishable area which has been closed . - R . Walter Williams , Biologist "
+- That's nuts
 
 Page 66 of the 1962 report (of the recreational salmon fishery):
 For all of Washington: "The estimated number of angler trips was a new record jumping to 1,130,800, an increase of nearly 100,000 over the previous high set in 1961."
@@ -1630,6 +1639,32 @@ Page 16-A of the 1965 report has angler trips by area
 - "The 1,278,000 angler trips expended... were only below the 1,432,000 trips recorded for 1963".
 - 1,278,000 total in Washington
 - 125,000 in Ilwaco, 170,000 in Westport, 22,000 in LaPush, 46,000 in Neah Bay (I believe these are the coastal marine waters), then 98,000 in Sekiu-Pillar Point.
+
+
+**Effort statistics**
+- 1943: no mention of sport fishery effort
+- 1944-1947: no mention of sport fishery effort
+- 1948: "There are over 150 boathouses and resorts operating on Puget Sound with a total of about 4,000 boats . In addition , there are a large number of residents who own their own boats and fish throughout the year . At the boathouses alone , 2,000 private boats for salmon fishing are moored . About 15,000 outboard boats are regis tered with the Coast Guard , many of which are used for salmon fishing. **Each year around 350,000 fishermen try their luck for salmon on Puget Sound . This figure does not actually represent 350,000 persons , but is a total of all fishing trips, or fishermen days.**
+- 1949: Table 2 (PDF page 55) clearly shows that estimates of fisherman days exists for 1938, 1939, 1940, 1946, 1947, and 1949.
+- 1950: Decrease in number of fisherman days in the salmon fishery (page 34 of doc) - table 1
+- 1951: Increase in number of fisherman days (see table 1)
+  - It appears that the 62nd annual report contains 1951 and 1952, but complete statistics for only 1951?
+MISSING: 63rd annual report. 64th is published in 1956, but mostly concerns 1954
+- 1953: "On Puget Sound a total of 652,000 fisherman trips, an all-time record, were made".
+- 1954: 
+- 1956: "More fishermen than ever before" but does not list how many...
+- 1957: "Fishermen's trips were estimated at approximately one million" - but does not differentiate between PS and coastal waters
+- 1958: trips broken apart by region! Yay!
+- 1959:  change in size limit led to decrease in number of fishermen days
+- 1960: Effort is not listed. Less salmon caught, but does say that there was good halibut fishing, which would be relevant for catches of other bottomfishes.
+- 1961: Effort listed. Calls 1960 "dismal".
+- 1962: effort listed
+- 1963: effort listed. Notes that in 1964, all salmon anglers are required to submit punch cards with salmon catch, as the previous system of relying on boat houses is being undermined by the increase in private boat ownership.
+  - 1963 effort table lists effort for 1959-1963
+- I don't think any effort is listed for 1964
+
+
+
 
 **Information on Boathouses**
 https://cwbblog.wordpress.com/2012/12/18/new-exhibit-fish-on-opening-at-the-center-for-wooden-boats-december-29th-explores-the-history-of-boathouses-and-fishing-resorts-of-puget-sound/
@@ -2594,7 +2629,7 @@ rec_38_42_annual_sums %>%
 ```
 
 
-## 1943-1964: Use information from Buckley and 1938-1942 WDFW annual bulletins
+### 1943-1964: Use information from Buckley and 1938-1942 WDFW annual bulletins
 
 Here we are estimating proportions of the rock_cod catch that we think is yelloweye or bocaccio.
 1. Question 1: Do we think that for years where "red snapper" was recorded, there is still some yelloweye in the "rock cod" catch?
@@ -2626,7 +2661,6 @@ Okay, let's divide effort by area by # of boathouses (approx - based on map, loo
 
 ```{r estimate_43_64}
 rec_43_64_est <- data.frame(year = seq(1943, 1964, 1),est_days = rep(0, 22), est_RF = rep(0,22), est_RS = rep(0,22))
-
 # Estimate effort (est_days); use 6% annual growth
 # Add first year value
 rec_43_64_est$est_days[1] <- subset(rec_38_42_annual_sums, year == 1942)$est_days
@@ -2780,7 +2814,7 @@ rec_43_64_est %>%
   mutate(high_catch_lbs = high_boc_n * BOC_lbs_per_individual)-> boc_rec_catch_USDPS_43_64
 ```
 
-## Join all recreational catch sources
+## Recreational catch: All years combined
 ```{r combine_rec_catch_ye_boc}
 # Yelloweye, US DPS
 YE_rec_38_42_USDPS %>% 
@@ -2811,7 +2845,7 @@ BOC_rec_38_42 %>%
 ```
 
 
-# Combine recreational and commercial catch, make some plots
+# Combine recreational and commercial catch and export for modeling
 
 Create separate data frames for each catch scenario. Each data frame should have columns for each separate data source (rec/commercial/FSC, USA or Canada) and a column for total catch.
 ```{r comb_rec_comm_catch_yelloweye}
@@ -2931,7 +2965,7 @@ BOC_comm_complete %>%
   mutate(total_catch_lbs = sum(US_comm_catch_lbs, US_rec_catch_lbs, na.rm = TRUE)) -> BOC_low_catch_USDPS
 
 ```
-## Export all data as CSV for stock status modeling
+### Export all data as CSV for stock status modeling
 ```{r export_catch_histories}
 # Yelloweye high catch scenario, US DPS only
 write.csv(YE_high_catch_USDPS, here("catch_reconstruction_data", "complete_catch_histories", "yelloweye_USDPS_catch_scenario_high.csv"), row.names=FALSE)
@@ -2972,6 +3006,123 @@ write.csv(BOC_low_catch_USDPS, here("catch_reconstruction_data", "complete_catch
 ```
 
 
+## Exploratory plots
+
+```{r yelloweye_USDPS_catch_scenario_plots}
+fig_dir <- here("figures", "catch_reconstruction", "catch_scenarios")
+
+# Combine data for plotting
+YE_high_catch_USDPS %>% 
+  mutate(., scenario = "high") -> YE_high_USDPS_forplot
+
+YE_medium_catch_USDPS %>% 
+  mutate(., scenario = "medium") -> YE_medium_USDPS_forplot
+
+YE_low_catch_USDPS %>% 
+  mutate(., scenario = "low") -> YE_low_USDPS_forplot
+
+# YE_high_USDPS_forplot %>% 
+#   bind_rows(., YE_medium_USDPS_forplot) %>% 
+#   bind_rows(., YE_low_USDPS_forplot) %>% 
+#   dplyr::select(-total_catch_lbs) %>% 
+#   pivot_longer(., cols = c(US_comm_catch_lbs, US_rec_catch_lbs), names_to = "catch") -> YE_scenarios_USDPS
+
+YE_high_USDPS_forplot %>% 
+  bind_rows(., YE_medium_USDPS_forplot) %>% 
+  bind_rows(., YE_low_USDPS_forplot) %>% 
+  dplyr::select(-c(US_comm_catch_lbs, US_rec_catch_lbs)) %>% 
+  pivot_longer(., cols = c(total_catch_lbs), names_to = "catch") -> YE_scenarios_USDPS
+
+ye_USDPS_scenarios_plot <- ggplot(YE_scenarios_USDPS, aes(x = year, y = value, color = scenario))+
+  # geom_bar(stat = "identity", width = 1, position = "dodge") +
+  geom_line()+
+  scale_fill_tableau(palette = "Tableau 10")+
+  ggtitle("Yelloweye Catch Scenarios - non-Hood Canal population, U.S. only")+
+  ylab("Catch (pounds)") + 
+  xlab("Year")
+
+ye_USDPS_scenarios_plot
+
+ggsave(paste0(fig_dir, "/yelloweye_catch_scenarios_USDPS.png"), ye_USDPS_scenarios_plot, height = 6, width = 12)
+```
+
+```{r yelloweye_HC_catch_scenario_plots}
+fig_dir <- here("figures", "catch_reconstruction", "catch_scenarios")
+
+# Combine data for plotting
+YE_high_catch_HC %>% 
+  mutate(., scenario = "high") -> YE_high_HC_forplot
+
+YE_medium_catch_HC %>% 
+  mutate(., scenario = "medium") -> YE_medium_HC_forplot
+
+YE_low_catch_HC %>% 
+  mutate(., scenario = "low") -> YE_low_HC_forplot
+
+# YE_high_HC_forplot %>% 
+#   bind_rows(., YE_medium_HC_forplot) %>% 
+#   bind_rows(., YE_low_HC_forplot) %>% 
+#   dplyr::select(-total_catch_lbs) %>% 
+#   pivot_longer(., cols = c(US_comm_catch_lbs, US_rec_catch_lbs), names_to = "catch") -> YE_scenarios_HC
+
+YE_high_HC_forplot %>% 
+  bind_rows(., YE_medium_HC_forplot) %>% 
+  bind_rows(., YE_low_HC_forplot) %>% 
+  dplyr::select(-c(US_comm_catch_lbs, US_rec_catch_lbs)) %>% 
+  pivot_longer(., cols = c(total_catch_lbs), names_to = "catch") -> YE_scenarios_HC
+
+ye_HC_scenarios_plot <- ggplot(YE_scenarios_HC, aes(x = year, y = value, color = scenario))+
+  # geom_bar(stat = "identity", width = 1, position = "dodge") +
+  geom_line()+
+  scale_fill_tableau(palette = "Tableau 10")+
+  ggtitle("Yelloweye Catch Scenarios - non-Hood Canal population, U.S. only")+
+  ylab("Catch (pounds)") + 
+  xlab("Year")
+
+ye_HC_scenarios_plot
+
+ggsave(paste0(fig_dir, "/yelloweye_catch_scenarios_HC.png"), ye_HC_scenarios_plot, height = 6, width = 12)
+```
+
+
+
+```{r bocaccio_USDPS_catch_scenario_plots}
+fig_dir <- here("figures", "catch_reconstruction", "catch_scenarios")
+
+# Combine data for plotting
+BOC_high_catch_USDPS %>% 
+  mutate(., scenario = "high") -> BOC_high_USDPS_forplot
+
+BOC_medium_catch_USDPS %>% 
+  mutate(., scenario = "medium") -> BOC_medium_USDPS_forplot
+
+BOC_low_catch_USDPS %>% 
+  mutate(., scenario = "low") -> BOC_low_USDPS_forplot
+
+# BOC_high_USDPS_forplot %>% 
+#   bind_rows(., BOC_medium_USDPS_forplot) %>% 
+#   bind_rows(., BOC_low_USDPS_forplot) %>% 
+#   dplyr::select(-total_catch_lbs) %>% 
+#   pivot_longer(., cols = c(US_comm_catch_lbs, US_rec_catch_lbs), names_to = "catch") -> BOC_scenarios_USDPS
+
+BOC_high_USDPS_forplot %>% 
+  bind_rows(., BOC_medium_USDPS_forplot) %>% 
+  bind_rows(., BOC_low_USDPS_forplot) %>% 
+  dplyr::select(-c(US_comm_catch_lbs, US_rec_catch_lbs)) %>% 
+  pivot_longer(., cols = c(total_catch_lbs), names_to = "catch") -> BOC_scenarios_USDPS
+
+BOC_USDPS_scenarios_plot <- ggplot(BOC_scenarios_USDPS, aes(x = year, y = value, color = scenario))+
+  # geom_bar(stat = "identity", width = 1, position = "dodge") +
+  geom_line()+
+  scale_fill_tableau(palette = "Tableau 10")+
+  ggtitle("Bocaccio Catch Scenarios - non-Hood Canal population, U.S. only")+
+  ylab("Catch (pounds)") + 
+  xlab("Year")
+
+BOC_USDPS_scenarios_plot
+
+ggsave(paste0(fig_dir, "/bocaccio_catch_scenarios_USDPS.png"), BOC_USDPS_scenarios_plot, height = 6, width = 12)
+```
 
 
 

@@ -3,9 +3,13 @@ title: "ROV_analysis"
 author: "Markus Min"
 date: "4/15/2021"
 output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ### Load libraries, set fig_dir
+
 ```{r load_libraries}
 library(tidyverse)
 library(readxl)
@@ -22,14 +26,18 @@ library(sf)
 fig_dir <- here("figures", "ROV")
 ```
 
-
 # 2015-16 Puget Sound Survey
 
 ### Load data
 
-Note: The only species data that has lat/longs of detections is the 2015-2016 PS Survey
+Note: The only species data that has lat/longs of detections is the
+2015-2016 PS Survey
 
-Note about unclipped transects: "A number of the transects could not be fully processed due to missing time values that are needed to clip out unusable sections, and some cannot be processed because I don’t have any tracking data and that needs to be hand-keyed (these are identified in one of the attached spreadsheets)."
+Note about unclipped transects: "A number of the transects could not be
+fully processed due to missing time values that are needed to clip out
+unusable sections, and some cannot be processed because I don't have any
+tracking data and that needs to be hand-keyed (these are identified in
+one of the attached spreadsheets)."
 
 ```{r load_ROV_data_15_16_PS}
 ROV_data_path <- here("ROV_data")
@@ -66,14 +74,79 @@ PS_15_16_linelengths_unclipped %>%
   dplyr::rename(Tran_ID = `tolerance (m)`) -> PS_15_16_linelengths_unclipped
 
 
-read_excel(paste0(ROV_data_path, "/2015-16_areaswept_6May2021.xlsx"), skip = 3)[,c(1:4)] %>% 
+read_excel(paste0(ROV_data_path, "/2015-16_areaswept_12May2021.xlsx"), skip = 3)[,c(1:4)] %>% 
   dplyr::rename(avg_tran_len_m = `avg tran length (m)`, avg_tran_width_m = `avg tran width (m)`, area_swept_m = `area swept (m)`) -> PS_15_16_area_swept
+
+PS_15_16_transects <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2015-16 PS Transects")
+
+PS_15_16_transects %>% 
+  mutate(., Survey = "2015-16 PS") %>% 
+  mutate(., missingtime = "FALSE") %>% 
+  dplyr::select(-AreaSwept) -> PS_15_16_transects
+
+# Load transect locations
+PS_15_transects <- read_excel(paste0(ROV_data_path, "/2015-16 station locations.xlsx"), sheet = "2015 stations")
+PS_16_transects <- read_excel(paste0(ROV_data_path, "/2015-16 station locations.xlsx"), sheet = "2016 stations")
+PS_15_transects %>% 
+  bind_rows(., PS_16_transects) %>% 
+  dplyr::rename(Tran_ID = StationID) %>% 
+  # Make Tran_ID triple digits (add leading zeros) for joining
+  mutate(., Tran_ID = gsub("H", "", Tran_ID)) %>% 
+  mutate(., Tran_ID = str_pad(Tran_ID, 3, pad = "0")) %>% 
+  mutate(., Tran_ID = paste0("H", Tran_ID)) %>% 
+  dplyr::select(Tran_ID, Latitude, Longitude) %>% 
+  # Determine if transect in Hood Canal
+  mutate(DPS = ifelse(Longitude < -122.71 & Latitude > 47.33 & Latitude < 47.85, "Hood Canal", "U.S. DPS")) -> PS_15_16_transects
+
+# Join lat/longs to area swept
+PS_15_16_area_swept %>% 
+  left_join(., PS_15_16_transects, by = "Tran_ID")  -> PS_15_16_area_swept
+
+# Make a map to confirm that transects are labeled correctly
+# Load shapefile data
+usa_spdf <- readOGR(dsn = here("map_files", "USA_adm0.shp"))
+usa_spdf_fort <- tidy(usa_spdf)
+
+# Create base map
+PS_map <- ggplot(usa_spdf_fort, aes(x = long, y = lat, group = group))+
+  # Create grid using geom_vline and geom_hline
+  # geom_vline(xintercept = seq(-123.1, min_lon, 1/nm), color = "gray50", size = 0.1)+
+  # geom_hline(yintercept = seq(min_lat, 48.5, 1/60), color = "gray50", size = 0.1)+
+  #base map
+  geom_polygon(color = "gray20")+
+  ylab("Latitude")+
+  coord_fixed(ylim = c(47.1,48.25),  xlim = c(-123.1,-122.1), ratio = 1.3)+
+  theme(plot.background = element_rect(fill = "white"),
+        panel.grid = element_blank())
+
+# Add locations
+PS_map +
+  geom_point(data = PS_15_16_area_swept, aes(x = Longitude, y = Latitude, color = DPS), inherit.aes = FALSE)
 ```
+There's one transect just north of Thorndyke Bay that may or may not be included in Hood Canal, depending on your definition. 
+
+```{r calculate_basin_areas}
+# Load areas (these are from Bob and are in hectares)
+neah_bay_ha <- 30627
+west_JDF_ha <- 99400
+east_JDF_ha <- 168330
+gulf_bellingham_ha <- 143615
+SJI_ha <- 147623
+whidbey_basin_ha <- 124854
+central_PS_ha <- 222800
+south_PS_ha <- 130466
+HC_ha <- 125123
+
+basin_areas <- data.frame(basin = c("neah_bay", "west_JDF", "east_JDF", "gulf_bellingham", "SJI", "whidbey_basin", "central_PS", "south_PS", "HC"), area = c(neah_bay_ha, west_JDF_ha, east_JDF_ha, gulf_bellingham_ha, SJI_ha, whidbey_basin_ha, central_PS_ha, south_PS_ha, HC_ha))
+```
+
+
 
 
 ## Map individuals from survey
 
 ### 2015-2016 Puget Sound Survey Map
+
 ```{r map_ESA_rockfishes_PS}
 # Load shapefile data
 usa_spdf <- readOGR(dsn = here("map_files", "USA_adm0.shp"))
@@ -100,17 +173,12 @@ ESA_ROV_detections_map <- PS_map +
 ggsave(paste0(fig_dir, "/PS_15_16_ROV_map.png"), ESA_ROV_detections_map, height = 8, width = 8)
 ```
 
-
-
 ## 2015-2016 Puget Sound Survey Analysis
 
-**NEED TO SUBSET HOOD CANAL TRANSECTS** - but then we need to figure out what the strata areas are for Hood Canal. Would have to ask Andrea/Bob.
+1)  PS_15_16_species has species observations, linked to transect and segment number
+2)  PS_15_16_area_swept has the area swept totals for each transect
 
-Need to understand which transects are missing, and why
 
-1) PS_15_16_species has species observations, linked to transect and segment number
-2) PS_15_16_area_swept has the area swept totals for each transect
-  - Missing some transects, since this is only for those transects that are "clipped"
 ```{r reformat_15_16_PS_survey_data}
 PS_15_16_species %>% 
   # Rename "Transect" as "Tran_ID" to match area_swept sheet
@@ -125,98 +193,216 @@ PS_15_16_segments
 PS_15_16_linelengths_clipped
 ```
 
-### Data exploration: Which transects appear to be missing?
+### Hood Canal population
+```{r prepare_HC_data}
+# Get list of HC Transects
+PS_15_16_HC_transects <- subset(PS_15_16_area_swept, DPS == "Hood Canal")$Tran_ID
 
-Note: Survey design says that while 552 transects were planned in the "high" area, only 515 were completed
-
-It says that they saw two bocaccio, but I only see one in the data
-```{r explore_transects}
-PS_15_16_transects <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2015-16 PS Transects")
-PS_15_16_transects_missingtimes <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "Transects - Need Times")
-
-PS_15_16_transects_missingtimes %>% 
-  mutate(., missingtime = "TRUE") -> PS_15_16_transects_missingtimes
-
-PS_15_16_transects %>% 
-  mutate(., Survey = "2015-16 PS") %>% 
-  mutate(., missingtime = "FALSE") %>% 
-  dplyr::select(-AreaSwept) -> PS_15_16_transects
-
-PS_15_16_transects %>% 
-  bind_rows(., PS_15_16_transects_missingtimes) %>% 
-  subset(., Survey == "2015-16 PS") -> PS_15_16_transects_all
-
-PS_15_16_transects_all[order(PS_15_16_transects_all$Transect),] -> PS_15_16_transects_all
-
-# Extract only the numeric part of the transect ID
-PS_15_16_transects_all %>% 
-  mutate(., transect_no = parse_number(Transect)) %>% 
-  mutate(., transect_habitat = gsub("[0-9]","", Transect)) -> PS_15_16_transects_all
-
-# Look at only high probability
-PS_15_16_transects_all %>% 
-  subset(., grepl("H", transect_habitat)) -> PS_15_16_high_transects
-
-# Number of unique transects: 506. So missing 9?
-length(unique(PS_15_16_high_transects$transect_no))
-
-# Investigate which numbers are missing
-numbers <- seq(1,600,1)
-missing_transect_nos <- numbers[!numbers %in%  PS_15_16_high_transects$transect_no]
-
+# Subset HC species detections
+HC_PS_15_16_species <- subset(PS_15_16_species, Tran_ID %in% PS_15_16_HC_transects)
 ```
 
 
-### Figure out which unclipped transects have ESA-listed species
-```{r look_for_unclipped_transects_of_importance}
-positive_transects <- unique(PS_15_16_species$Tran_ID)
-clipped_transects <- unique(PS_15_16_linelengths_clipped$Tran_ID)
+#### Calculate stratum density
 
-setdiff(positive_transects, clipped_transects)
+The area swept for each transect ($A_i$) was the product of the mean transect width ($\overline{W_i}$) and the smoothed transect length ($L_i$). Taxon densities for individual transects ($D_i$) were estimated by dividing the species count ($C_i$) by the transect area: 
 
-# Check to see ones that have yelloweye/bocaccio but no area swept calculations
-setdiff(positive_transects, PS_15_16_area_swept$Tran_ID)
+$$
+D_i = \frac{C_i} {L_i\overline{W_i}} = \frac{C_i} {\overline{A_i}}
+$$
+
+```{r HC_PS_15_16_calculate_taxon_densities_for_individual_transects}
+# Summarise fish observations for each transect
+HC_PS_15_16_species %>% 
+  group_by(Tran_ID) %>% 
+  summarise(., total_ye = sum(FishCount)) -> HC_PS_15_16_ye_counts
+
+# Join species observation and area swept values
+HC_PS_15_16_ye_counts %>% 
+  left_join(., PS_15_16_area_swept, by = "Tran_ID") %>% 
+  mutate(., ye_density = total_ye/area_swept_m) -> HC_PS_15_16_ye_density
+
+HC_PS_15_16_ye_density
 ```
 
-- 560 is because it's divided into two parts, not an issue
-- H408 is in the unclipped but not the clipped data; also says that it was found in H408 part 2
+The mean stratum density ($\overline{D_s}$) for a given taxon was then the sum of the individual transect densities divided by the number of transects ($N_s$): 
+
+$$
+\overline{D_s} = \frac{\sum\limits_{i=1}^N D_i} {N_s}
+$$
+
+```{r HC_PS_15_16_calculate_mean_stratum_density}
+# Subset Hood Canal transects
+HC_PS_15_16_transects <- subset(PS_15_16_transects, DPS == "Hood Canal")
+
+# Determine number of transects (replace part 1/part 2 with nothing)
+HC_PS_15_16_transects %>% 
+  mutate(Tran_ID = gsub(" .*", "", Tran_ID)) %>% 
+  # Keep only high values
+  subset(., grepl("H", Tran_ID)) -> HC_PS_15_16_transects_unique_high
+  
+HC_PS_15_16_ye_mean_high_stratum_density <- sum(HC_PS_15_16_ye_density$ye_density)/length(unique(HC_PS_15_16_transects_unique_high$Tran_ID))
 
 
-These transects aren't in the clipped or unclipped line lengths, but are found in the "segments" data:
-- H177, H233, H259, H287, H307, H557
-- None are identified in the "Transects - Need Times" sheet
+```
 
+The variance of the mean stratum density was calculated as: 
+$$
+Var(\overline{D_s}) = \frac{\sum\limits_{i=1}^N (D_i-\overline{D_s})^2} {N_s - 1}
+$$
 
-### Estimate area swept for unclipped segments
+```{r HC_PS_15_16_calculate_mean_stratum_density_variance}
+HC_PS_15_16_ye_density %>% 
+  mutate(., mean_ye_density = HC_PS_15_16_ye_mean_high_stratum_density) %>% 
+  mutate(., square_dens_diff = (ye_density - mean_ye_density)^2) -> HC_PS_15_16_ye_density
 
-The only unclipped segment that we need to estimate area swept for is H408. I think I should just ask Bob for this information, but for now we can use a placeholder.
+HC_PS_15_16_mean_high_stratum_density_var <- sum(HC_PS_15_16_ye_density$square_dens_diff)/(length(unique(HC_PS_15_16_transects_unique_high$Tran_ID))-1)
+```
 
-Transect width:
-Wt ≡ Wm *0.10/Wl
-```{r est_area_swept_unclipped}
-# The ratio of clipped line length to unclipped line length is about 0.86
-H408_length <- subset(PS_15_16_linelengths_unclipped, Tran_ID == "H408")$average
-H408_data <- subset(PS_15_16_segments, Transect %in% c("H408 Part 1", "H408 Part 2"))
-H408_data %>% 
-  mutate(tran_width = 0.1*Screen_width/Laser_width) -> H408_data
+#### Calculate abundance estimates
 
-H408_mean_width <- mean(H408_data$tran_width, na.rm = TRUE)
-H408_area_swept <- H408_mean_width*H408_length*0.86
+Total abundance ($P$) in numbers of individuals was the product of the
+stratum surface area ($SA_s$) and the mean taxon density ($D$), with
+variance calculated as the product of surface area and the variance of
+mean stratum density: 
 
-# Make H408 data into a dataframe
-H408_df <- data.frame(Tran_ID = "H408", avg_tran_len_m = H408_length, avg_tran_width_m = H408_mean_width, area_swept_m = H408_area_swept)
+$$
+P_s = SA_s\overline{D_s};Var(P_s) = SA_sVar(\overline{D_s})
+$$
 
-# Add H408 estimate to area swept calculations
-PS_15_16_area_swept %>% 
-  bind_rows(., H408_df) -> PS_15_16_area_swept
+```{r HC_PS_15_16_abundance_estimate}
+# Value from Bob: High stratum surface area in Hood Canal (see email on 5/17/21)
+HC_PS_15_16_high_surface_area_m2 <- 44859795
+
+HC_PS_15_16_high_stratum_YE_abundance <- HC_PS_15_16_high_surface_area_m2*HC_PS_15_16_ye_mean_high_stratum_density
+
+HC_PS_15_16_high_stratum_YE_variance <- HC_PS_15_16_high_surface_area_m2*HC_PS_15_16_mean_high_stratum_density_var
+```
+
+Coefficients of variation for each taxon (as percentages) were calculated as the standard deviation of mean stratum density ($\overline{D}$) divided by the product of the square root of the station count ($N$) multiplied by the mean stratum density ($\overline{D}$):
+
+$$
+CV = \frac{\sqrt{Var(\overline{D})}} {\sqrt{N}*\overline{D}} * 100
+$$
+
+```{r HC_PS_15_16_CV}
+HC_PS_15_16_CV <- sqrt(HC_PS_15_16_mean_high_stratum_density_var)/(sqrt(length(unique(HC_PS_15_16_transects_unique_high$Tran_ID)))*HC_PS_15_16_ye_mean_high_stratum_density)*100
 ```
 
 
 
+### non-Hood Canal population
+```{r prepare_nonHC_data}
+# Get list of nonHC Transects
+PS_15_16_nonHC_transects <- subset(PS_15_16_area_swept, DPS == "U.S. DPS")$Tran_ID
 
-### Calculate stratum density
+# Subset nonHC species detections
+nonHC_PS_15_16_species <- subset(PS_15_16_species, Tran_ID %in% PS_15_16_nonHC_transects)
+```
 
-The area swept for each transect ($A_i$) was the product of the mean transect width ($\overline{W_i}$) and the smoothed transect length ($L_i$). Taxon densities for individual transects ($D_i$) were estimated by dividing the species count ($C_i$) by the transect area:
+
+#### Calculate stratum density
+
+The area swept for each transect ($A_i$) was the product of the mean transect width ($\overline{W_i}$) and the smoothed transect length ($L_i$). Taxon densities for individual transects ($D_i$) were estimated by dividing the species count ($C_i$) by the transect area: 
+  
+$$
+D_i = \frac{C_i} {L_i\overline{W_i}} = \frac{C_i} {\overline{A_i}}
+$$
+  
+```{r nonHC_PS_15_16_calculate_taxon_densities_for_individual_transects}
+# Summarise fish observations for each transect
+nonHC_PS_15_16_species %>% 
+  group_by(Tran_ID) %>% 
+  summarise(., total_ye = sum(FishCount)) -> nonHC_PS_15_16_ye_counts
+
+# Join species observation and area swept values
+nonHC_PS_15_16_ye_counts %>% 
+  left_join(., PS_15_16_area_swept, by = "Tran_ID") %>% 
+  mutate(., ye_density = total_ye/area_swept_m) -> nonHC_PS_15_16_ye_density
+
+nonHC_PS_15_16_ye_density
+```
+
+The mean stratum density ($\overline{D_s}$) for a given taxon was then the sum of the individual transect densities divided by the number of transects ($N_s$): 
+  
+$$
+\overline{D_s} = \frac{\sum\limits_{i=1}^N D_i} {N_s}
+$$
+  
+```{r nonHC_PS_15_16_calculate_mean_stratum_density}
+# Subset Hood Canal transects
+nonHC_PS_15_16_transects <- subset(PS_15_16_transects, DPS == "Hood Canal")
+
+# Determine number of transects (replace part 1/part 2 with nothing)
+nonHC_PS_15_16_transects %>% 
+  mutate(Tran_ID = gsub(" .*", "", Tran_ID)) %>% 
+  # Keep only high values
+  subset(., grepl("H", Tran_ID)) -> nonHC_PS_15_16_transects_unique_high
+
+nonHC_PS_15_16_ye_mean_high_stratum_density <- sum(nonHC_PS_15_16_ye_density$ye_density)/length(unique(nonHC_PS_15_16_transects_unique_high$Tran_ID))
+```
+
+The variance of the mean stratum density was calculated as: 
+$$
+Var(\overline{D_s}) = \frac{\sum\limits_{i=1}^N (D_i-\overline{D_s})^2} {N_s - 1}
+$$
+  
+```{r nonPS_15_16_calculate_mean_stratum_density_variance}
+nonHC_PS_15_16_ye_density %>% 
+  mutate(., mean_ye_density = nonHC_PS_15_16_ye_mean_high_stratum_density) %>% 
+  mutate(., square_dens_diff = (ye_density - mean_ye_density)^2) -> nonHC_PS_15_16_ye_density
+
+nonHC_PS_15_16_mean_high_stratum_density_var <- sum(nonHC_PS_15_16_ye_density$square_dens_diff)/(length(unique(nonHC_PS_15_16_transects_unique_high$Tran_ID))-1)
+```
+
+#### Calculate abundance estimates
+
+Total abundance ($P$) in numbers of individuals was the product of thestratum surface area ($SA_s$) and the mean taxon density ($D$), with variance calculated as the product of surface area and the variance of mean stratum density: 
+  
+$$
+P_s = SA_s\overline{D_s};Var(P_s) = SA_sVar(\overline{D_s})
+$$
+  
+```{r nonHC_PS_15_16_abundance_estimate}
+# Value from Bob: High stratum surface area in Hood Canal (see email on 5/17/21)
+nonHC_PS_15_16_high_surface_area_m2 <- 92876441
+
+nonHC_PS_15_16_high_stratum_YE_abundance <- nonHC_PS_15_16_high_surface_area_m2*nonHC_PS_15_16_ye_mean_high_stratum_density
+
+nonHC_PS_15_16_high_stratum_YE_variance <- nonHC_PS_15_16_high_surface_area_m2*nonHC_PS_15_16_mean_high_stratum_density_var
+```
+
+Coefficients of variation for each taxon (as percentages) were calculated as the standard deviation of mean stratum density ($\overline{D}$) divided by the product of the square root of the station count ($N$) multiplied by the mean stratum density ($\overline{D}$):
+  
+$$
+CV = \frac{\sqrt{Var(\overline{D})}} {\sqrt{N}*\overline{D}} * 100
+$$
+  
+```{r nonHC_PS_15_16_CV}
+nonHC_PS_15_16_CV <- sqrt(nonHC_PS_15_16_mean_high_stratum_density_var)/(sqrt(length(unique(nonHC_PS_15_16_transects_unique_high$Tran_ID)))*nonHC_PS_15_16_ye_mean_high_stratum_density)*100
+```
+
+# 2018 San Juan Islands Survey
+
+```{r load_ROV_data_2018_SJI}
+ROV_data_path <- here("ROV_data")
+
+SJI_2018_species <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2018 SJI Species")
+
+# Convert DMS to decimal degrees (no lat/long info currently so this doesn't do anything)
+SJI_2018_species %>% 
+  mutate(., latitude = Lat_deg + Lat_decmin/60) %>% 
+  mutate(., longitude = Long_deg - Long_decmin/60) -> SJI_2018_species
+
+# Order so that Bocaccio is on the bottom and gets plotted on top
+SJI_2018_species[order(SJI_2018_species$SpeciesName),] %>% map_df(rev) -> SJI_2018_species
+```
+
+
+#### Calculate stratum density
+
+The area swept for each transect ($A_i$) was the product of the mean transect width ($\overline{W_i}$) and the smoothed transect length ($L_i$). Taxon densities for individual transects ($D_i$) were estimated by dividing the species count ($C_i$) by the transect area: 
+
 $$
 D_i = \frac{C_i} {L_i\overline{W_i}} = \frac{C_i} {\overline{A_i}}
 $$
@@ -235,10 +421,8 @@ PS_15_16_ye_counts %>%
 PS_15_16_ye_density
 ```
 
+The mean stratum density ($\overline{D_s}$) for a given taxon was then the sum of the individual transect densities divided by the number of transects ($N_s$): 
 
-
-
-The mean stratum density ($\overline{D_s}$) for a given taxon was then the sum of the individual transect densities divided by the number of transects ($N_s$):
 $$
 \overline{D_s} = \frac{\sum\limits_{i=1}^N D_i} {N_s}
 $$
@@ -255,13 +439,10 @@ PS_15_16_ye_mean_high_stratum_density <- sum(PS_15_16_ye_density$ye_density)/len
 
 ```
 
-
-The variance of the mean stratum density was calculated as:
+The variance of the mean stratum density was calculated as: 
 $$
 Var(\overline{D_s}) = \frac{\sum\limits_{i=1}^N (D_i-\overline{D_s})^2} {N_s - 1}
-
 $$
-
 
 ```{r PS_15_16_calculate_mean_stratum_density_variance}
 PS_15_16_ye_density %>% 
@@ -271,13 +452,17 @@ PS_15_16_ye_density %>%
 PS_15_16_mean_high_stratum_density_var <- sum(PS_15_16_ye_density$square_dens_diff)/(length(unique(PS_15_16_transects_unique_high$Transect))-1)
 ```
 
+#### Calculate abundance estimates
 
-### Calculate abundance estimates
+Total abundance ($P$) in numbers of individuals was the product of the
+stratum surface area ($SA_s$) and the mean taxon density ($D$), with
+variance calculated as the product of surface area and the variance of
+mean stratum density: 
 
-Total abundance ($P$) in numbers of individuals was the product of the stratum surface area ($SA_s$) and the mean taxon density ($D$), with variance calculated as the product of surface area and the variance of mean stratum density:
 $$
 P_s = SA_s\overline{D_s};Var(P_s) = SA_sVar(\overline{D_s})
 $$
+
 ```{r PS_15_16_abundance_estimate}
 PS_15_16_high_surface_area_ha <- 1280
 PS_15_16_high_surface_area_m2 <- 10000*PS_15_16_high_surface_area_ha
@@ -287,47 +472,26 @@ PS_15_16_high_stratum_YE_abundance <- PS_15_16_high_surface_area_m2*PS_15_16_ye_
 PS_15_16_high_stratum_YE_variance <- PS_15_16_high_surface_area_m2*PS_15_16_mean_high_stratum_density_var
 ```
 
-
-
 Coefficients of variation for each taxon (as percentages) were calculated as the standard deviation of mean stratum density ($\overline{D}$) divided by the product of the square root of the station count ($N$) multiplied by the mean stratum density ($\overline{D}$):
 
 $$
 CV = \frac{\sqrt{Var(\overline{D})}} {\sqrt{N}*\overline{D}} * 100
 $$
 
-
 ```{r PS_15_16_CV}
 PS_15_16_CV <- sqrt(PS_15_16_mean_high_stratum_density_var)/(sqrt(length(unique(PS_15_16_transects_unique_high$Transect)))*PS_15_16_ye_mean_high_stratum_density)*100
 ```
 
 
-
-
-
-
-
-# 2018 San Juan Islands Survey
-```{r load_ROV_data_2018_SJI}
-ROV_data_path <- here("ROV_data")
-
-SJI_2018_species <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2018 SJI Species")
-
-# Convert DMS to decimal degrees (no lat/long info currently so this doesn't do anything)
-SJI_2018_species %>% 
-  mutate(., latitude = Lat_deg + Lat_decmin/60) %>% 
-  mutate(., longitude = Long_deg - Long_decmin/60) -> SJI_2018_species
-
-# Order so that Bocaccio is on the bottom and gets plotted on top
-SJI_2018_species[order(SJI_2018_species$SpeciesName),] %>% map_df(rev) -> SJI_2018_species
-```
-
 # 2018 Vector Survey
+I'm a little unsure of what the "explore" transects are, but it seems that they're within the high stratum anyway, so they can probably be treated the same as the other transects.
+
 
 ### Load data
 
-What do the suffixes "-CA-V", "-CA-P1", and "-CA-P2" mean?
-- P1 and P2 mean part 1 and part 2
-- I'm guessing CA-V means Canada-Vector?
+What do the suffixes "-CA-V", "-CA-P1", and "-CA-P2" mean? - P1 and P2
+mean part 1 and part 2 - I'm guessing CA-V means Canada-Vector?
+
 ```{r load_ROV_data_2018_vector}
 ROV_data_path <- here("ROV_data")
 
@@ -357,24 +521,16 @@ v18_areaswept %>%
 
 ```
 
-#### Compare area swept and species observation data
-```{r data_exploration}
-positive_transects <- unique(v18_species$Station)
-areaswept_transects <- unique(v18_areaswept$Station)
-
-setdiff(positive_transects, areaswept_transects)
-# Not missing any area swept calculations
-```
-
 
 ### Calculate stratum density
 
-The area swept for each transect ($A_i$) was the product of the mean transect width ($\overline{W_i}$) and the smoothed transect length ($L_i$). Taxon densities for individual transects ($D_i$) were estimated by dividing the species count ($C_i$) by the transect area:
+The area swept for each transect ($A_i$) was the product of the meantransect width ($\overline{W_i}$) and the smoothed transect length ($L_i$). Taxon densities for individual transects ($D_i$) were estimated by dividing the species count ($C_i$) by the transect area: 
+
 $$
 D_i = \frac{C_i} {L_i\overline{W_i}} = \frac{C_i} {\overline{A_i}}
 $$
 
-```{r calculate_taxon_densities_for_individual_transects}
+```{r v18_calculate_taxon_densities_for_individual_transects}
 # Summarise fish observations for each transect
 v18_species %>% 
   group_by(Station) %>% 
@@ -389,27 +545,23 @@ v18_density
 ```
 
 
-
-
-The mean stratum density ($\overline{D_s}$) for a given taxon was then the sum of the individual transect densities divided by the number of transects ($N_s$):
+The mean stratum density ($\overline{D_s}$) for a given taxon was then the sum of the individual transect densities divided by the number of transects ($N_s$): 
 $$
 \overline{D_s} = \frac{\sum\limits_{i=1}^N D_i} {N_s}
 $$
 
-```{r calculate_mean_stratum_density}
+```{r v18_calculate_mean_stratum_density}
 v18_mean_stratum_density <- sum(v18_density$ye_density)/length(unique(v18_areaswept$Station))
   
 ```
 
-
-The variance of the mean stratum density was calculated as:
+The variance of the mean stratum density was calculated as: 
 $$
-Var(\overline{D_s}) = \frac{\sum\limits_{i=1}^N (D_i-\overline{D_s})^2} {N_s - 1}
-
+Var(\overline{D_s}) = \frac{\sum\limits_{i=1}^N (D_i-\overline{D_s})^2}
+{N_s - 1}
 $$
 
-
-```{r calculate_mean_stratum_density_variance}
+```{r v18_calculate_mean_stratum_density_variance}
 v18_density %>% 
   mutate(., mean_ye_density = v18_mean_stratum_density) %>% 
   mutate(., square_dens_diff = (ye_density - mean_ye_density)^2) -> v18_density
@@ -418,29 +570,35 @@ mean_stratum_density_var <- sum(v18_density$square_dens_diff)/(length(unique(v18
 ```
 
 
-### Calculate abundance estimates
+#### Calculate abundance estimates
 
-Total abundance ($P$) in numbers of individuals was the product of the stratum surface area ($SA_s$) and the mean taxon density ($D$), with variance calculated as the product of surface area and the variance of mean stratum density:
+Total abundance ($P$) in numbers of individuals was the product of the stratum surface area ($SA_s$) and the mean taxon density ($D$), with variance calculated as the product of surface area and the variance of mean stratum density: 
 $$
 P_s = SA_s\overline{D_s};Var(P_s) = SA_sVar(\overline{D_s})
 $$
 
-Coefficients of variation for each taxon (as percentages) were calculated as the standard deviation of mean stratum density ($\overline{D}$) divided by the product of the square root of the station count ($N$) multiplied by the mean stratum density ($\overline{D}$):
 
+```{r v18_abundance_estimate}
+# Value from Bob: High stratum surface area in Hood Canal (see email on 5/17/21)
+nonHC_PS_15_16_high_surface_area_m2 <- 92876441
+
+nonHC_PS_15_16_high_stratum_YE_abundance <- nonHC_PS_15_16_high_surface_area_m2*nonHC_PS_15_16_ye_mean_high_stratum_density
+
+nonHC_PS_15_16_high_stratum_YE_variance <- nonHC_PS_15_16_high_surface_area_m2*nonHC_PS_15_16_mean_high_stratum_density_var
+```
+
+Coefficients of variation for each taxon (as percentages) were calculated as the standard deviation of mean stratum density ($\overline{D}$) divided by the product of the square root of the station count ($N$) multiplied by the mean stratum density ($\overline{D}$):
+  
 $$
 CV = \frac{\sqrt{Var(\overline{D})}} {\sqrt{N}*\overline{D}} * 100
 $$
-
-
-
-
-
-
-
-
-
+  
+```{r nonHC_PS_15_16_CV}
+nonHC_PS_15_16_CV <- sqrt(nonHC_PS_15_16_mean_high_stratum_density_var)/(sqrt(length(unique(nonHC_PS_15_16_transects_unique_high$Tran_ID)))*nonHC_PS_15_16_ye_mean_high_stratum_density)*100
+```
 
 # 2018 Gulf Islands Survey
+
 ```{r load_ROV_data_2018_GI}
 ROV_data_path <- here("ROV_data")
 
@@ -454,6 +612,3 @@ GI_2018_species %>%
 # Order so that Bocaccio is on the bottom and gets plotted on top
 GI_2018_species[order(GI_2018_species$SpeciesName),] %>% map_df(rev) -> GI_2018_species
 ```
-
-
-

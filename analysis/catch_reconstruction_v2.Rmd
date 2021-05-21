@@ -248,9 +248,12 @@ This data was provided by Wayne Palsson. For the time period 1970-2003, catch ha
 #### Yelloweye catch scenarios
 Yelloweye rockfish was estimated by prorating total rockfish catch based on reliable catch composition data for this time period. However, region 3 (Strait of Juan de Fuca) is about half in and half out of the DPS, as such, the different catch scenarios concern whether or not this data is included:
 
+non-Hood Canal:
 1. High catch: All catch from the Strait of Juan de Fuca is included.
 2. Medium catch: 50% of the catch from the Strait of Juan de Fuca is included.
 3. Low catch: No catch from the Strait of Juan de Fuca is included.
+
+Hood Canal: ?
 
 #### Bocaccio catch scenarios
 Bocaccio was estimated by prorating total rockfish catch based on reliable catch composition data for this time period and as such will only have one catch estimate. However, region 3 (Strait of Juan de Fuca) is about half in and half out of the DPS, as such, the different catch scenarios concern whether or not this data is included:
@@ -437,6 +440,7 @@ There are two main decisions to make regarding this time period:
 2. Should catches from the Strait of Juan de Fuca be included?
 
 For now, we will assume that yelloweye catch is only the "red snapper" catch. Bocaccio catch will be prorated based on the 1970-1987 catch composition data from Schmitt 1991.
+- There is next to no "red snapper" catch from Hood Canal during this time period (from HISCOM)
 
 We also have "red snapper" already from the HISCOM data, so we just need to re-subset that dataframe for the appropriate timeframe.
  Another interesting note: West Juan de Fuca (region 7) was not used until 1970. Does this mean that there was no catch from this region until 1970 when it abruptly started, or was this due to a change in regional reporting requirements? i.e. were Strait of Juan de Fuca and West Juan de Fuca one region prior to 1970?
@@ -496,7 +500,7 @@ boc_55_69_prorated %>%
   mutate(., low_catch = catch_lbs) -> BOC_comm_55_69
 ```
 
-## 1943-1954
+## 1935-1954
 
 ### Notes:
 This data comes from the yellow book. We do not have any region-specific information for this time period, but we do have catches by gear.
@@ -626,8 +630,24 @@ BV_PS %>%
 ```
 
 ```{r compare_BV_YB_totals, cache = TRUE}
+# Summarize by year to compare with yellow book data
 BV_PS_sums %>% 
-  bind_rows(., yb_long) -> BV_YB
+  dplyr::select(year, value) %>% 
+  group_by(year) %>% 
+  summarise(annual_catch = sum(value, na.rm = TRUE)) %>% 
+  mutate(data_source = "Bound Volumes") -> BV_PS_annual_sums
+
+# Summarize yellow book data by year
+yb_long %>% 
+  dplyr::select(year, value) %>% 
+  group_by(year) %>% 
+  summarise(annual_catch = sum(value, na.rm = TRUE)) %>% 
+  mutate(data_source = "Yellow Book") -> YB_PS_annual_sums
+
+
+# Combine BV and yellow book data
+BV_PS_annual_sums %>% 
+  bind_rows(., YB_PS_annual_sums) -> BV_YB_annual_sums
 
 # Plot BV catch by region
 BV_catch_by_region <- ggplot(BV_PS_sums, aes(x = year, y = value, fill = region)) +
@@ -659,6 +679,23 @@ YB_gear <- ggplot(subset(BV_YB, source == "Yellow Book" & year >= 1943 & year <=
 
 ggsave(paste0(fig_dir, "/YB_gear.png"), YB_gear, height = 8, width = 10)
 
+
+# Plot Bound Volume vs. Yellow Book catches
+# Plot only 1935-1954
+YB_BV_comparison <- ggplot(subset(BV_YB_annual_sums, year >= 1935 & year <= 1954), aes(x = year, y = annual_catch, fill = data_source)) +
+  geom_bar(stat = "identity", width = 0.5, position = "dodge")+
+  scale_fill_tableau(palette = "Tableau 10")+
+  ggtitle("Bound Volume vs. Yellow Book Catches")+
+  ylab("Commercial Catch (lbs)") + 
+  xlab("Year")+
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12))
+
+YB_BV_comparison
+
+ggsave(paste0(fig_dir, "/YB_BV_comparison.png"), YB_BV_comparison, height = 6, width = 10)
+
+
 ```
 
 #### Approach 1: Using the bound volume data as is
@@ -669,9 +706,15 @@ Note: With this approach, we are just calculating all of the bound volume data a
 ##### Yelloweye catch scenarios
 Region 3 (Strait of Juan de Fuca) is about half in and half out of the DPS, as such, the different catch scenarios concern whether or not this data is included:
 
+U.S. DPS (excluding Hood Canal):
 1. High catch: All prorated catch from the Strait of Juan de Fuca is included.
 2. Medium catch: 50% of the prorated catch from the Strait of Juan de Fuca is included.
 3. Low catch: No prorated catch from the Strait of Juan de Fuca is included.
+
+Hood Canal:
+1. High catch: Double the prorated catch (2x estimates).
+2. Medium catch: The prorated catch (1x estimates).
+3. Low catch: Half of the prorated catch (0.5x estimates).
 
 ##### Bocaccio catch scenarios
 Region 3 (Strait of Juan de Fuca) is about half in and half out of the DPS, as such, the different catch scenarios concern whether or not this data is included:
@@ -716,6 +759,12 @@ BV_PS_sums_prorate %>%
 BV_PS_ye_prorated %>% 
   subset(., region == "Hood Canal") %>% 
   dplyr::rename(DPS = region) -> BV_hood_canal_ye_prorated
+
+# Hood Canal catch scenarios:
+BV_hood_canal_ye_prorated %>% 
+  mutate(high_catch = catch_lbs*2) %>% 
+  mutate(medium_catch = catch_lbs*1) %>% 
+  mutate(low_catch = catch_lbs*0.5) -> BV_hood_canal_ye_prorated 
 
 # Calculate U.S. DPS minus Hood Canal
 BV_PS_ye_prorated %>% 
@@ -1034,6 +1083,41 @@ boc_comm_21_33 %>%
 
 ```
 
+```{r plot_comm_ye_data}
+YE_comm_complete_HC <- subset(YE_comm_complete, DPS == "Hood Canal")
+YE_comm_complete_USDPS <- subset(YE_comm_complete, DPS == "U.S. DPS except Hood Canal")
+
+# Hood Canal
+YE_comm_complete_HC %>% 
+  dplyr::select(-c(catch_lbs, DPS)) %>% 
+  dplyr::rename(high = high_catch, medium = medium_catch, low = low_catch) %>% 
+  pivot_longer(., cols = c("high", "medium", "low"), names_to = "scenario") -> YE_comm_complete_HC
+
+# US DPS
+YE_comm_complete_USDPS %>% 
+  dplyr::select(-c(catch_lbs, DPS)) %>% 
+  dplyr::rename(high = high_catch, medium = medium_catch, low = low_catch) %>% 
+  pivot_longer(., cols = c("high", "medium", "low"), names_to = "scenario") -> YE_comm_complete_USDPS
+
+# Plot Hood Canal
+YE_comm_HC_plot <- ggplot(YE_comm_complete_HC, aes(x = year, y = value, color = scenario)) +
+  geom_line()+
+  ylab("Catch (lbs)") +
+  xlab("Year")
+
+# Hood Canal has some issues...
+YE_comm_HC_plot
+
+# Plot US DPS
+
+YE_comm_USDPS_plot <- ggplot(YE_comm_complete_USDPS, aes(x = year, y = value, color = scenario)) +
+  geom_line()+
+  ylab("Catch (lbs)") +
+  xlab("Year")
+
+YE_comm_USDPS_plot
+
+```
 
 
 ## DFO Data for Canadian portion of Yelloweye Rockfish DPS
@@ -3075,7 +3159,7 @@ ye_HC_scenarios_plot <- ggplot(YE_scenarios_HC, aes(x = year, y = value, color =
   # geom_bar(stat = "identity", width = 1, position = "dodge") +
   geom_line()+
   scale_fill_tableau(palette = "Tableau 10")+
-  ggtitle("Yelloweye Catch Scenarios - non-Hood Canal population, U.S. only")+
+  ggtitle("Yelloweye Catch Scenarios - Hood Canal")+
   ylab("Catch (pounds)") + 
   xlab("Year")
 

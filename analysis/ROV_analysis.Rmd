@@ -394,8 +394,29 @@ SJI_2018_species %>%
   mutate(., latitude = Lat_deg + Lat_decmin/60) %>% 
   mutate(., longitude = Long_deg - Long_decmin/60) -> SJI_2018_species
 
+# Fix transect names
+SJI_2018_species %>% 
+  dplyr::rename(Tran_ID = Transect) %>% 
+  mutate(Tran_ID = gsub("-18SJI", "", Tran_ID)) -> SJI_2018_species
+
+
 # Order so that Bocaccio is on the bottom and gets plotted on top
 SJI_2018_species[order(SJI_2018_species$SpeciesName),] %>% map_df(rev) -> SJI_2018_species
+
+# Load segments data
+SJI_2018_segments <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2018 SJI Segments")
+
+# Load area swept data
+read_excel(paste0(ROV_data_path, "/2018 SJI area swept estimates_17May2021.xlsx"), skip = 3)[,c(1:4)] %>% 
+  dplyr::rename(avg_tran_len_m = `avg tran length (m)`, avg_tran_width_m = `avg tran width (m)`, area_swept_m = `area swept (m)`) -> SJI_2018_area_swept
+
+# For now, drop the two transects (TO BE UPDATED) in area swept and species files
+SJI_2018_area_swept <- subset(SJI_2018_area_swept, !(Tran_ID %in% c("H014", "H029")))
+SJI_2018_species <- subset(SJI_2018_species, !(Tran_ID %in% c("H014", "H029")))
+
+SJI_2018_transects <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2018 SJI Transects")
+
+
 ```
 
 
@@ -407,18 +428,18 @@ $$
 D_i = \frac{C_i} {L_i\overline{W_i}} = \frac{C_i} {\overline{A_i}}
 $$
 
-```{r PS_15_16_calculate_taxon_densities_for_individual_transects}
+```{r SJI_2018_calculate_taxon_densities_for_individual_transects}
 # Summarise fish observations for each transect
-PS_15_16_species %>% 
+SJI_2018_species %>% 
   group_by(Tran_ID) %>% 
-  summarise(., total_ye = sum(FishCount)) -> PS_15_16_ye_counts
+  summarise(., total_ye = sum(FishCount)) -> SJI_2018_ye_counts
 
 # Join species observation and area swept values
-PS_15_16_ye_counts %>% 
-  left_join(., PS_15_16_area_swept, by = "Tran_ID") %>% 
-  mutate(., ye_density = total_ye/area_swept_m) -> PS_15_16_ye_density
+SJI_2018_ye_counts %>% 
+  left_join(., SJI_2018_area_swept, by = "Tran_ID") %>% 
+  mutate(., ye_density = total_ye/area_swept_m) -> SJI_2018_ye_density
 
-PS_15_16_ye_density
+SJI_2018_ye_density
 ```
 
 The mean stratum density ($\overline{D_s}$) for a given taxon was then the sum of the individual transect densities divided by the number of transects ($N_s$): 
@@ -427,14 +448,14 @@ $$
 \overline{D_s} = \frac{\sum\limits_{i=1}^N D_i} {N_s}
 $$
 
-```{r PS_15_16_calculate_mean_stratum_density}
+```{r SJI_2018_calculate_mean_stratum_density}
 # Determine number of transects (replace part 1/part 2 with nothing)
-PS_15_16_transects %>% 
+SJI_2018_transects %>% 
   mutate(Transect = gsub(" .*", "", Transect)) %>% 
   # Keep only high values
-  subset(., grepl("H", Transect)) -> PS_15_16_transects_unique_high
+  subset(., grepl("H", Transect)) -> SJI_2018_transects_unique_high
   
-PS_15_16_ye_mean_high_stratum_density <- sum(PS_15_16_ye_density$ye_density)/length(unique(PS_15_16_transects_unique_high$Transect))
+SJI_2018_ye_mean_high_stratum_density <- sum(SJI_2018_ye_density$ye_density)/length(unique(SJI_2018_transects_unique_high$Transect))
 
 
 ```
@@ -444,12 +465,12 @@ $$
 Var(\overline{D_s}) = \frac{\sum\limits_{i=1}^N (D_i-\overline{D_s})^2} {N_s - 1}
 $$
 
-```{r PS_15_16_calculate_mean_stratum_density_variance}
-PS_15_16_ye_density %>% 
-  mutate(., mean_ye_density = PS_15_16_ye_mean_stratum_density) %>% 
-  mutate(., square_dens_diff = (ye_density - mean_ye_density)^2) -> PS_15_16_ye_density
+```{r SJI_2018_calculate_mean_stratum_density_variance}
+SJI_2018_ye_density %>% 
+  mutate(., mean_ye_density = SJI_2018_ye_mean_high_stratum_density) %>% 
+  mutate(., square_dens_diff = (ye_density - mean_ye_density)^2) -> SJI_2018_ye_density
 
-PS_15_16_mean_high_stratum_density_var <- sum(PS_15_16_ye_density$square_dens_diff)/(length(unique(PS_15_16_transects_unique_high$Transect))-1)
+SJI_2018_mean_high_stratum_density_var <- sum(SJI_2018_ye_density$square_dens_diff)/(length(unique(SJI_2018_transects_unique_high$Transect))-1)
 ```
 
 #### Calculate abundance estimates
@@ -463,13 +484,15 @@ $$
 P_s = SA_s\overline{D_s};Var(P_s) = SA_sVar(\overline{D_s})
 $$
 
-```{r PS_15_16_abundance_estimate}
-PS_15_16_high_surface_area_ha <- 1280
-PS_15_16_high_surface_area_m2 <- 10000*PS_15_16_high_surface_area_ha
+Areas here are from the survey design notes
 
-PS_15_16_high_stratum_YE_abundance <- PS_15_16_high_surface_area_m2*PS_15_16_ye_mean_high_stratum_density
+```{r SJI_2018_abundance_estimate}
+SJI_2018_high_surface_area_ha <- 6036
+SJI_2018_high_surface_area_m2 <- 10000*SJI_2018_high_surface_area_ha
 
-PS_15_16_high_stratum_YE_variance <- PS_15_16_high_surface_area_m2*PS_15_16_mean_high_stratum_density_var
+SJI_2018_high_stratum_YE_abundance <- SJI_2018_high_surface_area_m2*SJI_2018_ye_mean_high_stratum_density
+
+SJI_2018_high_stratum_YE_variance <- SJI_2018_high_surface_area_m2*SJI_2018_mean_high_stratum_density_var
 ```
 
 Coefficients of variation for each taxon (as percentages) were calculated as the standard deviation of mean stratum density ($\overline{D}$) divided by the product of the square root of the station count ($N$) multiplied by the mean stratum density ($\overline{D}$):
@@ -478,8 +501,8 @@ $$
 CV = \frac{\sqrt{Var(\overline{D})}} {\sqrt{N}*\overline{D}} * 100
 $$
 
-```{r PS_15_16_CV}
-PS_15_16_CV <- sqrt(PS_15_16_mean_high_stratum_density_var)/(sqrt(length(unique(PS_15_16_transects_unique_high$Transect)))*PS_15_16_ye_mean_high_stratum_density)*100
+```{r SJI_2018_CV}
+SJI_2018_CV <- sqrt(SJI_2018_mean_high_stratum_density_var)/(sqrt(length(unique(SJI_2018_transects_unique_high$Transect)))*SJI_2018_ye_mean_high_stratum_density)*100
 ```
 
 
@@ -612,3 +635,74 @@ GI_2018_species %>%
 # Order so that Bocaccio is on the bottom and gets plotted on top
 GI_2018_species[order(GI_2018_species$SpeciesName),] %>% map_df(rev) -> GI_2018_species
 ```
+
+
+# Summarise results from each survey
+
+Make a table with six fields: survey name, species, abundance, CV (%), area, year(s) of survey
+
+Data for the 2008 and 2010 San Juan Islands surveys just pulled out of the corresponding reports:
+- 2008 SJI: Pacusnki et al. 2013, table 5 (page 27)
+  - abundance: 47407
+  - %CV: 24.8
+- 2010 SJI: Pacunski et al. 2020, table 1 (page 24)
+  - abundance: 114494
+  - %CV: 33
+  
+- Well these are crazy different...
+- 2008 SJI survey design:
+  - bottom habitat mapping from MBES (multibeam echosounder); only surveyed rocky habitat, which was divided into "shallow" and "deep" strata
+  - random sampling within these strata
+  - density from ROV surveys in "shallow rock" and "deep rock" multiplied by total areas of these strata
+- 2010 SJI survey design: 
+  - Divided into eastern and western SJI, based on knowledge from last survey where most rockfish were found in the western SJI
+  - "Stations were placed along a systematic grid from a random starting point, with Eastern stations spaced at 3,000 m intervals and Western stations spaced at 2,100 m intervals" 
+  - multiplied densities in each stratum by area of each stratum (eastern or western SJI)
+    - probably explains why estimates were much higher
+    
+- Note: 2018 SJI survey is again different, using the maxent design
+
+- 2008 SJI: Pacusnki et al. 2013, table 5 (page 27)
+  - abundance: 47407
+  - %CV: 24.8
+- 2010 SJI: Pacunski et al. 2020, table 1 (page 24)
+  - abundance: 114494
+  - %CV: 33
+```{r summarise_ROV_results}
+
+survey_names <- c("2008 San Juan Islands", "2010 San Juan Islands", "2015-16 Puget Sound", "2015-16 Puget Sound", "2018 San Juan Islands", "2018 Gulf Islands", "2018 Vector")
+
+survey_areas <- c("San Juan Islands", "San Juan Islands", "Puget Sound Proper (excluding Hood Canal)", "Hood Canal", "San Juan Islands", "Gulf Islands (CA)", "Strait of Georgia (CA)")
+
+years <- c("2008", "2010", "2015, 2016", "2015, 2016", "2018", "2018", "2018")
+
+
+YE_ROV_results_summary <- data.frame(survey = survey_names, area = survey_areas, year = years, species = rep("Yelloweye Rockfish", length(survey_names)), abundance = rep(0,length(survey_names)), CV = rep(0,length(survey_names)))
+
+# 2008 San Juan Islands
+YE_ROV_results_summary[YE_ROV_results_summary$survey == "2008 San Juan Islands",]$abundance <- 47407
+YE_ROV_results_summary[YE_ROV_results_summary$survey == "2008 San Juan Islands",]$CV <- 24.8
+
+# 2010 San Juan Islands
+YE_ROV_results_summary[YE_ROV_results_summary$survey == "2010 San Juan Islands",]$abundance <- 114494
+YE_ROV_results_summary[YE_ROV_results_summary$survey == "2010 San Juan Islands",]$CV <- 33
+
+# 2015-16 Puget Sound results - US DPS
+YE_ROV_results_summary[YE_ROV_results_summary$area == "Puget Sound Proper (excluding Hood Canal)",]$abundance <- nonHC_PS_15_16_high_stratum_YE_abundance
+
+YE_ROV_results_summary[YE_ROV_results_summary$area == "Puget Sound Proper (excluding Hood Canal)",]$CV <- nonHC_PS_15_16_CV
+
+  
+# 2015-16 Puget Sound results - Hood Canal
+YE_ROV_results_summary[YE_ROV_results_summary$area == "Hood Canal",]$abundance <- HC_PS_15_16_high_stratum_YE_abundance
+YE_ROV_results_summary[YE_ROV_results_summary$area == "Hood Canal",]$CV <- HC_PS_15_16_CV
+
+# 2018 San Juan Islands
+YE_ROV_results_summary[YE_ROV_results_summary$survey == "2018 San Juan Islands",]$abundance <- SJI_2018_high_stratum_YE_abundance
+YE_ROV_results_summary[YE_ROV_results_summary$survey == "2018 San Juan Islands",]$CV <- SJI_2018_CV
+
+
+# Save results
+write.csv(YE_ROV_results_summary, paste0(here("outputs"), "/ROV_survey_abundance_estimates.csv"), row.names=FALSE)
+```
+

@@ -38,6 +38,7 @@ library(here)
 library(ggthemes)
 library(ggpubr)
 library(janitor)
+library(zoo)
 
 fig_dir <- here("figures", "catch_reconstruction")
 ```
@@ -660,7 +661,7 @@ BV_catch_by_region <- ggplot(BV_PS_sums, aes(x = year, y = value, fill = region)
 ggsave(paste0(fig_dir, "/BV_catch_by_region.png"), BV_catch_by_region, height = 8, width = 10)
 
 # Bound Volumes - Plot total catch by gear type
-BV_gear <- ggplot(subset(BV_YB, source == "Bound Volumes" & year >= 1943 & year <= 1954), aes(x = year, y = value, fill = gear)) +
+BV_gear <- ggplot(subset(BV_PS_sums, source == "Bound Volumes" & year >= 1943 & year <= 1954), aes(x = year, y = value, fill = gear)) +
   geom_bar(stat = "identity")+
   scale_fill_tableau(palette = "Tableau 10")+
   ggtitle("Bound volume catch by gear")+
@@ -670,7 +671,7 @@ BV_gear <- ggplot(subset(BV_YB, source == "Bound Volumes" & year >= 1943 & year 
 ggsave(paste0(fig_dir, "/BV_gear.png"), BV_gear, height = 8, width = 10)
 
 # Yellow Book - Plot total catch by gear type
-YB_gear <- ggplot(subset(BV_YB, source == "Yellow Book" & year >= 1943 & year <= 1954), aes(x = year, y = value, fill = gear)) +
+YB_gear <- ggplot(subset(BV_PS_sums, source == "Yellow Book" & year >= 1943 & year <= 1954), aes(x = year, y = value, fill = gear)) +
   geom_bar(stat = "identity")+
   scale_fill_tableau(palette = "Tableau 10")+
   ggtitle("Yellow Book catch by gear")+
@@ -1498,6 +1499,9 @@ Wayne Palsson does not seem to have a high degree of confidence for the recreati
 
 Catch composition data for the recreational fishery exists for 1980-1986 and 1989 for this time period; the next compositional data is from 1996. We will use all compositional data from 1980-1986 and 1989 to prorate catches for this time period. There is also some catch composition data for 1965-1967; see PDF page 108 from Palsson et al. 2009, with the original data from Buckley (1967, 1968); Buckley and Satterthwaite (1970).
 
+Again, we only have catch broken down by North Sound and South Sound without any estimates of regional differences (importantly, Hood Canal is not separated from South Sound). We are assuming that 12% of catch in South Sound is from Hood Canal.
+  - See Palsson 1987 for more detailed catch statistics - might be able to break down areas of catch better
+
 #### Yelloweye and Bocaccio catch scenarios
 There is only one catch scenario for yelloweye and bocaccio.
 
@@ -1668,18 +1672,16 @@ Buckley and Sattherwhaite (1970) - 1967 recreational bottomfish fishery:
 - "Rockfish were the dominant family, accounting for more than 43% of the total specific harvest."
 
 
-#### Bargmann tables (1968-1973)
-- Use years 1968 and 1969. Data is available in Google Drive here (old fishery records and analysis): https://docs.google.com/spreadsheets/d/0B3NnRv_9_F9sNG1ITG1fQU5ZUFk/edit#gid=1104389180
-- "The data used in this report were gathered by technicians collecting data primarily for the sport salmon fishery, and data on marine fish catches were recorded secondarily. As such, there were many gaps and areas of incomplete coverage in the bottomfish harvest estimates. The reader is cautioned that **the estimates presented here should be regarded as minimum harvest estimates**.
 
 
-##### WDFW Annual Bulletins
+
+#### WDFW Annual Bulletins
 
 These are all available online through the University of Washington library.
 
 1940 report:
 - "Approximately 60% of the resorts reported regularly on a purely voluntary basis... It should be noted that all individual catches brought in to any given resort cannot be recorded by the manager. For that reason the catch statistics given below can be assumed to constitute only a very conservative record of the number of fish caught by recreational fishermen fishing from the various resorts."
-- "In estimating the total sports catch of any species for 1940, allowance must be made for (a) 43% of known boathouses not reporting during the eight-months period above, (b) four additional months to complete the year, and (c) catches made by persons not using boathouse facilities.
+- "In estimating the total sports catch of any species for 1940, allowance must be made for (a) 43% of known boathouses not reporting during the eight-months period above, (b) four additional months to complete the year, and (c) catches made by persons not using boathouse facilities."
   - Tables indicate the in each year, somewhere between 30% and 60% of total known boathouses are reporting.
 - "While statistics of sports catches kept by the Department of Fisheries on the present basis provide the basis of reasonable estimates, **the data are by no means complete or accurate**." 
 
@@ -1756,7 +1758,11 @@ https://www.cwb.org/fish-on
 
 Maybe 15% of boathouses in 1957 were in Hood Canal, 15% North of Admiralty Inlet, and the other 70% in "South Puget Sound" (south of Admiralty)
 
-### Bargmann (1968-1969)
+### Bargmann (1968-1973)
+- Use years 1968 and 1969. Data is available in Google Drive here (old fishery records and analysis): https://docs.google.com/spreadsheets/d/0B3NnRv_9_F9sNG1ITG1fQU5ZUFk/edit#gid=1104389180
+- "The data used in this report were gathered by technicians collecting data primarily for the sport salmon fishery, and data on marine fish catches were recorded secondarily. As such, there were many gaps and areas of incomplete coverage in the bottomfish harvest estimates. The reader is cautioned that **the estimates presented here should be regarded as minimum harvest estimates**.
+
+
 Sheets are numbered according to the table numbers in the document.
 
 Tables of interest:
@@ -1923,7 +1929,15 @@ bargmann_annual_sums %>%
 
 ### Buckley (1965-1967)
 
-The Buckley tables have the exact same numbering as the Bargmann tables
+The Buckley data has been shown to be problematic - e.g. Jason and Theresa excluded Buckley's 1965 report from the vermilion stock assessment on the basis that landings were unreasonably high and likely based on a small sample size that was extrapolated to a large effort.
+
+
+Note: Yelloweye catchces from this time period are crazy high, mostly owing to a super high incidental take in area 11 (South Puget Sound) - 3450 individuals, with 2,429 in the month of June.
+- Yelloweye catches are also far too high in Hood Canal
+
+
+
+The Buckley tables have the exact same numbering as the Bargmann tables.
 
 ```{r load_buckley_1965_data}
 buck65_path <- here("catch_reconstruction_data", "recreational", "pre_1970", "Buckley 1965 tables.xls")
@@ -2022,8 +2036,6 @@ buck65_data %>%
   mutate(., PS = ifelse(area %in% c(8,9,10,11), "South Puget Sound", 
                         ifelse(area == 12, "Hood Canal",  "North Puget Sound"))) -> buck65_data
 ```
-
-Note: Yelloweye catchces from this time period are crazy high, mostly owing to a super high incidental take in area 11 (South Puget Sound) - 3450 individuals, with 2,429 in the month of June.
 
 
 ```{r load_buckley_1966_data}
@@ -2605,8 +2617,11 @@ ggplot(rec_38_42, aes(x = factor(month, levels = c("February", "March", "April",
 ggplot(rec_38_42, aes(x = factor(month, levels = c("February", "March", "April", "May", "June", "July", "August", "September", "October", "November")), y = fisherman_days/no_boathouses, color = factor(year)))+
   geom_point()
 
-# Peak catches are in the summer, so I don't think that the fact that we're missing December-March is a big deal.
+# Peak catches are in the summer, but we still need to interpolate data for the missing months. 
 ```
+
+Interpolating data for missing months:
+- If there is not data for this month (December and January), then use the mean November catches (since those are lowest); and we are taking this as representative of the "low" season
 
 ```{r estimate_total_catch_effort}
 # Add total_boathouses = 130 for 1942; given that total boathouses was 101 in 1939, 130 in 1940, 128 in 1941, and then there were "about 150" in 1949 indicates slow growth
@@ -2625,7 +2640,7 @@ How to estimate private boat (non-boathouse) effort? The best indication we have
 
 Based on a plot of fisherman days per boathouse by month, the peak month is August. So to get from 7 in February to 30 in August, the growth rate is 1.2744. To get from 30 in August to 7 in November, the growth rate is 0.6156.
 
-```{r est_private_effort}
+```{r est_total_effort}
 # Calculate multipliers of boathouse fisherman days
 private_boats <- data.frame(month = c("February", "March", "April", "May", "June", "July", "August", "September", "October", "November"), multiplier = rep(0, 10))
 # Add value February
@@ -2662,11 +2677,22 @@ rec_38_42 %>%
 
 mean_CPUE_38_42 <- mean(rec_38_42_CPUE$CPUE)
 
+# Interpolate the catches for missing month
+# Add zeros for years where there was no catch using tidyverse::complete
+rec_38_42 %>%
+  complete(., month = c("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"), year = seq(1938, 1942, 1), fill = list(no_boathouses = NA, fisherman_days = NA, rock_cod = NA, red_snapper = NA, total_boathouses = NA, days_per_boathouse = NA, est_days = NA, est_RF = mean(subset(rec_38_42, month == "November")$est_RF))) -> rec_38_42
+```
+
+
+``` {r summarise_rec_catch_38_42}
 # Calculate annual sums
 rec_38_42 %>% 
   group_by(year) %>% 
   dplyr::select(est_RF, est_RS, est_days) %>% 
-  summarise_all(sum) -> rec_38_42_annual_sums
+  summarise_all(sum, na.rm = TRUE) -> rec_38_42_annual_sums
+
+# Change RS in 1938 and 1939 to NA from 0 (since it was not reported at all)
+rec_38_42_annual_sums[rec_38_42_annual_sums$year %in% c(1938, 1939),]$est_RS <- NA
 
 # Prorate, generate catch scenarios
 
@@ -2674,7 +2700,7 @@ rec_38_42 %>%
 subset(rec_38_42_annual_sums, !is.na(est_RS)) %>% 
   mutate(total_RF = est_RF + est_RS) -> RF_RS_38_42
 
-RS_prop <- sum(RF_RS_38_42$est_RS)/ sum(RF_RS_38_42$total_RF)
+RS_prop <- sum(RF_RS_38_42$est_RS, na.rm = TRUE)/ sum(RF_RS_38_42$total_RF, na.rm = TRUE)
 
 # Prorate yelloweye
 rec_38_42_annual_sums %>% 
@@ -2735,6 +2761,16 @@ Okay, let's divide effort by area by # of boathouses (approx - based on map, loo
 - Area 11: 15% (~20 boathouses)
 - Area 12:  16% (~22 boathouses)
 
+| Region | Boathouses | % Total |
+|-|-|-|
+| Strait of Juan de Fuca | 5 | 4% |
+| San Juan Islands | 13 | 10% |
+| Deception Pass, Hope Islands, Skagit Bay, Ports Susan and Gardner | 25 | 18% |
+| Admiralty Inlet | 30 | 22% |
+| Seattle/Bremerton | 20 | 15% |
+| South Sound | 20 | 15% |
+| Hood Canal | 22 | 16% |
+
 
 #### Yelloweye and Bocaccio catch scenarios
 1. High catch scenario: Use max annual Buckley (1965-1967) catch proportions
@@ -2743,15 +2779,57 @@ Okay, let's divide effort by area by # of boathouses (approx - based on map, loo
 2. Medium catch scenario: Use mean Buckley (1965-1967) catch proportions
 3. Low catch scenario: Use min annual Buckley (1965-1967) catch proportions
 
-```{r estimate_43_64}
-rec_43_64_est <- data.frame(year = seq(1943, 1964, 1),est_days = rep(0, 22), est_RF = rep(0,22), est_RS = rep(0,22))
-# Estimate effort (est_days); use 6% annual growth
-# Add first year value
-rec_43_64_est$est_days[1] <- subset(rec_38_42_annual_sums, year == 1942)$est_days
-for (i in 2:dim(rec_43_64_est)[1]){
-  rec_43_64_est$est_days[i] <- rec_43_64_est$est_days[i-1]+ rec_43_64_est$est_days[i-1]*0.06
-}
 
+-> This causes the Hood Canal catches to look pretty inflated, because of the fact that there are some very high proportions of yelloweye in the Buckley proportions.
+
+```{r estimate_43_64_effort}
+# Read in effort statistics
+rec_43_64_effort_stats <- read.csv(here("catch_reconstruction_data", "recreational","pre_1970", "rec_effort_stats_43_65.csv"))
+rec_43_64_effort_stats %>% 
+  group_by(year) %>% 
+  summarise(fisherman_days = sum(fisherman_days)) -> rec_43_64_effort_stats
+
+# Plot effort estimates
+ggplot(rec_43_64_effort_stats, aes(x = year, y = fisherman_days)) +
+  geom_point()
+
+# Interpolate all missing years using linear interpolation
+# 1940 had 260000 angler days; add that as placeholder to faciliate linear interpolation
+bind_rows(data.frame(year = 1940, fisherman_days = 260000), rec_43_64_effort_stats) -> rec_43_64_effort_stats
+rec_43_64_effort_stats$fisherman_days <- na.approx(rec_43_64_effort_stats$fisherman_days)
+# Remove 1940 and 1965 data points
+
+rec_43_64_effort_stats <- subset(rec_43_64_effort_stats, !(year %in% c(1940, 1965)))
+
+# Reformat to join with other data later
+rec_43_64_effort_stats %>% 
+  dplyr::rename(est_days = fisherman_days) %>% 
+  mutate(est_RF = 0, est_RS = 0) -> rec_43_64_est
+
+# Plot data, showing actual and interpolated data points
+rec_43_64_effort_stats <- read.csv(here("catch_reconstruction_data", "recreational","pre_1970", "rec_effort_stats_43_65.csv"))
+rec_43_64_effort_stats %>% 
+  group_by(year) %>% 
+  summarise(fisherman_days = sum(fisherman_days)) %>% 
+  mutate(source = ifelse(is.na(fisherman_days), "interpolated", "WDFW estimate")) -> rec_43_64_effort_stats
+
+rec_43_64_est %>% 
+  left_join(., dplyr::select(rec_43_64_effort_stats, year, source), by = "year") -> rec_43_64_est_forplot
+
+ggplot(rec_43_64_est_forplot, aes(x = year, y = est_days, color = source)) +
+  geom_point()+
+  ylab("Fisherman Days")
+
+# rec_43_64_est <- data.frame(year = seq(1943, 1964, 1),est_days = rep(0, 22), est_RF = rep(0,22), est_RS = rep(0,22))
+# # Estimate effort (est_days); use 6% annual growth
+# # Add first year value
+# rec_43_64_est$est_days[1] <- subset(rec_38_42_annual_sums, year == 1942)$est_days
+# for (i in 2:dim(rec_43_64_est)[1]){
+#   rec_43_64_est$est_days[i] <- rec_43_64_est$est_days[i-1]+ rec_43_64_est$est_days[i-1]*0.06
+# }
+```
+
+```{r estimate_RF_catch_43_64}
 # Calculate estimated rockfish catch using mean CPUE from 1938-1942
 rec_43_64_est %>% 
   mutate(., est_RF = est_days * mean_CPUE_38_42) -> rec_43_64_est
@@ -2910,6 +2988,12 @@ YE_rec_38_42_USDPS %>%
   dplyr::select(year, low_catch_lbs, medium_catch_lbs, high_catch_lbs) -> YE_USDPS_rec_complete
 
 # Yelloweye, Hood Canal
+
+# Try to fix year joining issue
+YE_rec_38_42_HC %>% 
+  mutate(year = as.character(year)) %>% 
+  mutate(year = as.numeric(year)) -> YE_rec_38_42_HC
+
 YE_rec_38_42_HC %>% 
   bind_rows(., ye_rec_catch_HC_43_64) %>% 
   bind_rows(., ye_rec_catch_65_69_HC) %>% 
@@ -2978,7 +3062,7 @@ YE_comm_complete %>%
   subset(., DPS == "Hood Canal") %>% 
   dplyr::select(year, medium_catch) %>% 
   dplyr::rename(US_comm_catch_lbs = medium_catch) %>% 
-  left_join(., YE_HC_rec_complete, by = "year") %>% 
+  left_join(YE_HC_rec_complete, by = "year") %>% 
   dplyr::select(year, US_comm_catch_lbs, medium_catch_lbs) %>% 
   dplyr::rename(US_rec_catch_lbs = medium_catch_lbs) %>% 
   mutate(total_catch_lbs = sum(US_comm_catch_lbs, US_rec_catch_lbs, na.rm = TRUE)) -> YE_medium_catch_HC
@@ -3199,7 +3283,7 @@ BOC_USDPS_scenarios_plot <- ggplot(BOC_scenarios_USDPS, aes(x = year, y = value,
   # geom_bar(stat = "identity", width = 1, position = "dodge") +
   geom_line()+
   scale_fill_tableau(palette = "Tableau 10")+
-  ggtitle("Bocaccio Catch Scenarios - non-Hood Canal population, U.S. only")+
+  ggtitle("Bocaccio Catch Scenarios")+
   ylab("Catch (pounds)") + 
   xlab("Year")
 

@@ -85,11 +85,14 @@ PS_15_16_transects %>%
   dplyr::select(-AreaSwept) -> PS_15_16_transects
 
 # Load transect locations
+# NOTE: These files contain transects that weren't completed; need to subset those
 PS_15_transects <- read_excel(paste0(ROV_data_path, "/2015-16 station locations.xlsx"), sheet = "2015 stations")
 PS_16_transects <- read_excel(paste0(ROV_data_path, "/2015-16 station locations.xlsx"), sheet = "2016 stations")
 PS_15_transects %>% 
   bind_rows(., PS_16_transects) %>% 
   dplyr::rename(Tran_ID = StationID) %>% 
+  # Keep only transects that were completed
+  subset(., Status == "completed") %>% 
   # Make Tran_ID triple digits (add leading zeros) for joining
   mutate(., Tran_ID = gsub("H", "", Tran_ID)) %>% 
   mutate(., Tran_ID = str_pad(Tran_ID, 3, pad = "0")) %>% 
@@ -215,6 +218,8 @@ $$
 # Summarise fish observations for each transect
 HC_PS_15_16_species %>% 
   group_by(Tran_ID) %>% 
+  # Subset only yelloweye
+  subset(SpeciesName == "Yelloweye rockfish") %>% 
   summarise(., total_ye = sum(FishCount)) -> HC_PS_15_16_ye_counts
 
 # Join species observation and area swept values
@@ -234,7 +239,6 @@ $$
 ```{r HC_PS_15_16_calculate_mean_stratum_density}
 # Subset Hood Canal transects
 HC_PS_15_16_transects <- subset(PS_15_16_transects, DPS == "Hood Canal")
-
 # Determine number of transects (replace part 1/part 2 with nothing)
 HC_PS_15_16_transects %>% 
   mutate(Tran_ID = gsub(" .*", "", Tran_ID)) %>% 
@@ -263,11 +267,11 @@ HC_PS_15_16_mean_high_stratum_density_var <- sum(HC_PS_15_16_ye_density$square_d
 
 Total abundance ($P$) in numbers of individuals was the product of the
 stratum surface area ($SA_s$) and the mean taxon density ($D$), with
-variance calculated as the product of surface area and the variance of
+variance calculated as the product of the square of surface area and the variance of
 mean stratum density: 
 
 $$
-P_s = SA_s\overline{D_s};Var(P_s) = SA_sVar(\overline{D_s})
+P_s = SA_s\overline{D_s};Var(P_s) = SA_s^2Var(\overline{D_s})
 $$
 
 ```{r HC_PS_15_16_abundance_estimate}
@@ -276,7 +280,7 @@ HC_PS_15_16_high_surface_area_m2 <- 44859795
 
 HC_PS_15_16_high_stratum_YE_abundance <- HC_PS_15_16_high_surface_area_m2*HC_PS_15_16_ye_mean_high_stratum_density
 
-HC_PS_15_16_high_stratum_YE_variance <- HC_PS_15_16_high_surface_area_m2*HC_PS_15_16_mean_high_stratum_density_var
+HC_PS_15_16_high_stratum_YE_variance <- HC_PS_15_16_high_surface_area_m2^2*HC_PS_15_16_mean_high_stratum_density_var
 ```
 
 Coefficients of variation for each taxon (as percentages) were calculated as the standard deviation of mean stratum density ($\overline{D}$) divided by the product of the square root of the station count ($N$) multiplied by the mean stratum density ($\overline{D}$):
@@ -293,7 +297,7 @@ HC_PS_15_16_CV <- sqrt(HC_PS_15_16_mean_high_stratum_density_var)/(sqrt(length(u
 
 ### non-Hood Canal population
 ```{r prepare_nonHC_data}
-# Get list of nonHC Transects
+# Get list of nonHC Transects (for subsetting species)
 PS_15_16_nonHC_transects <- subset(PS_15_16_area_swept, DPS == "U.S. DPS")$Tran_ID
 
 # Subset nonHC species detections
@@ -313,6 +317,8 @@ $$
 # Summarise fish observations for each transect
 nonHC_PS_15_16_species %>% 
   group_by(Tran_ID) %>% 
+  # Subset only yelloweye
+  subset(SpeciesName == "Yelloweye rockfish") %>% 
   summarise(., total_ye = sum(FishCount)) -> nonHC_PS_15_16_ye_counts
 
 # Join species observation and area swept values
@@ -330,8 +336,8 @@ $$
 $$
   
 ```{r nonHC_PS_15_16_calculate_mean_stratum_density}
-# Subset Hood Canal transects
-nonHC_PS_15_16_transects <- subset(PS_15_16_transects, DPS == "Hood Canal")
+# Subset non Hood Canal transects
+nonHC_PS_15_16_transects <- subset(PS_15_16_transects, DPS == "U.S. DPS")
 
 # Determine number of transects (replace part 1/part 2 with nothing)
 nonHC_PS_15_16_transects %>% 
@@ -357,10 +363,10 @@ nonHC_PS_15_16_mean_high_stratum_density_var <- sum(nonHC_PS_15_16_ye_density$sq
 
 #### Calculate abundance estimates
 
-Total abundance ($P$) in numbers of individuals was the product of thestratum surface area ($SA_s$) and the mean taxon density ($D$), with variance calculated as the product of surface area and the variance of mean stratum density: 
+Total abundance ($P$) in numbers of individuals was the product of the stratum surface area ($SA_s$) and the mean taxon density ($D$), with variance calculated as the product of the square of surface area and the variance of mean stratum density: 
   
 $$
-P_s = SA_s\overline{D_s};Var(P_s) = SA_sVar(\overline{D_s})
+P_s = SA_s\overline{D_s};Var(P_s) = SA_s^2Var(\overline{D_s})
 $$
   
 ```{r nonHC_PS_15_16_abundance_estimate}
@@ -369,7 +375,7 @@ nonHC_PS_15_16_high_surface_area_m2 <- 92876441
 
 nonHC_PS_15_16_high_stratum_YE_abundance <- nonHC_PS_15_16_high_surface_area_m2*nonHC_PS_15_16_ye_mean_high_stratum_density
 
-nonHC_PS_15_16_high_stratum_YE_variance <- nonHC_PS_15_16_high_surface_area_m2*nonHC_PS_15_16_mean_high_stratum_density_var
+nonHC_PS_15_16_high_stratum_YE_variance <- nonHC_PS_15_16_high_surface_area_m2^2*nonHC_PS_15_16_mean_high_stratum_density_var
 ```
 
 Coefficients of variation for each taxon (as percentages) were calculated as the standard deviation of mean stratum density ($\overline{D}$) divided by the product of the square root of the station count ($N$) multiplied by the mean stratum density ($\overline{D}$):
@@ -407,12 +413,12 @@ SJI_2018_species[order(SJI_2018_species$SpeciesName),] %>% map_df(rev) -> SJI_20
 SJI_2018_segments <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2018 SJI Segments")
 
 # Load area swept data
-read_excel(paste0(ROV_data_path, "/2018 SJI area swept estimates_17May2021.xlsx"), skip = 3)[,c(1:4)] %>% 
+read_excel(paste0(ROV_data_path, "/2018 SJI area swept estimates_25May2021.xlsx"), skip = 3)[,c(1:4)] %>% 
   dplyr::rename(avg_tran_len_m = `avg tran length (m)`, avg_tran_width_m = `avg tran width (m)`, area_swept_m = `area swept (m)`) -> SJI_2018_area_swept
 
-# For now, drop the two transects (TO BE UPDATED) in area swept and species files
-SJI_2018_area_swept <- subset(SJI_2018_area_swept, !(Tran_ID %in% c("H014", "H029")))
-SJI_2018_species <- subset(SJI_2018_species, !(Tran_ID %in% c("H014", "H029")))
+# For now, drop the one problematic transect (H014) in area swept and species files - but no yelloweye in this transect
+SJI_2018_area_swept <- subset(SJI_2018_area_swept, !(Tran_ID %in% c("H014")))
+SJI_2018_species <- subset(SJI_2018_species, !(Tran_ID %in% c("H014")))
 
 SJI_2018_transects <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2018 SJI Transects")
 
@@ -477,11 +483,11 @@ SJI_2018_mean_high_stratum_density_var <- sum(SJI_2018_ye_density$square_dens_di
 
 Total abundance ($P$) in numbers of individuals was the product of the
 stratum surface area ($SA_s$) and the mean taxon density ($D$), with
-variance calculated as the product of surface area and the variance of
+variance calculated as the product of the square of surface area and the variance of
 mean stratum density: 
 
 $$
-P_s = SA_s\overline{D_s};Var(P_s) = SA_sVar(\overline{D_s})
+P_s = SA_s\overline{D_s};Var(P_s) = SA_s^2Var(\overline{D_s})
 $$
 
 Areas here are from the survey design notes
@@ -492,7 +498,8 @@ SJI_2018_high_surface_area_m2 <- 10000*SJI_2018_high_surface_area_ha
 
 SJI_2018_high_stratum_YE_abundance <- SJI_2018_high_surface_area_m2*SJI_2018_ye_mean_high_stratum_density
 
-SJI_2018_high_stratum_YE_variance <- SJI_2018_high_surface_area_m2*SJI_2018_mean_high_stratum_density_var
+SJI_2018_high_stratum_YE_variance <- SJI_2018_high_surface_area_m2^2*SJI_2018_mean_high_stratum_density_var
+sqrt(SJI_2018_high_stratum_YE_variance)
 ```
 
 Coefficients of variation for each taxon (as percentages) were calculated as the standard deviation of mean stratum density ($\overline{D}$) divided by the product of the square root of the station count ($N$) multiplied by the mean stratum density ($\overline{D}$):
@@ -533,6 +540,9 @@ v18_species %>%
 v18_areaswept <- read_excel(paste0(ROV_data_path, "/2018_Vector_areaswept.xlsx"), sheet = "2018_Vector_areaswept", skip = 2)
 v18_areaswept %>% 
   dplyr::rename(notes = `...5`, avg_tran_width_m = `avg tran width_m`, tran_length_m = `tran length_m`, area_swept = `area swept`)  -> v18_areaswept
+
+# Remove the one low transect
+v18_areaswept <- subset(v18_areaswept, Station != "L029")
 
 # # Convert DMS to decimal degrees (no lat/long info currently so this doesn't do anything)
 # v18_species %>% 
@@ -575,7 +585,7 @@ $$
 
 ```{r v18_calculate_mean_stratum_density}
 v18_mean_stratum_density <- sum(v18_density$ye_density)/length(unique(v18_areaswept$Station))
-  
+
 ```
 
 The variance of the mean stratum density was calculated as: 
@@ -589,25 +599,26 @@ v18_density %>%
   mutate(., mean_ye_density = v18_mean_stratum_density) %>% 
   mutate(., square_dens_diff = (ye_density - mean_ye_density)^2) -> v18_density
 
-mean_stratum_density_var <- sum(v18_density$square_dens_diff)/(length(unique(v18_areaswept$Station))-1)
+v18_mean_stratum_density_var <- sum(v18_density$square_dens_diff)/(length(unique(v18_areaswept$Station))-1)
 ```
 
 
 #### Calculate abundance estimates
 
-Total abundance ($P$) in numbers of individuals was the product of the stratum surface area ($SA_s$) and the mean taxon density ($D$), with variance calculated as the product of surface area and the variance of mean stratum density: 
+Total abundance ($P$) in numbers of individuals was the product of the stratum surface area ($SA_s$) and the mean taxon density ($D$), with variance calculated as the product of the square of surface area and the variance of mean stratum density: 
 $$
-P_s = SA_s\overline{D_s};Var(P_s) = SA_sVar(\overline{D_s})
+P_s = SA_s\overline{D_s};Var(P_s) = SA_s^2Var(\overline{D_s})
 $$
 
 
 ```{r v18_abundance_estimate}
-# Value from Bob: High stratum surface area in Hood Canal (see email on 5/17/21)
-nonHC_PS_15_16_high_surface_area_m2 <- 92876441
+# Value from Bob: High stratum surface area in the Strait of Georgia
+v18_high_surface_area_ha <- 92031
+v18_high_surface_area_m2 <- v18_high_surface_area_ha*10000
 
-nonHC_PS_15_16_high_stratum_YE_abundance <- nonHC_PS_15_16_high_surface_area_m2*nonHC_PS_15_16_ye_mean_high_stratum_density
+v18_high_stratum_YE_abundance <- v18_high_surface_area_m2*v18_mean_stratum_density
 
-nonHC_PS_15_16_high_stratum_YE_variance <- nonHC_PS_15_16_high_surface_area_m2*nonHC_PS_15_16_mean_high_stratum_density_var
+v18_high_stratum_YE_variance <- v18_high_surface_area_m2^2*v18_mean_stratum_density_var
 ```
 
 Coefficients of variation for each taxon (as percentages) were calculated as the standard deviation of mean stratum density ($\overline{D}$) divided by the product of the square root of the station count ($N$) multiplied by the mean stratum density ($\overline{D}$):
@@ -616,26 +627,142 @@ $$
 CV = \frac{\sqrt{Var(\overline{D})}} {\sqrt{N}*\overline{D}} * 100
 $$
   
-```{r nonHC_PS_15_16_CV}
-nonHC_PS_15_16_CV <- sqrt(nonHC_PS_15_16_mean_high_stratum_density_var)/(sqrt(length(unique(nonHC_PS_15_16_transects_unique_high$Tran_ID)))*nonHC_PS_15_16_ye_mean_high_stratum_density)*100
+```{r v18_CV}
+v18_CV <- sqrt(v18_mean_stratum_density_var)/(sqrt(length(unique(v18_areaswept$Station)))*v18_mean_stratum_density)*100
 ```
 
 # 2018 Gulf Islands Survey
+
+Note: For this survey, we are only looking at the "inside" portion of the survey area, since all of the "outside" stations were dropped.
 
 ```{r load_ROV_data_2018_GI}
 ROV_data_path <- here("ROV_data")
 
 GI_2018_species <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2018 GI Species")
 
-# Convert DMS to decimal degrees (no lat/long info currently so this doesn't do anything)
+# Rename some of the transects to match with area swept calculations
 GI_2018_species %>% 
-  mutate(., latitude = Lat_deg + Lat_decmin/60) %>% 
-  mutate(., longitude = Long_deg - Long_decmin/60) -> GI_2018_species
+  # Change "Part 1" to "A"
+  mutate(., Transect = gsub(" Part 1", "A", Transect)) %>% 
+  dplyr::rename(Station = Transect) -> GI_2018_species
 
-# Order so that Bocaccio is on the bottom and gets plotted on top
-GI_2018_species[order(GI_2018_species$SpeciesName),] %>% map_df(rev) -> GI_2018_species
+# Load area swept calculations
+GI_2018_areaswept <- read_excel(paste0(ROV_data_path, "/2018 CGI transect stats.xlsx"), sheet = "2018 CGI area swept", skip = 3)
+GI_2018_areaswept %>% 
+  dplyr::rename(Station = `Row Labels`, avg_tran_width_m = `tran width`, tran_length_m = `tran length`, area_swept = `area swept`)  -> GI_2018_areaswept
+
+# Remove all of the explore transects
+GI_2018_species <- GI_2018_species[grep("CA", GI_2018_species$Station),]
 ```
 
+
+### Calculate stratum density
+
+The area swept for each transect ($A_i$) was the product of the meantransect width ($\overline{W_i}$) and the smoothed transect length ($L_i$). Taxon densities for individual transects ($D_i$) were estimated by dividing the species count ($C_i$) by the transect area: 
+
+$$
+D_i = \frac{C_i} {L_i\overline{W_i}} = \frac{C_i} {\overline{A_i}}
+$$
+
+```{r GI_2018_calculate_taxon_densities_for_individual_transects}
+# Summarise fish observations for each transect
+GI_2018_species %>% 
+  group_by(Station) %>% 
+  summarise(., total_ye = sum(FishCount)) -> GI_2018_ye_counts
+
+
+
+# Join species observation and area swept values
+GI_2018_ye_counts %>% 
+  left_join(., GI_2018_areaswept, by = "Station") %>% 
+  mutate(., ye_density = total_ye/area_swept) -> GI_2018_density
+
+GI_2018_density
+```
+
+
+The mean stratum density ($\overline{D_s}$) for a given taxon was then the sum of the individual transect densities divided by the number of transects ($N_s$): 
+$$
+\overline{D_s} = \frac{\sum\limits_{i=1}^N D_i} {N_s}
+$$
+
+```{r GI_2018_calculate_mean_stratum_density}
+# Subset medium and high
+GI_2018_density_high <- GI_2018_density[grep("H", GI_2018_density$Station),]
+GI_2018_density_med <- GI_2018_density[grep("M", GI_2018_density$Station),]
+
+# Calculate high stratum density
+GI_2018_mean_high_stratum_density <- sum(GI_2018_density_high$ye_density)/length(grep("H", GI_2018_areaswept$Station))
+
+# Calculate medium stratum density
+GI_2018_mean_med_stratum_density <- sum(GI_2018_density_med$ye_density)/length(grep("M", GI_2018_areaswept$Station))
+```
+
+The variance of the mean stratum density was calculated as: 
+$$
+Var(\overline{D_s}) = \frac{\sum\limits_{i=1}^N (D_i-\overline{D_s})^2}
+{N_s - 1}
+$$
+
+```{r GI_2018_calculate_mean_stratum_density_variance}
+# High stratum
+GI_2018_density_high %>% 
+  mutate(., mean_ye_density = GI_2018_mean_high_stratum_density) %>% 
+  mutate(., square_dens_diff = (ye_density - mean_ye_density)^2) -> GI_2018_density_high
+
+GI_2018_mean_high_stratum_density_var <- sum(GI_2018_density_high$square_dens_diff)/(length(grep("H", GI_2018_areaswept$Station))-1)
+
+# Medium stratum
+GI_2018_density_med %>% 
+  mutate(., mean_ye_density = GI_2018_mean_med_stratum_density) %>% 
+  mutate(., square_dens_diff = (ye_density - mean_ye_density)^2) -> GI_2018_density_med
+
+GI_2018_mean_med_stratum_density_var <- sum(GI_2018_density_med$square_dens_diff)/(length(grep("M", GI_2018_areaswept$Station))-1)
+```
+
+
+#### Calculate abundance estimates
+
+Total abundance ($P$) in numbers of individuals was the product of the stratum surface area ($SA_s$) and the mean taxon density ($D$), with variance calculated as the product of the square of surface area and the variance of mean stratum density: 
+$$
+P_s = SA_s\overline{D_s};Var(P_s) = SA_s^2Var(\overline{D_s})
+$$
+
+
+```{r GI_2018_abundance_estimate}
+# High Stratum
+# Value from Bob: High stratum surface area for the inside area of the Gulf Islands
+GI_2018_high_surface_area_ha <- 6070
+GI_2018_high_surface_area_m2 <- GI_2018_high_surface_area_ha*10000
+
+GI_2018_high_stratum_YE_abundance <- GI_2018_high_surface_area_m2*GI_2018_mean_high_stratum_density
+
+GI_2018_high_stratum_YE_variance <- GI_2018_high_surface_area_m2^2*GI_2018_mean_high_stratum_density_var
+
+# Medium stratum
+# Value from Bob: High stratum surface area in the Strait of Georgia
+GI_2018_med_surface_area_ha <- 21462
+GI_2018_med_surface_area_m2 <- GI_2018_med_surface_area_ha*10000
+
+GI_2018_med_stratum_YE_abundance <- GI_2018_med_surface_area_m2*GI_2018_mean_med_stratum_density
+
+GI_2018_med_stratum_YE_variance <- GI_2018_med_surface_area_m2*GI_2018_mean_med_stratum_density_var
+
+```
+
+Coefficients of variation for each taxon (as percentages) were calculated as the standard deviation of mean stratum density ($\overline{D}$) divided by the product of the square root of the station count ($N$) multiplied by the mean stratum density ($\overline{D}$):
+  
+$$
+CV = \frac{\sqrt{Var(\overline{D})}} {\sqrt{N}*\overline{D}} * 100
+$$
+  
+```{r GI_2018_CV}
+# High stratum
+GI_2018_high_CV <- sqrt(GI_2018_mean_high_stratum_density_var)/(sqrt(length(grep("H", GI_2018_areaswept$Station)))*GI_2018_mean_high_stratum_density)*100
+
+# Medium stratum
+GI_2018_med_CV <- sqrt(GI_2018_mean_med_stratum_density_var)/(sqrt(length(grep("M", GI_2018_areaswept$Station)))*GI_2018_mean_med_stratum_density)*100
+```
 
 # Summarise results from each survey
 
@@ -670,14 +797,14 @@ Data for the 2008 and 2010 San Juan Islands surveys just pulled out of the corre
   - %CV: 33
 ```{r summarise_ROV_results}
 
-survey_names <- c("2008 San Juan Islands", "2010 San Juan Islands", "2015-16 Puget Sound", "2015-16 Puget Sound", "2018 San Juan Islands", "2018 Gulf Islands", "2018 Vector")
+survey_names <- c("2008 San Juan Islands", "2010 San Juan Islands", "2015-16 Puget Sound", "2015-16 Puget Sound", "2018 San Juan Islands", "2018 Gulf Islands - High Stratum", "2018 Gulf Islands - Medium Stratum",  "2018 Vector")
 
-survey_areas <- c("San Juan Islands", "San Juan Islands", "Puget Sound Proper (excluding Hood Canal)", "Hood Canal", "San Juan Islands", "Gulf Islands (CA)", "Strait of Georgia (CA)")
+survey_areas <- c("San Juan Islands", "San Juan Islands", "Puget Sound Proper (excluding Hood Canal)", "Hood Canal", "San Juan Islands", "Gulf Islands (Inside)", "Gulf Islands (Inside)", "Strait of Georgia (CA)")
 
-years <- c("2008", "2010", "2015, 2016", "2015, 2016", "2018", "2018", "2018")
+years <- c("2008", "2010", "2015, 2016", "2015, 2016", "2018", "2018", "2018", "2018")
 
 
-YE_ROV_results_summary <- data.frame(survey = survey_names, area = survey_areas, year = years, species = rep("Yelloweye Rockfish", length(survey_names)), abundance = rep(0,length(survey_names)), CV = rep(0,length(survey_names)))
+YE_ROV_results_summary <- data.frame(survey = survey_names, area = survey_areas, year = years, species = rep("Yelloweye Rockfish", length(survey_names)), abundance = rep(NA,length(survey_names)), CV = rep(NA,length(survey_names)))
 
 # 2008 San Juan Islands
 YE_ROV_results_summary[YE_ROV_results_summary$survey == "2008 San Juan Islands",]$abundance <- 47407
@@ -700,6 +827,18 @@ YE_ROV_results_summary[YE_ROV_results_summary$area == "Hood Canal",]$CV <- HC_PS
 # 2018 San Juan Islands
 YE_ROV_results_summary[YE_ROV_results_summary$survey == "2018 San Juan Islands",]$abundance <- SJI_2018_high_stratum_YE_abundance
 YE_ROV_results_summary[YE_ROV_results_summary$survey == "2018 San Juan Islands",]$CV <- SJI_2018_CV
+
+# 2018 Vector
+YE_ROV_results_summary[YE_ROV_results_summary$survey == "2018 Vector",]$abundance <- v18_high_stratum_YE_abundance
+YE_ROV_results_summary[YE_ROV_results_summary$survey == "2018 Vector",]$CV <- v18_CV
+
+# 2018 Gulf Islands - High Stratum
+YE_ROV_results_summary[YE_ROV_results_summary$survey == "2018 Gulf Islands - High Stratum",]$abundance <- GI_2018_high_stratum_YE_abundance
+YE_ROV_results_summary[YE_ROV_results_summary$survey == "2018 Gulf Islands - High Stratum",]$CV <- GI_2018_high_CV
+
+# 2018 Gulf Islands - Medium Stratum
+YE_ROV_results_summary[YE_ROV_results_summary$survey == "2018 Gulf Islands - Medium Stratum",]$abundance <- GI_2018_med_stratum_YE_abundance
+YE_ROV_results_summary[YE_ROV_results_summary$survey == "2018 Gulf Islands - Medium Stratum",]$CV <- GI_2018_med_CV
 
 
 # Save results

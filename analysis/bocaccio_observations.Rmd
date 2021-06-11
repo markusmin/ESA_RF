@@ -1,0 +1,142 @@
+---
+title: "bocaccio_observations"
+author: "Markus Min"
+date: "6/9/2021"
+output: html_document
+---
+
+### Description
+In this document we will describe all recent Bocaccio occurrences through research surveys - by WDFW trawl survey, by ROV observation, and by hook and line surveys.
+
+
+### Load libraries
+```{r load_libraries}
+library(tidyverse)
+library(tidyverse)
+library(readxl)
+library(here)
+library(rgdal)
+library(broom)
+library(ggpubr)
+library(sf)
+
+# Set figure directory
+fig_dir <- here("figures", "bocaccio_observations")
+```
+
+
+### Create base map of Puget Sound
+```{r PS_base_map}
+# Load data
+usa_spdf <- readOGR(dsn = here("map_files", "USA_adm0.shp"))
+
+# Convert to df(ish)
+usa_spdf_fort <- tidy(usa_spdf)
+
+# Load BC data
+BC_shp <- readOGR(dsn = here("map_files", "canada", "lpr_000b16a_e.shp"))
+# proj4string(BC_shp)
+BC_shp_transform <- spTransform(BC_shp, "+init=epsg:4326")
+BC_spdf_fort <- tidy(BC_shp_transform)
+
+
+# Create map in ggplot
+
+greater_PS_map <- ggplot(usa_spdf_fort, aes(x = long, y = lat, group = group))+
+  geom_polygon(color = "gray70", fill = rgb(251, 234, 194, max=255))+
+  geom_polygon(data = BC_spdf_fort, aes(x = long, y = lat, group = group), inherit.aes = FALSE, color = "gray70", fill = rgb(251, 234, 194, max=255)) +
+  ylab("Latitude")+
+  xlab("Longitude")+
+  coord_fixed(ylim = c(47.1,48.9),  xlim = c(-124.8,-122.1), ratio = 1.3)+
+  theme(plot.background = element_rect(fill = "white"),
+        panel.background = element_rect(fill="white", color = "black"),
+        panel.border = element_rect(colour = "black", fill=NA, size=1),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())+
+  scale_x_continuous(breaks = c(-124.5, -124, -123.5, -123, -122.5), expand = c(0,0), labels=c(expression(paste(124.5*degree,"W")),
+                                                                                expression(paste(124*degree,"W")),
+                                                                                expression(paste(123.5*degree,"W")),
+                                                                                expression(paste(123*degree,"W")),
+                                                                                expression(paste(122.5*degree,"W"))))+
+  scale_y_continuous(breaks = seq(47.5, 48.5, 0.5), expand = c(0,0), labels=c(expression(paste(47.5*degree,"N")),
+                                                                    expression(paste(48*degree,"N")),
+                                                                    expression(paste(48.5*degree,"N"))))+
+  # Add line for DPS boundary - from 48.121536, -123.288602 (Green Point) to 48.411782, -123.294625 (McMicking Point in Victoria)
+  annotate("segment", x = -123.288602, xend = -123.294625, y = 48.121536, yend = 48.411782, lty = 2, color = "firebrick4")+
+  annotate("text", label = "DPS Boundary", x = -123.288602, 48.07, size = 4, color = "firebrick4")
+  
+```
+
+## WDFW Trawl Survey
+
+### Read in Bocaccio detections
+```{r load_bocaccio_survey_data}
+boc_bio <- read_excel(here("WDFW_trawl_survey_data", "bocaccio_lf_trawlsurvey.xlsx"))
+boc_loc <- read_excel(here("WDFW_trawl_survey_data", "MarkusMin_BocaccioCoordinates_WDFWtrawl.xlsx"))
+
+# Add the survey years
+boc_loc$year <- as.character(c(2012, 2016, 2016, 2017, 2017, 2017, 2018, 2018, 2018))
+```
+
+
+### Plot Bocaccio detections v1 - each individually
+```{r plot_boc_detections}
+boc_trawl_survey_map <- greater_PS_map+
+  geom_point(data = boc_loc, aes(x = Start_Longitude, y = Start_Latitude, color = year), inherit.aes = FALSE) +
+  scale_color_manual(values = c("#c6dbef", "#6baed6", "#2171b5", "#08306b"))
+
+# boc_trawl_survey_map
+
+ggsave(paste0(fig_dir, "/bocaccio_trawl_survey_map.png"), boc_trawl_survey_map, height = 6, width  = 8)
+```
+
+### Plot Bocaccio detections v2 - with years summarised
+```{r plot_boc_detections}
+boc_loc %>% 
+  mutate(station = ifelse(TowCode %in% c("12JWWT1", "16JWWU1", "16JWWT1", "17JWWT1", "17JWWU1"), "JWW",
+                          ifelse(TowCode == "17JWEV1", "JWE",
+                                 ifelse(TowCode == "18JEWV1", "JEW",
+                                        ifelse(TowCode == "18GBSV1", "GBS",
+                                               ifelse(TowCode == "18SJNV1", "SJN", "Other")))))) %>% 
+  group_by(station) %>% 
+  mutate(years_seen = paste0(year, collapse = ", ")) %>% 
+  distinct(station, years_seen, .keep_all = TRUE) %>% 
+  dplyr::select(Start_Latitude, Start_Longitude, station, years_seen) %>% 
+  mutate(years_seen = ifelse(years_seen == "2012, 2016, 2016, 2017, 2017", "2012, 2016, 2017", years_seen)) -> boc_loc_summarised
+  
+
+boc_trawl_survey_map <- greater_PS_map+
+  geom_point(data = boc_loc_summarised, aes(x = Start_Longitude, y = Start_Latitude), color = "black", inherit.aes = FALSE)+
+  # Plot all data except one right and above
+  geom_text(data = subset(boc_loc_summarised, years_seen != "2017"), aes(x = Start_Longitude+0.01, y = Start_Latitude+0.04, label = years_seen), size = 5, color = "black", inherit.aes = FALSE, hjust = 0) +
+  # Plot 2017 data point right and below
+    geom_text(data = subset(boc_loc_summarised, years_seen == "2017"), aes(x = Start_Longitude+0.01, y = Start_Latitude-0.04, label = years_seen), size = 5, color = "black", inherit.aes = FALSE, hjust = 0)
+
+# boc_trawl_survey_map
+
+ggsave(paste0(fig_dir, "/bocaccio_trawl_survey_map_v2.png"), boc_trawl_survey_map, height = 6, width  = 7.1)
+```
+
+
+
+
+### Plot Bocaccio length comps
+
+Look into strong Bocaccio recruitment event in 2016, as was referenced in DFO's assessment
+```{r plot_boc_lengths}
+boc_lengths_plot <- ggplot(boc_bio, aes(x = Length, y = FishCount)) +
+  geom_bar(stat = "identity")+
+  facet_wrap(vars(SurveyYear)) +
+  theme(panel.background = element_rect(fill = "white"))
+
+boc_lengths_plot
+```
+
+
+## ROV Data
+
+
+
+
+
+## Hook and Line Data

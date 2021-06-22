@@ -78,19 +78,7 @@ boc_loc <- read_excel(here("WDFW_trawl_survey_data", "MarkusMin_BocaccioCoordina
 boc_loc$year <- as.character(c(2012, 2016, 2016, 2017, 2017, 2017, 2018, 2018, 2018))
 ```
 
-
-### Plot Bocaccio detections v1 - each individually
-```{r plot_boc_detections}
-boc_trawl_survey_map <- greater_PS_map+
-  geom_point(data = boc_loc, aes(x = Start_Longitude, y = Start_Latitude, color = year), inherit.aes = FALSE) +
-  scale_color_manual(values = c("#c6dbef", "#6baed6", "#2171b5", "#08306b"))
-
-# boc_trawl_survey_map
-
-ggsave(paste0(fig_dir, "/bocaccio_trawl_survey_map.png"), boc_trawl_survey_map, height = 6, width  = 8)
-```
-
-### Plot Bocaccio detections v2 - with years summarised
+### Plot Bocaccio detections - with years summarised
 ```{r plot_boc_detections}
 boc_loc %>% 
   mutate(station = ifelse(TowCode %in% c("12JWWT1", "16JWWU1", "16JWWT1", "17JWWT1", "17JWWU1"), "JWW",
@@ -102,19 +90,23 @@ boc_loc %>%
   mutate(years_seen = paste0(year, collapse = ", ")) %>% 
   distinct(station, years_seen, .keep_all = TRUE) %>% 
   dplyr::select(Start_Latitude, Start_Longitude, station, years_seen) %>% 
-  mutate(years_seen = ifelse(years_seen == "2012, 2016, 2016, 2017, 2017", "2012, 2016, 2017", years_seen)) -> boc_loc_summarised
+  mutate(years_seen = ifelse(years_seen == "2012, 2016, 2016, 2017, 2017", "2012, 2016, 2017", years_seen)) %>% 
+  # Add field for inside/outside of DPS
+  mutate(DPS = ifelse(Start_Longitude > -123.3, "Inside", "Outside")) -> boc_loc_summarised
   
 
 boc_trawl_survey_map <- greater_PS_map+
-  geom_point(data = boc_loc_summarised, aes(x = Start_Longitude, y = Start_Latitude), color = "black", inherit.aes = FALSE)+
+  geom_point(data = boc_loc_summarised, aes(x = Start_Longitude, y = Start_Latitude, color = DPS), inherit.aes = FALSE)+
   # Plot all data except one right and above
-  geom_text(data = subset(boc_loc_summarised, years_seen != "2017"), aes(x = Start_Longitude+0.01, y = Start_Latitude+0.04, label = years_seen), size = 5, color = "black", inherit.aes = FALSE, hjust = 0) +
+  geom_text(data = subset(boc_loc_summarised, years_seen != "2017"), aes(x = Start_Longitude+0.01, y = Start_Latitude+0.04, label = years_seen, color = DPS), size = 5, inherit.aes = FALSE, hjust = 0) +
   # Plot 2017 data point right and below
-    geom_text(data = subset(boc_loc_summarised, years_seen == "2017"), aes(x = Start_Longitude+0.01, y = Start_Latitude-0.04, label = years_seen), size = 5, color = "black", inherit.aes = FALSE, hjust = 0)
+    geom_text(data = subset(boc_loc_summarised, years_seen == "2017"), aes(x = Start_Longitude+0.01, y = Start_Latitude-0.04, label = years_seen, color = DPS), size = 5, inherit.aes = FALSE, hjust = 0)+
+  scale_color_manual(values = c("Inside" = "firebrick4", "Outside" = "black"))+
+  theme(legend.position = "none")
 
 # boc_trawl_survey_map
 
-ggsave(paste0(fig_dir, "/bocaccio_trawl_survey_map_v2.png"), boc_trawl_survey_map, height = 6, width  = 7.1)
+ggsave(paste0(fig_dir, "/bocaccio_trawl_survey_map.png"), boc_trawl_survey_map, height = 6, width  = 7.1)
 ```
 
 
@@ -123,6 +115,7 @@ ggsave(paste0(fig_dir, "/bocaccio_trawl_survey_map_v2.png"), boc_trawl_survey_ma
 ### Plot Bocaccio length comps
 
 Look into strong Bocaccio recruitment event in 2016, as was referenced in DFO's assessment
+  "There is evidence from the two most important trawl surveys and from the commercial fishery that a strong BOR cohort was spawned in 2016. This stock assessment estimates that this cohort is 44 times (5–95% range: 30–58) the average recruitment (1935-2019) estimated over the 85 year reconstruction period."
 ```{r plot_boc_lengths}
 boc_lengths_plot <- ggplot(boc_bio, aes(x = Length, y = FishCount)) +
   geom_bar(stat = "identity")+
@@ -132,6 +125,35 @@ boc_lengths_plot <- ggplot(boc_bio, aes(x = Length, y = FishCount)) +
 boc_lengths_plot
 ```
 
+```{r plot_boc_lengths_v2}
+# left_join(boc_bio, dplyr::select(boc_loc, TowCode, Start_Latitude, Start_Longitude), by = "TowCode") %>% 
+#   mutate(DPS = ifelse(Start_Longitude > -123.3, "Inside", "Outside")) -> boc_bio
+
+boc_lengths_plot <- ggplot(boc_bio, aes(x = Length, y = FishCount, fill = as.character(SurveyYear), color = DPS))+
+  geom_bar(stat = "identity", size = 1) +
+  scale_pattern_manual(values = c(Inside = "stripe", Outside = "none"))+
+  ylab("Number of fish") +
+  xlab("Length (cm)")+
+  theme(plot.background = element_rect(fill = "white"),
+        panel.background = element_rect(fill="white", color = "black"),
+        panel.border = element_rect(colour = "black", fill=NA, size=1),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = c(0.9, 0.82),
+        legend.text = element_text(size = 20),
+        legend.key=element_blank(),
+        legend.box.background = element_rect(color = "black"),
+        legend.background = element_rect(fill = "gray90"),
+        legend.title = element_text(size = 20),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 12))+
+  scale_fill_manual(values = c("#ffffcc", "#a1dab4", "#41b6c4", "#225ea8"), name = "Year")+
+  # scale_fill_manual(values = c("#c6dbef", "#6baed6", "#2171b5", "#08306b"), name = "Year")+
+  scale_color_manual(values = c("Inside" = "firebrick4", "Outside" = "NA"), guide = FALSE)+
+  scale_y_continuous(expand = c(0,0), limits = c(0, 5.5))
+
+ggsave(paste0(fig_dir, "/bocaccio_trawl_survey_lengths.png"), boc_lengths_plot, height = 6, width  = 8)
+```
 
 ## ROV Data
 

@@ -23,7 +23,7 @@ urlcolor: blue
 \fancyfoot[C]{\thepage}
 
 ### Description
-**NEW VERSION** - this version of the catch reconstruction R markdown has a few key differences from v2:
+**CHANGES MADE FROM V2 to V3** - this version of the catch reconstruction R markdown has a few key differences from v2:
 1. A new input file is used for the recreational catches 1970-2003: NFINrec, provided by Wayne Palsson. This file has more detail than the old file, which was summed across North and South Puget Sound. However, aside from being summarised, the numbers in the files are the same (checked via Pivot Table in Excel). To use this file, need to:
   - Use PCA 6-13 (this is the same as the DPS boundaries); PCA 12 is Hood Canal
   - Subset EFFORT == 3 (all boat anglers, includes those targeting bottomfish, salmon, and "anything")
@@ -37,6 +37,11 @@ urlcolor: blue
 
 4. Shelf rockfish percentages bocaccio have been changed to 0% for medium and 5% for high.
 
+5. The year 1942 has been removed from the initial reporting and this year has instead been interpolated. This is because the reporting rate for this year was very low because of WDF's attempt to establish a new reporting system. An average of only 13 boathouses reported per month, a very small sample size and far lower than the 60+ from the previous few years.
+
+6. In the years 1938-1941, the percentage of catch assumed to be red snapper has been decreased, as 4% was likely far too high.
+
+7. The bocaccio catch proportions for 1938-1941 have been decreased significantly from 0% (low) 1% (medium) and 2% (high) to 0% (low) 0.25% (medium) and 0.5% (high).
 
 This R markdown file goes through the catch reconstruction of yelloweye rockfish and bocaccio in Puget Sound. This document will generate different plausible catch scenarios and address the sources of uncertainty at each step of the analysis. This document is organized in reverse chronological order, beginning with the commercial catch and then going through the recreational catch.
 
@@ -1747,6 +1752,8 @@ These are all available online through the University of Washington library.
 - "While statistics of sports catches kept by the Department of Fisheries on the present basis provide the basis of reasonable estimates, **the data are by no means complete or accurate**." 
 
 Note: Annual bulletins started in 1935, but 1935-1937 had no note of sport fishing statistics. Reporting by boathouses dropped dramatically in 1942, and then in 1943 it appears that the Department of Fisheries stopped surveying boathouses altogether.
+- another note: In 1942, it says that the total number of boathouses listed was only 36 (compared to 128 in 1941) - why is this value so low? Unless 3/4 of boathouses closed (possible due to WWII?), this seems erroneous
+  - 1942 also has some super high red snapper catches - about 10% of total rockfish catch for some months
 
 A quote from page 11 of the 1946 annual bulletin:
 
@@ -1942,7 +1949,7 @@ bargmann_data %>%
                         ifelse(area == 12, "Hood Canal",  "North Puget Sound"))) -> bargmann_data
 ```
 
-```{r summarise_data}
+```{r summarise_bargmann_data}
 # Summarise across regions
 bargmann_data %>% 
   group_by(year, Species, PS) %>% 
@@ -2633,14 +2640,19 @@ boc_catch_bargmann %>%
 
 #### Yelloweye catch scenarios
 Main questions here are 1) how to deal with prorating rockfish category if there is also a "red snapper" category and 2) what species proportions to use
-1. High catch scenario: In years where "red snapper" is listed, 2% of the other rockfish catch is red snapper. In years where no red snapper is listed (1938 and 1939), 4% of the rockfish catch is red snapper.
-2. Medium catch scenario: In years where "red snapper" is listed, 1% of the other rockfish catch is red snapper. In years where no red snapper is listed (1938 and 1939), 2% of the rockfish catch is red snapper.
-3. Low catch scenario: In years where "red snapper" is listed, it is the only yelloweye catch. In years where no red snapper is listed (1938 and 1939), prorate catch based on mean proportion of total rockfishes that are "red snapper" from the years 1940-42.
+1. High catch scenario: In years where "red snapper" is listed, all of the other rockfish catch is prorated to red snapper, based on the mean proportion of total rockfishes that are "red snapper" from the years 1940-1941, and is added to the "red snapper" catch. In years where no red snapper is listed (1938 and 1939), prorate catch based on mean proportion of total rockfishes that are "red snapper" from the years 1940-41 * 2.
+2. Medium catch scenario: In years where "red snapper" is listed, half of the rockfish catch is prorated to red snapper, based on the mean proportion of total rockfishes that are "red snapper" from the years 1940-1941, and is added to the "red snapper" catch. In years where no red snapper is listed (1938 and 1939), prorate catch based on mean proportion of total rockfishes that are "red snapper" from the years 1940-41.
+3. Low catch scenario: In years where "red snapper" is listed, it is the only yelloweye catch. In years where no red snapper is listed (1938 and 1939), prorate catch based on mean proportion of total rockfishes that are "red snapper" from the years 1940-41 * 0.5. 
+
+For the proportion of rockfishes that are red snapper: If 1942 is included, this value turns out to be about 1.4%, highly inflated by the 1942 values. If 1942 is not included, this value drops down to 0.68%.
+
+We may also want to consider removing 1942 from this, because so few boathouses were actually reporting - the sample size is perhaps too small to have much confidence in, and in the chart it clearly looks out of place.
+- Let's remove 1942 and interpolate the values, since the sample size is super low (13 boathouses reporting average rather than 60+ from the previous few years)
 
 #### Bocaccio catch scenarios
 Question for bocaccio is how to prorate the general rockfishes category
-1. High catch scenario: 2% of the rockfish catch is bocaccio
-2. Medium catch scenario: 1% of the rockfish catch is bocaccio
+1. High catch scenario: 0.5% of the rockfish catch is bocaccio
+2. Medium catch scenario: 0.25% of the rockfish catch is bocaccio
 3. Low catch scenario: No bocaccio were caught (0%)
 
 ```{r 1938_1941_rec_data}
@@ -2660,11 +2672,16 @@ read_excel(WDFW_38_42_path, sheet = "1942") %>%
   mutate(year = 1942) %>% 
   mutate(total_boathouses = as.numeric(total_boathouses))-> rec_42
 
-rec_38 %>% 
+rec_38 %>%
   bind_rows(., rec_39) %>%
-  bind_rows(., rec_40) %>% 
-  bind_rows(., rec_41) %>% 
+  bind_rows(., rec_40) %>%
+  bind_rows(., rec_41) %>%
   bind_rows(., rec_42) -> rec_38_42
+
+rec_38 %>%
+  bind_rows(., rec_39) %>%
+  bind_rows(., rec_40) %>%
+  bind_rows(., rec_41) -> rec_38_41
 
 
 
@@ -2688,13 +2705,15 @@ Interpolating data for missing months:
 
 ```{r estimate_total_catch_effort}
 # Add total_boathouses = 130 for 1942; given that total boathouses was 101 in 1939, 130 in 1940, 128 in 1941, and then there were "about 150" in 1949 indicates slow growth
-rec_38_42 %>% 
-  mutate(total_boathouses = ifelse(year == 1942, 130, total_boathouses)) -> rec_38_42
+# However, number of boathouses listed in 1942 report is only 36... not sure why this is so low.
+# Clear data issues = remove 1942
+# rec_38_42 %>% 
+#   mutate(total_boathouses = ifelse(year == 1942, 130, total_boathouses)) -> rec_38_42
 
 # For each month, calculate fisherman_days per boathouse, then use this to estimate total fisherman_days across all boathouses.
-rec_38_42 %>% 
+rec_38_41 %>% 
   mutate(days_per_boathouse = fisherman_days/no_boathouses) %>% 
-  mutate(est_days = days_per_boathouse * total_boathouses) -> rec_38_42
+  mutate(est_days = days_per_boathouse * total_boathouses) -> rec_38_41
 ```
 
 How to estimate private boat (non-boathouse) effort? The best indication we have is from the 1949 annual report (which is the first time that they tried to estimate private effort in the recreational (salmon) fishery):
@@ -2721,88 +2740,88 @@ private_boats %>%
   mutate(multiplier = 1+multiplier/100) -> private_boats
 
 # Add private boat effort estimates to estimates of fisherman days
-rec_38_42 %>% 
+rec_38_41 %>% 
   left_join(., private_boats, by = "month") %>% 
-  mutate(est_days = est_days*multiplier) -> rec_38_42
+  mutate(est_days = est_days*multiplier) -> rec_38_41
   
   
 # Estimate total rock_cod and red_snapper by multiplying catch by est_days/fisherman_days
-rec_38_42 %>% 
+rec_38_41 %>% 
   mutate(., est_RF = rock_cod * est_days/fisherman_days) %>% 
-  mutate(., est_RS = red_snapper * est_days/fisherman_days) -> rec_38_42
+  mutate(., est_RS = red_snapper * est_days/fisherman_days) -> rec_38_41
 
 # Calculate rock cod CPUE by fisherman day
-rec_38_42 %>% 
+rec_38_41 %>% 
   group_by(year) %>% 
   dplyr::select(fisherman_days, rock_cod, year) %>% 
   summarise_all(sum) %>% 
-  mutate(CPUE = rock_cod/fisherman_days) -> rec_38_42_CPUE
+  mutate(CPUE = rock_cod/fisherman_days) -> rec_38_41_CPUE
 
-mean_CPUE_38_42 <- mean(rec_38_42_CPUE$CPUE)
+mean_CPUE_38_41 <- mean(rec_38_41_CPUE$CPUE)
 
 # Interpolate the catches for missing month
 # Add zeros for years where there was no catch using tidyverse::complete
-rec_38_42 %>%
-  complete(., month = c("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"), year = seq(1938, 1942, 1), fill = list(no_boathouses = NA, fisherman_days = NA, rock_cod = NA, red_snapper = NA, total_boathouses = NA, days_per_boathouse = NA, est_days = NA, est_RF = mean(subset(rec_38_42, month == "November")$est_RF))) -> rec_38_42
+rec_38_41 %>%
+  complete(., month = c("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"), year = seq(1938, 1941, 1), fill = list(no_boathouses = NA, fisherman_days = NA, rock_cod = NA, red_snapper = NA, total_boathouses = NA, days_per_boathouse = NA, est_days = NA, est_RF = mean(subset(rec_38_41, month == "November")$est_RF))) -> rec_38_41
 ```
 
 
-``` {r summarise_rec_catch_38_42}
+``` {r summarise_rec_catch_38_41}
 # Calculate annual sums
-rec_38_42 %>% 
+rec_38_41 %>% 
   group_by(year) %>% 
   dplyr::select(est_RF, est_RS, est_days) %>% 
-  summarise_all(sum, na.rm = TRUE) -> rec_38_42_annual_sums
+  summarise_all(sum, na.rm = TRUE) -> rec_38_41_annual_sums
 
 # Change RS in 1938 and 1939 to NA from 0 (since it was not reported at all)
-rec_38_42_annual_sums[rec_38_42_annual_sums$year %in% c(1938, 1939),]$est_RS <- NA
+rec_38_41_annual_sums[rec_38_41_annual_sums$year %in% c(1938, 1939),]$est_RS <- NA
 
 # Prorate, generate catch scenarios
 
 # Determine red snapper as proportion of total catch comp
-subset(rec_38_42_annual_sums, !is.na(est_RS)) %>% 
-  mutate(total_RF = est_RF + est_RS) -> RF_RS_38_42
+subset(rec_38_41_annual_sums, !is.na(est_RS)) %>% 
+  mutate(total_RF = est_RF + est_RS) -> RF_RS_38_41
 
-RS_prop <- sum(RF_RS_38_42$est_RS, na.rm = TRUE)/ sum(RF_RS_38_42$total_RF, na.rm = TRUE)
+RS_prop <- sum(RF_RS_38_41$est_RS, na.rm = TRUE)/ sum(RF_RS_38_41$total_RF, na.rm = TRUE)
 
 # Prorate yelloweye
-rec_38_42_annual_sums %>% 
-  mutate(low_ye_n = ifelse(is.na(est_RS), est_RF * RS_prop, est_RS)) %>% 
-  mutate(medium_ye_n = ifelse(is.na(est_RS), est_RF * 0.02, est_RS + est_RF * 0.01)) %>% 
-  mutate(high_ye_n = ifelse(is.na(est_RS), est_RF * 0.04, est_RS + est_RF * 0.02)) %>% 
+rec_38_41_annual_sums %>% 
+  mutate(low_ye_n = ifelse(is.na(est_RS), est_RF * 0.5 * RS_prop, est_RS)) %>% 
+  mutate(medium_ye_n = ifelse(is.na(est_RS), est_RF * RS_prop, est_RS + est_RF * RS_prop * 0.5)) %>% 
+  mutate(high_ye_n = ifelse(is.na(est_RS), est_RF * 2 * RS_prop, est_RS + est_RF * RS_prop * 2)) %>% 
   mutate(low_catch_lbs = low_ye_n*YE_lbs_per_individual) %>% 
   mutate(medium_catch_lbs = medium_ye_n*YE_lbs_per_individual) %>% 
-  mutate(high_catch_lbs = high_ye_n*YE_lbs_per_individual) -> YE_rec_38_42
+  mutate(high_catch_lbs = high_ye_n*YE_lbs_per_individual) -> YE_rec_38_41
 
 # Subset yelloweye into US DPS and Hood Canal, based on the assumption that 15% of catch was from Hood Canal
-YE_rec_38_42 %>% 
-  dplyr::select(year, low_catch_lbs, medium_catch_lbs, high_catch_lbs, low_ye_n, medium_ye_n, high_ye_n) -> YE_rec_38_42_int
+YE_rec_38_41 %>% 
+  dplyr::select(year, low_catch_lbs, medium_catch_lbs, high_catch_lbs, low_ye_n, medium_ye_n, high_ye_n) -> YE_rec_38_41_int
   
 # Hood Canal
-YE_rec_38_42_int*0.15 -> YE_rec_38_42_HC
+YE_rec_38_41_int*0.15 -> YE_rec_38_41_HC
 
-YE_rec_38_42_HC %>% 
-  mutate(year = year/0.15) -> YE_rec_38_42_HC
+YE_rec_38_41_HC %>% 
+  mutate(year = year/0.15) -> YE_rec_38_41_HC
 
 # US DPS
-YE_rec_38_42_int*0.85 -> YE_rec_38_42_USDPS
+YE_rec_38_41_int*0.85 -> YE_rec_38_41_USDPS
 
-YE_rec_38_42_USDPS %>% 
-  mutate(year = year/0.85) -> YE_rec_38_42_USDPS
+YE_rec_38_41_USDPS %>% 
+  mutate(year = year/0.85) -> YE_rec_38_41_USDPS
 
 # Prorate bocaccio
-rec_38_42_annual_sums %>% 
+rec_38_41_annual_sums %>% 
   mutate(low_boc_n = est_RF * 0) %>% 
-  mutate(medium_boc_n = est_RF * 0.01) %>% 
-  mutate(high_boc_n = est_RF * 0.02) %>% 
+  mutate(medium_boc_n = est_RF * 0.0025) %>% 
+  mutate(high_boc_n = est_RF * 0.005) %>% 
   mutate(low_catch_lbs = low_boc_n*BOC_lbs_per_individual) %>% 
   mutate(medium_catch_lbs = medium_boc_n*BOC_lbs_per_individual) %>% 
-  mutate(high_catch_lbs = high_boc_n*BOC_lbs_per_individual) -> BOC_rec_38_42
+  mutate(high_catch_lbs = high_boc_n*BOC_lbs_per_individual) -> BOC_rec_38_41
 
 ```
 
 
-### 1943-1965: Use information from Buckley and 1938-1942 WDFW annual bulletins
+### 1942-1965: Use information from Buckley and 1938-1942 WDFW annual bulletins
 
 Here we are estimating proportions of the rock_cod catch that we think is yelloweye or bocaccio.
 1. Question 1: Do we think that for years where "red snapper" was recorded, there is still some yelloweye in the "rock cod" catch?
@@ -2850,7 +2869,7 @@ Okay, let's divide effort by area by # of boathouses (approx - based on map, loo
 
 -> This causes the Hood Canal catches to look pretty inflated, because of the fact that there are some very high proportions of yelloweye in the Buckley proportions.
 
-```{r estimate_43_65_effort}
+```{r estimate_42_65_effort}
 # Read in effort statistics
 rec_43_65_effort_stats <- read.csv(here("catch_reconstruction_data", "recreational","pre_1970", "rec_effort_stats_43_65.csv"))
 rec_43_65_effort_stats %>% 
@@ -2864,27 +2883,35 @@ ggplot(rec_43_65_effort_stats, aes(x = year, y = fisherman_days)) +
 # Interpolate all missing years using linear interpolation
 # 1940 had 260000 angler days; add that as placeholder to faciliate linear interpolation
 bind_rows(data.frame(year = 1940, fisherman_days = 260000), rec_43_65_effort_stats) -> rec_43_65_effort_stats
-rec_43_65_effort_stats$fisherman_days <- na.approx(rec_43_65_effort_stats$fisherman_days)
+# Add year 1942, since we are now interpolating that value as well
+rec_43_65_effort_stats %>% 
+  bind_rows(., data.frame(year = 1942, fisherman_days = NA)) -> rec_42_65_effort_stats
+rec_42_65_effort_stats <- rbind(rec_42_65_effort_stats[1,], rec_42_65_effort_stats[rec_42_65_effort_stats$year == 1942,],
+                                rec_42_65_effort_stats[3:nrow(rec_42_65_effort_stats)-1,])
+
+
+rec_42_65_effort_stats$fisherman_days <- na.approx(rec_42_65_effort_stats$fisherman_days)
 # Remove 1940 data point; keep 1965, since we are interpolating that
 
-rec_43_65_effort_stats <- subset(rec_43_65_effort_stats, !(year %in% c(1940)))
+rec_42_65_effort_stats <- subset(rec_42_65_effort_stats, !(year %in% c(1940)))
 
 # Reformat to join with other data later
-rec_43_65_effort_stats %>% 
+rec_42_65_effort_stats %>% 
   dplyr::rename(est_days = fisherman_days) %>% 
-  mutate(est_RF = 0, est_RS = 0) -> rec_43_65_est
+  mutate(est_RF = 0, est_RS = 0) -> rec_42_65_est
 
 # Plot data, showing actual and interpolated data points
 rec_43_65_effort_stats <- read.csv(here("catch_reconstruction_data", "recreational","pre_1970", "rec_effort_stats_43_65.csv"))
 rec_43_65_effort_stats %>% 
+  bind_rows(., data.frame(year = 1942, fisherman_days = NA))  %>% 
   group_by(year) %>% 
   summarise(fisherman_days = sum(fisherman_days)) %>% 
-  mutate(source = ifelse(is.na(fisherman_days), "interpolated", "WDFW estimate")) -> rec_43_65_effort_stats
+  mutate(source = ifelse(is.na(fisherman_days), "interpolated", "WDFW estimate")) -> rec_42_65_effort_stats
 
-rec_43_65_est %>% 
-  left_join(., dplyr::select(rec_43_65_effort_stats, year, source), by = "year") -> rec_43_65_est_forplot
+rec_42_65_est %>% 
+  left_join(., dplyr::select(rec_42_65_effort_stats, year, source), by = "year") -> rec_42_65_est_forplot
 
-ggplot(rec_43_65_est_forplot, aes(x = year, y = est_days, color = source)) +
+ggplot(rec_42_65_est_forplot, aes(x = year, y = est_days, color = source)) +
   geom_point()+
   ylab("Fisherman Days")
 
@@ -2925,15 +2952,15 @@ MRFSS_props_forjoin %>%
 ```
 
 
-```{r estimate_RF_catch_43_65}
+```{r estimate_RF_catch_42_65}
 # Calculate estimated rockfish catch using mean CPUE from 1938-1942
-rec_43_65_est %>% 
-  mutate(., est_RF = est_days * mean_CPUE_38_42) -> rec_43_65_est
+rec_42_65_est %>% 
+  mutate(., est_RF = est_days * mean_CPUE_38_41) -> rec_42_65_est
 
 # Compare these values to sums from 1965-1967 from Buckley
 RF_sums_buckley <- data.frame(year = c(1965, 1966, 1967), total = c(sum(buck65_data_2$catch_individuals), sum(buck66_data_2$catch_individuals), sum(buck67_data_2$catch_individuals)))
 
-rec_43_65_est
+rec_42_65_est
 RF_sums_buckley
 # These values seem totally plausible based on the ramps... there isn't a noticeable discontinuity between the interpolated and actual values.
 # Catches in 1970 are around 50k
@@ -2942,7 +2969,7 @@ RF_sums_buckley
 effort_by_area <- data.frame(area = c(6,7,8,9,10,11,12), prop_effort = c(0.04, 0.1, 0.18, 0.22, 0.15, 0.15, 0.16))
 
 # Yelloweye USDPS
-rec_43_65_est %>% 
+rec_42_65_est %>% 
   # Medium catch estimate (best guess) - using mean of MRFSS and Buckley
   mutate(medium_ye_n = 
            # Area 6
@@ -2990,10 +3017,10 @@ rec_43_65_est %>%
            # Area 11
            subset(MRFSS_buckley_props, area == 11)$buckley_ye_prop * subset(effort_by_area, area ==11)$prop_effort*est_RF
            ) %>%
-  mutate(high_catch_lbs = high_ye_n * YE_lbs_per_individual)-> ye_rec_catch_USDPS_43_65
+  mutate(high_catch_lbs = high_ye_n * YE_lbs_per_individual)-> ye_rec_catch_USDPS_42_65
 
 # Yelloweye Hood Canal
-rec_43_65_est %>% 
+rec_42_65_est %>% 
   # Medium catch estimate - with mean of Buckley and MRFSS proportions
   mutate(medium_ye_n = 
            # Area 12
@@ -3010,10 +3037,10 @@ rec_43_65_est %>%
   mutate(low_ye_n = 
            # Area 6
            subset(MRFSS_buckley_props, area == 12)$MRFSS_ye_prop * subset(effort_by_area, area ==12)$prop_effort*est_RF) %>% 
-  mutate(low_catch_lbs = low_ye_n * YE_lbs_per_individual)-> ye_rec_catch_HC_43_65
+  mutate(low_catch_lbs = low_ye_n * YE_lbs_per_individual)-> ye_rec_catch_HC_42_65
 
 # Bocaccio, USDPS
-rec_43_65_est %>% 
+rec_42_65_est %>% 
   mutate(medium_boc_n = 
            # Area 6
            subset(MRFSS_buckley_props, area == 6)$mean_boc_prop * subset(effort_by_area, area ==6)$prop_effort*est_RF +
@@ -3066,14 +3093,14 @@ rec_43_65_est %>%
            # Area 12
            subset(MRFSS_buckley_props, area == 12)$buckley_boc_prop * subset(effort_by_area, area ==12)$prop_effort*est_RF
            ) %>% 
-  mutate(high_catch_lbs = high_boc_n * BOC_lbs_per_individual)-> boc_rec_catch_USDPS_43_65
+  mutate(high_catch_lbs = high_boc_n * BOC_lbs_per_individual)-> boc_rec_catch_USDPS_42_65
 ```
 
 ## Recreational catch: All years combined
 ```{r combine_rec_catch_ye_boc}
 # Yelloweye, US DPS
-YE_rec_38_42_USDPS %>% 
-  bind_rows(., ye_rec_catch_USDPS_43_65) %>% 
+YE_rec_38_41_USDPS %>% 
+  bind_rows(., ye_rec_catch_USDPS_42_65) %>% 
   bind_rows(., ye_rec_catch_66_69_USDPS) %>% 
   bind_rows(., ye_rec_catch_USDPS_70_93) %>% 
   bind_rows(., ye_rec_catch_USDPS_94_02) %>% 
@@ -3083,12 +3110,12 @@ YE_rec_38_42_USDPS %>%
 # Yelloweye, Hood Canal
 
 # Try to fix year joining issue
-YE_rec_38_42_HC %>% 
+YE_rec_38_41_HC %>% 
   mutate(year = as.character(year)) %>% 
-  mutate(year = as.numeric(year)) -> YE_rec_38_42_HC
+  mutate(year = as.numeric(year)) -> YE_rec_38_41_HC
 
-YE_rec_38_42_HC %>% 
-  bind_rows(., ye_rec_catch_HC_43_65) %>% 
+YE_rec_38_41_HC %>% 
+  bind_rows(., ye_rec_catch_HC_42_65) %>% 
   bind_rows(., ye_rec_catch_66_69_HC) %>% 
   bind_rows(., HC_rec_ye_70_93) %>% 
   bind_rows(., ye_rec_HC_94_02) %>% 
@@ -3096,8 +3123,8 @@ YE_rec_38_42_HC %>%
   dplyr::select(year, low_catch_lbs, medium_catch_lbs, high_catch_lbs) -> YE_HC_rec_complete
 
 # Bocaccio, US DPS
-BOC_rec_38_42 %>% 
-  bind_rows(., boc_rec_catch_USDPS_43_65) %>% 
+BOC_rec_38_41 %>% 
+  bind_rows(., boc_rec_catch_USDPS_42_65) %>% 
   bind_rows(., boc_rec_catch_66_69) %>% 
   bind_rows(., boc_rec_catch_USDPS_70_93) %>% 
   bind_rows(., boc_rec_catch_USDPS_94_02) %>% 
@@ -3390,7 +3417,7 @@ ggsave(paste0(fig_dir, "/bocaccio_catch_scenarios_USDPS.png"), BOC_USDPS_scenari
 # Plot data for review
 
 ## Yelloweye, USDPS
-```{r yelloweye_catch_history_plot_data_prep}
+```{r yelloweye_USDPS_catch_history_plot_data_prep}
 # Join various catch scenarios
 YE_high_catch_USDPS %>% 
   dplyr::rename(high_US_comm_catch_lbs = US_comm_catch_lbs, high_US_rec_catch_lbs = US_rec_catch_lbs) %>% 
@@ -3419,20 +3446,8 @@ YE_high_catch_USDPS_forplot %>%
  YE_catch_USDPS_forplot %>% 
    pivot_longer(., cols = c("US_comm_catch_lbs", "US_rec_catch_lbs"), names_to = "catch_type") %>% 
    mutate(catch_type = ifelse(catch_type == "US_comm_catch_lbs", "Commercial", "Recreational")) ->  YE_catch_USDPS_forplot
-
-```
-
-```{r make_barplot_ye_catch_history}
-YE_catch_history_plot <- ggplot(YE_catch_USDPS_forplot, aes(x = year, y = value, fill = catch_type))+
-  geom_bar(stat = "identity", position = "dodge2")
-
-YE_catch_history_plot
-
-ggsave(paste0(fig_dir, "/plots_for_review/yelloweye_USDPS_catch_history.png"), YE_catch_history_plot, height = 6, width = 12)
-```
-
-```{r make_plot_only_rec_test}
-# Make new column so that only difference between different scenarios is plotted
+ 
+ # Make new column so that only difference between different scenarios is plotted
 YE_catch_USDPS_forplot_wide %>% 
   mutate(medium_comm_diff = medium_US_comm_catch_lbs - low_US_comm_catch_lbs) %>% 
   mutate(high_comm_diff = high_US_comm_catch_lbs - medium_US_comm_catch_lbs) %>% 
@@ -3460,7 +3475,9 @@ YE_rec_catch_USDPS_forplot %>%
   bind_rows(., YE_comm_catch_USDPS_forplot) %>% 
   mutate(scenario = factor(scenario, levels = c("high", "medium", "low"))) -> YE_catch_USDPS_forplot_2
 
+```
 
+```{r plot_yelloweye_USDPS_rec_catch_for_review}
 YE_rec_catch_history_plot <- ggplot(subset(YE_catch_USDPS_forplot_2, catch_type == "Recreational"), aes(x = year, y = value, fill = scenario))+
   geom_bar(stat = "identity")+
   scale_fill_manual(values = c("#1f78b4", "#33a02c", "#ff7f00"))+
@@ -3478,9 +3495,226 @@ YE_rec_catch_history_plot <- ggplot(subset(YE_catch_USDPS_forplot_2, catch_type 
 ggsave(paste0(fig_dir, "/plots_for_review/yelloweye_USDPS_rec_catch_history.png"), YE_rec_catch_history_plot, height = 6, width = 12)
 ```
 
+```{r plot_yelloweye_commercial_catch_for_review}
+YE_comm_catch_history_plot <- ggplot(subset(YE_catch_USDPS_forplot_2, catch_type == "Commercial"), aes(x = year, y = value, fill = scenario))+
+  geom_bar(stat = "identity")+
+  scale_fill_manual(values = c("#1f78b4", "#33a02c", "#ff7f00"))+
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 16),
+        panel.background = element_rect(fill = "white", color = "black"),
+        panel.grid = element_blank(),
+        legend.position = c(0.9, 0.85),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 15))+
+  xlab("Year")+
+  ylab("Catch (lbs)")+
+  scale_x_continuous(breaks = seq(1920, 2020, 20)) +
+  scale_y_continuous(expand = c(0,0), limits = c(0, 20000))
+
+ggsave(paste0(fig_dir, "/plots_for_review/yelloweye_USDPS_comm_catch_history.png"), YE_comm_catch_history_plot, height = 6, width = 12)
+```
+
+
+## Yelloweye, Hood Canal
+```{r yelloweye_HC_catch_history_plot_data_prep}
+# Join various catch scenarios
+YE_high_catch_HC %>% 
+  dplyr::rename(high_US_comm_catch_lbs = US_comm_catch_lbs, high_US_rec_catch_lbs = US_rec_catch_lbs) %>% 
+  dplyr::select(-total_catch_lbs) -> YE_high_catch_HC_forplot
+
+YE_medium_catch_HC %>% 
+  dplyr::rename(medium_US_comm_catch_lbs = US_comm_catch_lbs, medium_US_rec_catch_lbs = US_rec_catch_lbs) %>% 
+  dplyr::select(-total_catch_lbs) -> YE_medium_catch_HC_forplot
+
+YE_low_catch_HC %>% 
+  dplyr::rename(low_US_comm_catch_lbs = US_comm_catch_lbs, low_US_rec_catch_lbs = US_rec_catch_lbs) %>% 
+  dplyr::select(-total_catch_lbs) -> YE_low_catch_HC_forplot
+
+YE_high_catch_HC_forplot %>% 
+  left_join(., YE_medium_catch_HC_forplot, by = "year") %>% 
+  left_join(., YE_low_catch_HC_forplot, by = "year") -> YE_catch_HC_forplot_wide
+
+
+# Join catch scenarios
+mutate(YE_high_catch_HC, scenario = "high") %>% 
+  bind_rows(.,  mutate(YE_medium_catch_HC, scenario = "medium")) %>% 
+  bind_rows(.,  mutate(YE_low_catch_HC, scenario = "low")) %>% 
+  dplyr::select(-total_catch_lbs) -> YE_catch_HC_forplot
+
+# Pivot longer
+YE_catch_HC_forplot %>% 
+  pivot_longer(., cols = c("US_comm_catch_lbs", "US_rec_catch_lbs"), names_to = "catch_type") %>% 
+  mutate(catch_type = ifelse(catch_type == "US_comm_catch_lbs", "Commercial", "Recreational")) ->  YE_catch_HC_forplot
+
+# Make new column so that only difference between different scenarios is plotted
+YE_catch_HC_forplot_wide %>% 
+  mutate(medium_comm_diff = medium_US_comm_catch_lbs - low_US_comm_catch_lbs) %>% 
+  mutate(high_comm_diff = high_US_comm_catch_lbs - medium_US_comm_catch_lbs) %>% 
+  mutate(medium_rec_diff = medium_US_rec_catch_lbs - low_US_rec_catch_lbs) %>% 
+  mutate(high_rec_diff = high_US_rec_catch_lbs - medium_US_rec_catch_lbs) -> YE_catch_HC_forplot_wide
+
+# Recreational only
+YE_catch_HC_forplot_wide %>% 
+  dplyr::select(low_US_rec_catch_lbs, medium_rec_diff, high_rec_diff) %>% 
+  pivot_longer(cols = c(low_US_rec_catch_lbs, medium_rec_diff, high_rec_diff), names_to = "scenario") %>% 
+  mutate(scenario = ifelse(scenario == "low_US_rec_catch_lbs", "low", 
+                           ifelse(scenario == "medium_rec_diff", "medium", "high"))) %>% 
+  mutate(catch_type = "Recreational") -> YE_rec_catch_HC_forplot
+
+# Commercial only
+YE_catch_HC_forplot_wide %>% 
+  dplyr::select(low_US_comm_catch_lbs, medium_comm_diff, high_comm_diff) %>% 
+  pivot_longer(cols = c(low_US_comm_catch_lbs, medium_comm_diff, high_comm_diff), names_to = "scenario") %>% 
+  mutate(scenario = ifelse(scenario == "low_US_comm_catch_lbs", "low", 
+                           ifelse(scenario == "medium_comm_diff", "medium", "high"))) %>% 
+  mutate(catch_type = "Commercial") -> YE_comm_catch_HC_forplot
+
+# Join rec and commercial
+YE_rec_catch_HC_forplot %>% 
+  bind_rows(., YE_comm_catch_HC_forplot) %>% 
+  mutate(scenario = factor(scenario, levels = c("high", "medium", "low"))) -> YE_catch_HC_forplot_2
+
+```
+
+```{r plot_yelloweye_HC_rec_catch_for_review}
+YE_rec_catch_history_plot <- ggplot(subset(YE_catch_HC_forplot_2, catch_type == "Recreational"), aes(x = year, y = value, fill = scenario))+
+  geom_bar(stat = "identity")+
+  scale_fill_manual(values = c("#1f78b4", "#33a02c", "#ff7f00"))+
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 16),
+        panel.background = element_rect(fill = "white", color = "black"),
+        panel.grid = element_blank(),
+        legend.position = c(0.9, 0.85),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 15))+
+  xlab("Year")+
+  ylab("Catch (lbs)")+
+  scale_y_continuous(expand = c(0,0), limits = c(0, 6000))
+
+ggsave(paste0(fig_dir, "/plots_for_review/yelloweye_HC_rec_catch_history.png"), YE_rec_catch_history_plot, height = 6, width = 12)
+```
+
+```{r plot_yelloweye_commercial_catch_for_review}
+YE_comm_catch_history_plot <- ggplot(subset(YE_catch_HC_forplot_2, catch_type == "Commercial"), aes(x = year, y = value, fill = scenario))+
+  geom_bar(stat = "identity")+
+  scale_fill_manual(values = c("#1f78b4", "#33a02c", "#ff7f00"))+
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 16),
+        panel.background = element_rect(fill = "white", color = "black"),
+        panel.grid = element_blank(),
+        legend.position = c(0.9, 0.85),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 15))+
+  xlab("Year")+
+  ylab("Catch (lbs)")+
+  scale_x_continuous(breaks = seq(1920, 2020, 20)) +
+  scale_y_continuous(expand = c(0,0), limits = c(0, 1000))
+
+ggsave(paste0(fig_dir, "/plots_for_review/yelloweye_HC_comm_catch_history.png"), YE_comm_catch_history_plot, height = 6, width = 12)
+```
 
 
 
 
 
+
+
+## Bocaccio, USDPS
+```{r bocaccio_catch_history_plot_data_prep}
+# Join various catch scenarios
+BOC_high_catch_USDPS %>% 
+  dplyr::rename(high_US_comm_catch_lbs = US_comm_catch_lbs, high_US_rec_catch_lbs = US_rec_catch_lbs) %>% 
+  dplyr::select(-total_catch_lbs) -> BOC_high_catch_USDPS_forplot
+
+BOC_medium_catch_USDPS %>% 
+  dplyr::rename(medium_US_comm_catch_lbs = US_comm_catch_lbs, medium_US_rec_catch_lbs = US_rec_catch_lbs) %>% 
+  dplyr::select(-total_catch_lbs) -> BOC_medium_catch_USDPS_forplot
+
+BOC_low_catch_USDPS %>% 
+  dplyr::rename(low_US_comm_catch_lbs = US_comm_catch_lbs, low_US_rec_catch_lbs = US_rec_catch_lbs) %>% 
+  dplyr::select(-total_catch_lbs) -> BOC_low_catch_USDPS_forplot
+
+BOC_high_catch_USDPS_forplot %>% 
+  left_join(., BOC_medium_catch_USDPS_forplot, by = "year") %>% 
+  left_join(., BOC_low_catch_USDPS_forplot, by = "year") -> BOC_catch_USDPS_forplot_wide
+
+
+# Join catch scenarios
+mutate(BOC_high_catch_USDPS, scenario = "high") %>% 
+  bind_rows(.,  mutate(BOC_medium_catch_USDPS, scenario = "medium")) %>% 
+  bind_rows(.,  mutate(BOC_low_catch_USDPS, scenario = "low")) %>% 
+  dplyr::select(-total_catch_lbs) -> BOC_catch_USDPS_forplot
+
+# Pivot longer
+BOC_catch_USDPS_forplot %>% 
+  pivot_longer(., cols = c("US_comm_catch_lbs", "US_rec_catch_lbs"), names_to = "catch_type") %>% 
+  mutate(catch_type = ifelse(catch_type == "US_comm_catch_lbs", "Commercial", "Recreational")) ->  BOC_catch_USDPS_forplot
+
+# Make new column so that only difference between different scenarios is plotted
+BOC_catch_USDPS_forplot_wide %>% 
+  mutate(medium_comm_diff = medium_US_comm_catch_lbs - low_US_comm_catch_lbs) %>% 
+  mutate(high_comm_diff = high_US_comm_catch_lbs - medium_US_comm_catch_lbs) %>% 
+  mutate(medium_rec_diff = medium_US_rec_catch_lbs - low_US_rec_catch_lbs) %>% 
+  mutate(high_rec_diff = high_US_rec_catch_lbs - medium_US_rec_catch_lbs) -> BOC_catch_USDPS_forplot_wide
+
+# Recreational only
+BOC_catch_USDPS_forplot_wide %>% 
+  dplyr::select(low_US_rec_catch_lbs, medium_rec_diff, high_rec_diff) %>% 
+  pivot_longer(cols = c(low_US_rec_catch_lbs, medium_rec_diff, high_rec_diff), names_to = "scenario") %>% 
+  mutate(scenario = ifelse(scenario == "low_US_rec_catch_lbs", "low", 
+                           ifelse(scenario == "medium_rec_diff", "medium", "high"))) %>% 
+  mutate(catch_type = "Recreational") -> BOC_rec_catch_USDPS_forplot
+
+# Commercial only
+BOC_catch_USDPS_forplot_wide %>% 
+  dplyr::select(low_US_comm_catch_lbs, medium_comm_diff, high_comm_diff) %>% 
+  pivot_longer(cols = c(low_US_comm_catch_lbs, medium_comm_diff, high_comm_diff), names_to = "scenario") %>% 
+  mutate(scenario = ifelse(scenario == "low_US_comm_catch_lbs", "low", 
+                           ifelse(scenario == "medium_comm_diff", "medium", "high"))) %>% 
+  mutate(catch_type = "Commercial") -> BOC_comm_catch_USDPS_forplot
+
+# Join rec and commercial
+BOC_rec_catch_USDPS_forplot %>% 
+  bind_rows(., BOC_comm_catch_USDPS_forplot) %>% 
+  mutate(scenario = factor(scenario, levels = c("high", "medium", "low"))) -> BOC_catch_USDPS_forplot_2
+
+```
+
+
+```{r plot_bocaccio_rec_catch_for_review}
+BOC_rec_catch_history_plot <- ggplot(subset(BOC_catch_USDPS_forplot_2, catch_type == "Recreational"), aes(x = year, y = value, fill = scenario))+
+  geom_bar(stat = "identity")+
+  scale_fill_manual(values = c("#1f78b4", "#33a02c", "#ff7f00"))+
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 16),
+        panel.background = element_rect(fill = "white", color = "black"),
+        panel.grid = element_blank(),
+        legend.position = c(0.9, 0.85),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 15))+
+  xlab("Year")+
+  ylab("Catch (lbs)")+
+  scale_y_continuous(expand = c(0,0), limits = c(0, 80000))
+
+ggsave(paste0(fig_dir, "/plots_for_review/bocaccio_USDPS_rec_catch_history.png"), BOC_rec_catch_history_plot, height = 6, width = 12)
+```
+
+```{r plot_bocaccio_commercial_catch_for_review}
+BOC_comm_catch_history_plot <- ggplot(subset(BOC_catch_USDPS_forplot_2, catch_type == "Commercial"), aes(x = year, y = value, fill = scenario))+
+  geom_bar(stat = "identity")+
+  scale_fill_manual(values = c("#1f78b4", "#33a02c", "#ff7f00"))+
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 16),
+        panel.background = element_rect(fill = "white", color = "black"),
+        panel.grid = element_blank(),
+        legend.position = c(0.9, 0.85),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 15))+
+  xlab("Year")+
+  ylab("Catch (lbs)")+
+  scale_x_continuous(breaks = seq(1920, 2020, 20)) +
+  scale_y_continuous(expand = c(0,0), limits = c(0, 20000))
+
+ggsave(paste0(fig_dir, "/plots_for_review/bocaccio_USDPS_comm_catch_history.png"), BOC_comm_catch_history_plot, height = 6, width = 12)
+```
 

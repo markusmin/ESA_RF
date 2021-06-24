@@ -3416,6 +3416,12 @@ ggsave(paste0(fig_dir, "/bocaccio_catch_scenarios_USDPS.png"), BOC_USDPS_scenari
 
 # Plot data for review
 
+```{r set_figdir_review}
+fig_dir <- here("figures", "catch_reconstruction")
+```
+
+
+
 ## Yelloweye, USDPS
 ```{r yelloweye_USDPS_catch_history_plot_data_prep}
 # Join various catch scenarios

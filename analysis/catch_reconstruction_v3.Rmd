@@ -3387,3 +3387,100 @@ ggsave(paste0(fig_dir, "/bocaccio_catch_scenarios_USDPS.png"), BOC_USDPS_scenari
 
 
 
+# Plot data for review
+
+## Yelloweye, USDPS
+```{r yelloweye_catch_history_plot_data_prep}
+# Join various catch scenarios
+YE_high_catch_USDPS %>% 
+  dplyr::rename(high_US_comm_catch_lbs = US_comm_catch_lbs, high_US_rec_catch_lbs = US_rec_catch_lbs) %>% 
+  dplyr::select(-total_catch_lbs) -> YE_high_catch_USDPS_forplot
+
+YE_medium_catch_USDPS %>% 
+  dplyr::rename(medium_US_comm_catch_lbs = US_comm_catch_lbs, medium_US_rec_catch_lbs = US_rec_catch_lbs) %>% 
+  dplyr::select(-total_catch_lbs) -> YE_medium_catch_USDPS_forplot
+
+YE_low_catch_USDPS %>% 
+  dplyr::rename(low_US_comm_catch_lbs = US_comm_catch_lbs, low_US_rec_catch_lbs = US_rec_catch_lbs) %>% 
+  dplyr::select(-total_catch_lbs) -> YE_low_catch_USDPS_forplot
+
+YE_high_catch_USDPS_forplot %>% 
+  left_join(., YE_medium_catch_USDPS_forplot, by = "year") %>% 
+  left_join(., YE_low_catch_USDPS_forplot, by = "year") -> YE_catch_USDPS_forplot_wide
+
+
+# Join catch scenarios
+ mutate(YE_high_catch_USDPS, scenario = "high") %>% 
+   bind_rows(.,  mutate(YE_medium_catch_USDPS, scenario = "medium")) %>% 
+   bind_rows(.,  mutate(YE_low_catch_USDPS, scenario = "low")) %>% 
+   dplyr::select(-total_catch_lbs) -> YE_catch_USDPS_forplot
+
+ # Pivot longer
+ YE_catch_USDPS_forplot %>% 
+   pivot_longer(., cols = c("US_comm_catch_lbs", "US_rec_catch_lbs"), names_to = "catch_type") %>% 
+   mutate(catch_type = ifelse(catch_type == "US_comm_catch_lbs", "Commercial", "Recreational")) ->  YE_catch_USDPS_forplot
+
+```
+
+```{r make_barplot_ye_catch_history}
+YE_catch_history_plot <- ggplot(YE_catch_USDPS_forplot, aes(x = year, y = value, fill = catch_type))+
+  geom_bar(stat = "identity", position = "dodge2")
+
+YE_catch_history_plot
+
+ggsave(paste0(fig_dir, "/plots_for_review/yelloweye_USDPS_catch_history.png"), YE_catch_history_plot, height = 6, width = 12)
+```
+
+```{r make_plot_only_rec_test}
+# Make new column so that only difference between different scenarios is plotted
+YE_catch_USDPS_forplot_wide %>% 
+  mutate(medium_comm_diff = medium_US_comm_catch_lbs - low_US_comm_catch_lbs) %>% 
+  mutate(high_comm_diff = high_US_comm_catch_lbs - medium_US_comm_catch_lbs) %>% 
+  mutate(medium_rec_diff = medium_US_rec_catch_lbs - low_US_rec_catch_lbs) %>% 
+  mutate(high_rec_diff = high_US_rec_catch_lbs - medium_US_rec_catch_lbs) -> YE_catch_USDPS_forplot_wide
+
+# Recreational only
+YE_catch_USDPS_forplot_wide %>% 
+  dplyr::select(low_US_rec_catch_lbs, medium_rec_diff, high_rec_diff) %>% 
+  pivot_longer(cols = c(low_US_rec_catch_lbs, medium_rec_diff, high_rec_diff), names_to = "scenario") %>% 
+  mutate(scenario = ifelse(scenario == "low_US_rec_catch_lbs", "low", 
+                           ifelse(scenario == "medium_rec_diff", "medium", "high"))) %>% 
+  mutate(catch_type = "Recreational") -> YE_rec_catch_USDPS_forplot
+
+# Commercial only
+YE_catch_USDPS_forplot_wide %>% 
+  dplyr::select(low_US_comm_catch_lbs, medium_comm_diff, high_comm_diff) %>% 
+  pivot_longer(cols = c(low_US_comm_catch_lbs, medium_comm_diff, high_comm_diff), names_to = "scenario") %>% 
+  mutate(scenario = ifelse(scenario == "low_US_comm_catch_lbs", "low", 
+                           ifelse(scenario == "medium_comm_diff", "medium", "high"))) %>% 
+  mutate(catch_type = "Commercial") -> YE_comm_catch_USDPS_forplot
+
+# Join rec and commercial
+YE_rec_catch_USDPS_forplot %>% 
+  bind_rows(., YE_comm_catch_USDPS_forplot) %>% 
+  mutate(scenario = factor(scenario, levels = c("high", "medium", "low"))) -> YE_catch_USDPS_forplot_2
+
+
+YE_rec_catch_history_plot <- ggplot(subset(YE_catch_USDPS_forplot_2, catch_type == "Recreational"), aes(x = year, y = value, fill = scenario))+
+  geom_bar(stat = "identity")+
+  scale_fill_manual(values = c("#1f78b4", "#33a02c", "#ff7f00"))+
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 16),
+        panel.background = element_rect(fill = "white", color = "black"),
+        panel.grid = element_blank(),
+        legend.position = c(0.9, 0.85),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 15))+
+  xlab("Year")+
+  ylab("Catch (lbs)")+
+  scale_y_continuous(expand = c(0,0), limits = c(0, 20000))
+
+ggsave(paste0(fig_dir, "/plots_for_review/yelloweye_USDPS_rec_catch_history.png"), YE_rec_catch_history_plot, height = 6, width = 12)
+```
+
+
+
+
+
+
+

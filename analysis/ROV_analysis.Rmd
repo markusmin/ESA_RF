@@ -33,12 +33,6 @@ fig_dir <- here("figures", "ROV")
 Note: The only species data that has lat/longs of detections is the
 2015-2016 PS Survey
 
-Note about unclipped transects: "A number of the transects could not be
-fully processed due to missing time values that are needed to clip out
-unusable sections, and some cannot be processed because I don't have any
-tracking data and that needs to be hand-keyed (these are identified in
-one of the attached spreadsheets)."
-
 ```{r load_ROV_data_15_16_PS}
 ROV_data_path <- here("ROV_data")
 
@@ -74,7 +68,7 @@ PS_15_16_linelengths_unclipped %>%
   dplyr::rename(Tran_ID = `tolerance (m)`) -> PS_15_16_linelengths_unclipped
 
 
-read_excel(paste0(ROV_data_path, "/2015-16_areaswept_12May2021.xlsx"), skip = 3)[,c(1:4)] %>% 
+read_excel(paste0(ROV_data_path, "/2015-16_areaswept_17June2021.xlsx"), skip = 3, sheet = "area swept")[,c(1:4)] %>%
   dplyr::rename(avg_tran_len_m = `avg tran length (m)`, avg_tran_width_m = `avg tran width (m)`, area_swept_m = `area swept (m)`) -> PS_15_16_area_swept
 
 PS_15_16_transects <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2015-16 PS Transects")
@@ -104,7 +98,10 @@ PS_15_transects %>%
 # Join lat/longs to area swept
 PS_15_16_area_swept %>% 
   left_join(., PS_15_16_transects, by = "Tran_ID")  -> PS_15_16_area_swept
+```
 
+
+```{r PS_map_basin_labels}
 # Make a map to confirm that transects are labeled correctly
 # Load shapefile data
 usa_spdf <- readOGR(dsn = here("map_files", "USA_adm0.shp"))
@@ -198,7 +195,8 @@ PS_15_16_linelengths_clipped
 
 ### Hood Canal population
 ```{r prepare_HC_data}
-# Get list of HC Transects
+# Get list of HC Transects (those with area swept calculations; this is not all Hood canal Transects)
+# All Hood Canal transects are stored in "HC_PS_15_16_transects"
 PS_15_16_HC_transects <- subset(PS_15_16_area_swept, DPS == "Hood Canal")$Tran_ID
 
 # Subset HC species detections

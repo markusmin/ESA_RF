@@ -126,12 +126,11 @@ boc_lengths_plot
 ```
 
 ```{r plot_boc_lengths_v2}
-# left_join(boc_bio, dplyr::select(boc_loc, TowCode, Start_Latitude, Start_Longitude), by = "TowCode") %>% 
-#   mutate(DPS = ifelse(Start_Longitude > -123.3, "Inside", "Outside")) -> boc_bio
+left_join(boc_bio, dplyr::select(boc_loc, TowCode, Start_Latitude, Start_Longitude), by = "TowCode") %>%
+  mutate(DPS = ifelse(Start_Longitude > -123.3, "Inside", "Outside")) -> boc_bio
 
 boc_lengths_plot <- ggplot(boc_bio, aes(x = Length, y = FishCount, fill = as.character(SurveyYear), color = DPS))+
   geom_bar(stat = "identity", size = 1) +
-  scale_pattern_manual(values = c(Inside = "stripe", Outside = "none"))+
   ylab("Number of fish") +
   xlab("Length (cm)")+
   theme(plot.background = element_rect(fill = "white"),
@@ -156,9 +155,34 @@ ggsave(paste0(fig_dir, "/bocaccio_trawl_survey_lengths.png"), boc_lengths_plot, 
 ```
 
 ## ROV Data
+Bocaccio observations in ROV surveys:
+- 2015-16 Puget Sound: 1 Bocaccio
+- 2008 ROV survey: 4 Bocaccio
 
+```{r load_ROV_data_15_16_PS}
+ROV_data_path <- here("ROV_data")
 
+PS_15_16_species <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2015-16 PS Species")
+
+bocaccio_15_16 <- subset(PS_15_16_species, SpeciesName == "Bocaccio")
+# Convert to decimal degrees
+bocaccio_15_16 %>% 
+  mutate(., latitude = Lat_deg + Lat_decmin/60) %>% 
+  mutate(., longitude = Long_deg - Long_decmin/60) -> bocaccio_15_16
+```
+
+### ROV observation map
+```{r ROV_data_map}
+boc_ROV_survey_map <- greater_PS_map+
+  geom_point(data = bocaccio_15_16, aes(x = longitude, y = latitude), inherit.aes = FALSE)
+
+boc_ROV_survey_map
+```
 
 
 
 ## Hook and Line Data
+```{r hook_and_line_bocaccio}
+
+```
+

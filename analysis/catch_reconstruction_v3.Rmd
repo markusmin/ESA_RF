@@ -1826,174 +1826,6 @@ https://www.cwb.org/fish-on
 
 Maybe 15% of boathouses in 1957 were in Hood Canal, 15% North of Admiralty Inlet, and the other 70% in "South Puget Sound" (south of Admiralty)
 
-### Bargmann (1968-1973)
-- Use years 1968 and 1969. Data is available in Google Drive here (old fishery records and analysis): https://docs.google.com/spreadsheets/d/0B3NnRv_9_F9sNG1ITG1fQU5ZUFk/edit#gid=1104389180
-- "The data used in this report were gathered by technicians collecting data primarily for the sport salmon fishery, and data on marine fish catches were recorded secondarily. As such, there were many gaps and areas of incomplete coverage in the bottomfish harvest estimates. The reader is cautioned that **the estimates presented here should be regarded as minimum harvest estimates**.
-
-
-Sheets are numbered according to the table numbers in the document.
-
-Tables of interest:
-- Table 9: Area 6 (Strait of Juan de Fuca) incidental catch
-- Table 10: Area 6 (Strait of Juan de Fuca) specific catch
-- Table 11: Area 7 (SJI) incidental catch
-- Table 12: Area 7 (SJI) specific catch
-- Table 13: Area 8 (Deception Pass and Hope Island) incidental catch
-- Table 14: Area 8 (Deception Pass and Hope Island) specific catch
-- Table 15: Area 9 (Admirality Inlet, Possession Sound, Saratoga Passage, Port Susan/North Puget Sound) incidental catch
-- Table 16: Area 9 (Admirality Inlet, Possession Sound, Saratoga Passage, Port Susan/North Puget Sound) specific catch
-- Table 17: Area 10 (Seattle and Bremerton/Central Puget Sound) incidental catch
-- Table 18: Area 10 (Seattle and Bremerton/Central Puget Sound) specific catch
-- Table 19: Area 11 (South Puget Sound) incidental catch
-- Table 20: Area 11 (South Puget Sound) specific catch
-- Table 21: Area 12 (Hood Canal) incidental catch
-- Table 22: Area 12 (Hood Canal) specific catch
-
-Need to skip first four rows, and first column.
-
-```{r load_bargmann_data}
-bargmann_path <- here("catch_reconstruction_data", "recreational", "pre_1970", "Bargman tables.xls")
-
-JDF_inc <- read_excel(bargmann_path, sheet = "9", skip = 4)
-JDF_spe <- read_excel(bargmann_path, sheet = "10", skip = 4)
-SJI_inc <- read_excel(bargmann_path, sheet = "11", skip = 4)
-SJI_spe <- read_excel(bargmann_path, sheet = "12", skip = 4)
-DPHI_inc <- read_excel(bargmann_path, sheet = "13", skip = 4)
-DPHI_spe <- read_excel(bargmann_path, sheet = "14", skip = 4)
-NPS_inc <- read_excel(bargmann_path, sheet = "15", skip = 4)
-NPS_spe <- read_excel(bargmann_path, sheet = "16", skip = 4)
-CPS_inc <- read_excel(bargmann_path, sheet = "17", skip = 4)
-CPS_spe <- read_excel(bargmann_path, sheet = "18", skip = 4)
-SPS_inc <- read_excel(bargmann_path, sheet = "19", skip = 4)
-SPS_spe <- read_excel(bargmann_path, sheet = "20", skip = 4)
-HC_inc <- read_excel(bargmann_path, sheet = "21", skip = 4)
-HC_spe <- read_excel(bargmann_path, sheet = "22", skip = 4)
-
-# Make some edits/re-format
-JDF_inc %>% 
-  mutate(take = "incidental", area = 6) %>% 
-  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> JDF_inc
-JDF_spe %>% 
-  mutate(take = "specific", area = 6) %>% 
-  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> JDF_spe
-SJI_inc %>% 
-  mutate(take = "incidental", area = 7) %>% 
-  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> SJI_inc
-SJI_spe %>% 
-  mutate(take = "specific", area = 7) %>% 
-  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> SJI_spe
-DPHI_inc %>% 
-  mutate(take = "incidental", area = 8) %>% 
-  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> DPHI_inc
-DPHI_spe %>% 
-  mutate(take = "specific", area = 8) %>% 
-  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> DPHI_spe
-NPS_inc %>% 
-  mutate(take = "incidental", area = 9) %>% 
-  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> NPS_inc
-NPS_spe %>% 
-  mutate(take = "specific", area = 9) %>% 
-  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> NPS_spe
-CPS_inc %>% 
-  mutate(take = "incidental", area = 10) %>% 
-  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> CPS_inc
-CPS_spe %>% 
-  mutate(take = "specific", area = 10) %>% 
-  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> CPS_spe
-SPS_inc %>% 
-  mutate(take = "incidental", area = 11) %>% 
-  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> SPS_inc
-SPS_spe %>% 
-  mutate(take = "specific", area = 11) %>% 
-  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> SPS_spe
-HC_inc %>% 
-  mutate(take = "incidental", area = 12) %>% 
-  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> HC_inc
-HC_spe %>% 
-  mutate(take = "specific", area = 12) %>% 
-  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> HC_spe
-
-# Join together all
-JDF_inc  %>% 
-  bind_rows(., JDF_spe) %>% 
-  bind_rows(., SJI_inc) %>% 
-  bind_rows(., SJI_spe) %>% 
-  bind_rows(., DPHI_inc) %>% 
-  bind_rows(., DPHI_spe) %>% 
-  bind_rows(., NPS_inc) %>% 
-  bind_rows(., NPS_spe) %>% 
-  bind_rows(., CPS_inc) %>% 
-  bind_rows(., CPS_spe) %>% 
-  bind_rows(., SPS_inc) %>% 
-  bind_rows(., SPS_spe) %>% 
-  bind_rows(., HC_inc) %>% 
-  bind_rows(., HC_spe) -> bargmann_data
-
-# combine years into one column
-bargmann_data %>% 
-  pivot_longer(., cols = c(`1968`, `1969`), names_to = "year") %>% 
-  dplyr::rename(catch_individuals = value) -> bargmann_data
-
-# Remove the irrelevant species
-bargmann_data %>% 
-  subset(Species %in% c("Rockfish- unlcassified", "Rockfish-unclassified", "Rockfish- unclassified", "Rockfish unclassified", "Yelloweye rockfish", "Bocaccio", "Boccacio")) %>% 
-  mutate(Species = ifelse(Species %in% c("Bocaccio", "Boccacio"), "Bocaccio", Species)) %>% 
-  mutate(Species = ifelse(Species %in% c("Rockfish- unlcassified", "Rockfish-unclassified", "Rockfish- unclassified", "Rockfish unclassified"), "unclassified rockfish", Species)) -> bargmann_data
-
-# Replace all NAs with zeros
-bargmann_data[is.na(bargmann_data$catch_individuals),]$catch_individuals <- 0
-unique(bargmann_data$area)
-# Add a North Puget Sound vs. South Puget Sound vs. Hood Canal column for prorating catch, dividing DPS
-bargmann_data %>% 
-  mutate(., PS = ifelse(area %in% c(8,9,10,11), "South Puget Sound", 
-                        ifelse(area == 12, "Hood Canal",  "North Puget Sound"))) -> bargmann_data
-```
-
-```{r summarise_bargmann_data}
-# Summarise across regions
-bargmann_data %>% 
-  group_by(year, Species, PS) %>% 
-  summarise(total_catch = sum(catch_individuals)) -> bargmann_annual_sums
-
-# Prorate catch according to 1965-1967 comp data
-# Add the catch composition data
-# Note: is it better to use these estimates, or use the same year and use only the species-level identifications to prorate catch of the unclassified rockfish group?
-
-# Here we are using the South Puget Sound comps for the Hood Canal catches
-bargmann_annual_sums %>% 
-  mutate(boc_prop = ifelse(PS == "North Puget Sound", subset(rec_mean_spp_comp_NPS, Species == "Bocaccio")$`1965-1967a`/100, subset(rec_mean_spp_comp_SPS, Species == "Bocaccio")$`1965-1967a`/100)) %>% 
-  mutate(ye_prop = ifelse(PS == "North Puget Sound", subset(rec_mean_spp_comp_NPS, Species == "Yelloweye")$`1965-1967a`/100, subset(rec_mean_spp_comp_SPS, Species == "Yelloweye")$`1965-1967a`/100)) -> bargmann_annual_sums
-
-
-# Prorate and summarise for yelloweye
-
-# U.S. DPS minus Hood canal
-bargmann_annual_sums %>% 
-  subset(Species %in% c("unclassified rockfish", "Yelloweye rockfish")) %>% 
-  mutate(., catch = ifelse(Species == "Yelloweye rockfish", total_catch, ye_prop*total_catch)) %>% 
-  subset(PS != "Hood Canal") %>% 
-  group_by(year) %>% 
-  summarise(catch = sum(catch)) %>% 
-  mutate(catch_lbs = catch*YE_lbs_per_individual) -> ye_catch_bargmann_USDPS
-
-# Hood Canal
-bargmann_annual_sums %>% 
-  subset(Species %in% c("unclassified rockfish", "Yelloweye rockfish")) %>% 
-  mutate(., catch = ifelse(Species == "Yelloweye rockfish", total_catch, ye_prop*total_catch)) %>% 
-  subset(PS == "Hood Canal") %>% 
-  group_by(year) %>% 
-  summarise(catch = sum(catch)) %>% 
-  mutate(catch_lbs = catch*YE_lbs_per_individual) -> ye_catch_bargmann_HC
-
-# Prorate and summarise for bocaccio
-bargmann_annual_sums %>% 
-  subset(Species %in% c("unclassified rockfish", "Bocaccio")) %>% 
-  mutate(., catch = ifelse(Species == "Bocaccio", total_catch, boc_prop*total_catch)) %>% 
-  group_by(year) %>% 
-  summarise(catch = sum(catch)) %>% 
-  mutate(catch_lbs = catch*BOC_lbs_per_individual) -> boc_catch_bargmann
-  
-```
 
 ### Buckley (1965-1967)
 
@@ -2549,7 +2381,7 @@ buck67_data %>%
   group_by(Species, area) %>% 
   summarise(total_catch = sum(catch_individuals)) -> buck67_annual_sums
 
-# Prorate catch according to 1967-1967 comp data
+# Prorate catch according to 1965-1967 comp data
 # Add the catch composition data and prorate
 buck67_annual_sums %>% 
   ungroup() %>% 
@@ -2597,6 +2429,195 @@ buck67_ESA_sums %>%
 ```
 
 
+
+
+
+### Bargmann (1968-1973)
+- Use years 1968 and 1969. Data is available in Google Drive here (old fishery records and analysis): https://docs.google.com/spreadsheets/d/0B3NnRv_9_F9sNG1ITG1fQU5ZUFk/edit#gid=1104389180
+- "The data used in this report were gathered by technicians collecting data primarily for the sport salmon fishery, and data on marine fish catches were recorded secondarily. As such, there were many gaps and areas of incomplete coverage in the bottomfish harvest estimates. The reader is cautioned that **the estimates presented here should be regarded as minimum harvest estimates**.
+
+
+Palsson et al. 2009: "Other species compositions by Bargmann (1977) were based, in part, during the time period of un-trained identifications and are not considered here. Because of these problems, nominal harvest estimates by year were not attempted."
+- Wayne doesn't trust these species comps
+- Prorate using 1965-67 species comps that were previously calcualte
+
+Sheets are numbered according to the table numbers in the document.
+
+Tables of interest:
+- Table 9: Area 6 (Strait of Juan de Fuca) incidental catch
+- Table 10: Area 6 (Strait of Juan de Fuca) specific catch
+- Table 11: Area 7 (SJI) incidental catch
+- Table 12: Area 7 (SJI) specific catch
+- Table 13: Area 8 (Deception Pass and Hope Island) incidental catch
+- Table 14: Area 8 (Deception Pass and Hope Island) specific catch
+- Table 15: Area 9 (Admirality Inlet, Possession Sound, Saratoga Passage, Port Susan/North Puget Sound) incidental catch
+- Table 16: Area 9 (Admirality Inlet, Possession Sound, Saratoga Passage, Port Susan/North Puget Sound) specific catch
+- Table 17: Area 10 (Seattle and Bremerton/Central Puget Sound) incidental catch
+- Table 18: Area 10 (Seattle and Bremerton/Central Puget Sound) specific catch
+- Table 19: Area 11 (South Puget Sound) incidental catch
+- Table 20: Area 11 (South Puget Sound) specific catch
+- Table 21: Area 12 (Hood Canal) incidental catch
+- Table 22: Area 12 (Hood Canal) specific catch
+
+Need to skip first four rows, and first column.
+
+```{r load_bargmann_data}
+bargmann_path <- here("catch_reconstruction_data", "recreational", "pre_1970", "Bargman tables.xls")
+
+JDF_inc <- read_excel(bargmann_path, sheet = "9", skip = 4)
+JDF_spe <- read_excel(bargmann_path, sheet = "10", skip = 4)
+SJI_inc <- read_excel(bargmann_path, sheet = "11", skip = 4)
+SJI_spe <- read_excel(bargmann_path, sheet = "12", skip = 4)
+DPHI_inc <- read_excel(bargmann_path, sheet = "13", skip = 4)
+DPHI_spe <- read_excel(bargmann_path, sheet = "14", skip = 4)
+NPS_inc <- read_excel(bargmann_path, sheet = "15", skip = 4)
+NPS_spe <- read_excel(bargmann_path, sheet = "16", skip = 4)
+CPS_inc <- read_excel(bargmann_path, sheet = "17", skip = 4)
+CPS_spe <- read_excel(bargmann_path, sheet = "18", skip = 4)
+SPS_inc <- read_excel(bargmann_path, sheet = "19", skip = 4)
+SPS_spe <- read_excel(bargmann_path, sheet = "20", skip = 4)
+HC_inc <- read_excel(bargmann_path, sheet = "21", skip = 4)
+HC_spe <- read_excel(bargmann_path, sheet = "22", skip = 4)
+
+# Make some edits/re-format
+JDF_inc %>% 
+  mutate(take = "incidental", area = 6) %>% 
+  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> JDF_inc
+JDF_spe %>% 
+  mutate(take = "specific", area = 6) %>% 
+  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> JDF_spe
+SJI_inc %>% 
+  mutate(take = "incidental", area = 7) %>% 
+  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> SJI_inc
+SJI_spe %>% 
+  mutate(take = "specific", area = 7) %>% 
+  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> SJI_spe
+DPHI_inc %>% 
+  mutate(take = "incidental", area = 8) %>% 
+  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> DPHI_inc
+DPHI_spe %>% 
+  mutate(take = "specific", area = 8) %>% 
+  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> DPHI_spe
+NPS_inc %>% 
+  mutate(take = "incidental", area = 9) %>% 
+  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> NPS_inc
+NPS_spe %>% 
+  mutate(take = "specific", area = 9) %>% 
+  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> NPS_spe
+CPS_inc %>% 
+  mutate(take = "incidental", area = 10) %>% 
+  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> CPS_inc
+CPS_spe %>% 
+  mutate(take = "specific", area = 10) %>% 
+  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> CPS_spe
+SPS_inc %>% 
+  mutate(take = "incidental", area = 11) %>% 
+  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> SPS_inc
+SPS_spe %>% 
+  mutate(take = "specific", area = 11) %>% 
+  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> SPS_spe
+HC_inc %>% 
+  mutate(take = "incidental", area = 12) %>% 
+  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> HC_inc
+HC_spe %>% 
+  mutate(take = "specific", area = 12) %>% 
+  dplyr::select(-c(`Annual Avg`, `Percent of Total`, `1970`, `1971`, `1972`, `1973`)) -> HC_spe
+
+# Join together all
+JDF_inc  %>% 
+  bind_rows(., JDF_spe) %>% 
+  bind_rows(., SJI_inc) %>% 
+  bind_rows(., SJI_spe) %>% 
+  bind_rows(., DPHI_inc) %>% 
+  bind_rows(., DPHI_spe) %>% 
+  bind_rows(., NPS_inc) %>% 
+  bind_rows(., NPS_spe) %>% 
+  bind_rows(., CPS_inc) %>% 
+  bind_rows(., CPS_spe) %>% 
+  bind_rows(., SPS_inc) %>% 
+  bind_rows(., SPS_spe) %>% 
+  bind_rows(., HC_inc) %>% 
+  bind_rows(., HC_spe) -> bargmann_data
+
+# combine years into one column
+bargmann_data %>% 
+  pivot_longer(., cols = c(`1968`, `1969`), names_to = "year") %>% 
+  dplyr::rename(catch_individuals = value) -> bargmann_data
+
+# Remove the irrelevant species
+bargmann_data %>% 
+  subset(Species %in% c("Rockfish- unlcassified", "Rockfish-unclassified", "Rockfish- unclassified", "Rockfish unclassified", "Yelloweye rockfish", "Bocaccio", "Boccacio")) %>% 
+  mutate(Species = ifelse(Species %in% c("Bocaccio", "Boccacio"), "Bocaccio", Species)) %>% 
+  mutate(Species = ifelse(Species %in% c("Rockfish- unlcassified", "Rockfish-unclassified", "Rockfish- unclassified", "Rockfish unclassified"), "unclassified rockfish", Species)) -> bargmann_data
+
+# Replace all NAs with zeros
+bargmann_data[is.na(bargmann_data$catch_individuals),]$catch_individuals <- 0
+```
+
+```{r prorate_bargmann_data}
+# Summarise across regions
+bargmann_data %>% 
+  group_by(year, Species, area) %>% 
+  summarise(total_catch = sum(catch_individuals)) -> bargmann_annual_sums
+
+# Prorate catch according to 1965-1967 comp data
+# Add the catch composition data and prorate
+bargmann_data %>% 
+  ungroup() %>% 
+  dplyr::select(-take) %>% 
+  group_by(Species, area, year) %>% 
+  summarise_all(sum) %>% 
+  ungroup() %>% 
+  left_join(., buck65_67_ESA_comps_by_area, by = "area") %>% 
+  subset(Species == "unclassified rockfish") %>% 
+  mutate(ye_est_catch = ye_prop*catch_individuals) %>% 
+  mutate(boc_est_catch = boc_prop*catch_individuals) %>% 
+  dplyr::select(year, area, ye_est_catch, boc_est_catch) -> bargmann_prorated_catches
+
+bargmann_annual_sums %>% 
+  ungroup() %>% 
+  mutate(boc_catch = ifelse(Species == "Bocaccio", total_catch, 0)) %>% 
+  mutate(ye_catch = ifelse(Species == "Yelloweye rockfish", total_catch, 0)) %>% 
+  dplyr::select(year, area, boc_catch, ye_catch) %>% 
+  group_by(year, area) %>% 
+  summarise_all(sum) %>% 
+  # subset(Species %in% c("Bocaccio", "Yelloweye rockfish")) %>% 
+  left_join(., bargmann_prorated_catches, by = c("year", "area")) %>% 
+  group_by(year, area) %>% 
+  mutate(ye_catch_total = sum(ye_catch, ye_est_catch)) %>% 
+  mutate(boc_catch_total = sum(boc_catch, boc_est_catch)) -> bargmann_ESA_sums
+
+# Yelloweye: US DPS (no Hood Canal)
+bargmann_ESA_sums %>% 
+  subset(area != 12) %>% 
+  ungroup() %>% 
+  group_by(year) %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) -> ye_catch_bargmann_USDPS
+
+# Yelloweye: Subset Hood Canal
+bargmann_ESA_sums %>% 
+  subset(area == 12) %>% 
+  ungroup() %>% 
+  group_by(year) %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) -> ye_catch_bargmann_HC
+
+# Bocaccio: US DPS (all areas)
+bargmann_ESA_sums %>% 
+  ungroup() %>% 
+  group_by(year) %>% 
+  summarise(catch_n = sum(boc_catch_total)) %>% 
+  mutate(catch_lbs = catch_n*BOC_lbs_per_individual) -> boc_catch_bargmann
+```
+
+
+
+
+
+
+
+
 ### 1966-1969: Combine Buckley and Bargmann
 
 Don't include 1965 because of anomalously high values for yelloweye
@@ -2606,7 +2627,7 @@ Single estimate for both species for this time period
 
 ```{r combine_buckley_bargmann}
 ye_catch_bargmann_HC %>% 
-  dplyr::rename(catch_n = catch) %>% 
+  # dplyr::rename(catch_n = catch) %>% 
   mutate(year = as.numeric(year)) %>% 
   bind_rows(., ye_catch_buck67_HC) %>% 
   bind_rows(., ye_catch_buck66_HC) %>% 
@@ -2615,7 +2636,7 @@ ye_catch_bargmann_HC %>%
   mutate(high_catch_lbs = catch_lbs, medium_catch_lbs = catch_lbs, low_catch_lbs = catch_lbs) -> ye_rec_catch_66_69_HC
 
 ye_catch_bargmann_USDPS %>% 
-  dplyr::rename(catch_n = catch) %>% 
+  # dplyr::rename(catch_n = catch) %>% 
   mutate(year = as.numeric(year)) %>% 
   bind_rows(., ye_catch_buck67_USDPS) %>% 
   bind_rows(., ye_catch_buck66_USDPS) %>% 
@@ -2624,7 +2645,7 @@ ye_catch_bargmann_USDPS %>%
   mutate(high_catch_lbs = catch_lbs, medium_catch_lbs = catch_lbs, low_catch_lbs = catch_lbs)-> ye_rec_catch_66_69_USDPS
 
 boc_catch_bargmann %>% 
-  dplyr::rename(catch_n = catch) %>% 
+  # dplyr::rename(catch_n = catch) %>% 
   mutate(year = as.numeric(year)) %>% 
   bind_rows(., boc_catch_buck67_USDPS) %>% 
   bind_rows(., boc_catch_buck66_USDPS) %>% 
@@ -3002,7 +3023,7 @@ rec_42_65_est %>%
            subset(MRFSS_buckley_props, area == 11)$MRFSS_ye_prop * subset(effort_by_area, area ==11)$prop_effort*est_RF
            ) %>% 
   mutate(low_catch_lbs = low_ye_n * YE_lbs_per_individual) %>% 
-  # High catch estimate - v1 with max proportions from Buckley (clearly not an accurate estimate)
+  # High catch estimate - with buckley yelloweye props
   mutate(high_ye_n =
            # Area 6
            subset(MRFSS_buckley_props, area == 6)$buckley_ye_prop * subset(effort_by_area, area ==6)$prop_effort*est_RF +
@@ -3118,7 +3139,7 @@ YE_rec_38_41_HC %>%
   bind_rows(., ye_rec_catch_HC_42_65) %>% 
   bind_rows(., ye_rec_catch_66_69_HC) %>% 
   bind_rows(., HC_rec_ye_70_93) %>% 
-  bind_rows(., ye_rec_HC_94_02) %>% 
+  bind_rows(., HC_rec_ye_94_02) %>% 
   bind_rows(., YE_HC_rec_2003_2019) %>% 
   dplyr::select(year, low_catch_lbs, medium_catch_lbs, high_catch_lbs) -> YE_HC_rec_complete
 
@@ -3420,6 +3441,105 @@ ggsave(paste0(fig_dir, "/bocaccio_catch_scenarios_USDPS.png"), BOC_USDPS_scenari
 fig_dir <- here("figures", "catch_reconstruction")
 ```
 
+## Yelloweye, Full DPS (Canada + US)
+
+```{r yelloweye_CAN_USA_catch_history_plot_data_prep}
+# Join various catch scenarios
+YE_high_catch_CAN_USA %>% 
+  dplyr::rename(high_US_comm_catch_lbs = US_comm_catch_lbs, high_US_rec_catch_lbs = US_rec_catch_lbs) %>% 
+  dplyr::select(-total_catch_lbs) -> YE_high_catch_CAN_USA_forplot
+
+YE_medium_catch_CAN_USA %>% 
+  dplyr::rename(medium_US_comm_catch_lbs = US_comm_catch_lbs, medium_US_rec_catch_lbs = US_rec_catch_lbs) %>% 
+  dplyr::select(-total_catch_lbs) -> YE_medium_catch_CAN_USA_forplot
+
+YE_low_catch_CAN_USA %>% 
+  dplyr::rename(low_US_comm_catch_lbs = US_comm_catch_lbs, low_US_rec_catch_lbs = US_rec_catch_lbs) %>% 
+  dplyr::select(-total_catch_lbs) -> YE_low_catch_CAN_USA_forplot
+
+YE_high_catch_CAN_USA_forplot %>% 
+  left_join(., YE_medium_catch_CAN_USA_forplot, by = "year") %>% 
+  left_join(., YE_low_catch_CAN_USA_forplot, by = "year") -> YE_catch_CAN_USA_forplot_wide
+
+
+# Join catch scenarios
+mutate(YE_high_catch_CAN_USA, scenario = "high") %>% 
+  bind_rows(.,  mutate(YE_medium_catch_CAN_USA, scenario = "medium")) %>% 
+  bind_rows(.,  mutate(YE_low_catch_CAN_USA, scenario = "low")) %>% 
+  dplyr::select(-total_catch_lbs) -> YE_catch_CAN_USA_forplot
+
+# Pivot longer
+YE_catch_CAN_USA_forplot %>% 
+  pivot_longer(., cols = c("US_comm_catch_lbs", "US_rec_catch_lbs"), names_to = "catch_type") %>% 
+  mutate(catch_type = ifelse(catch_type == "US_comm_catch_lbs", "Commercial", "Recreational")) ->  YE_catch_CAN_USA_forplot
+
+# Make new column so that only difference between different scenarios is plotted
+YE_catch_CAN_USA_forplot_wide %>% 
+  mutate(medium_comm_diff = medium_US_comm_catch_lbs - low_US_comm_catch_lbs) %>% 
+  mutate(high_comm_diff = high_US_comm_catch_lbs - medium_US_comm_catch_lbs) %>% 
+  mutate(medium_rec_diff = medium_US_rec_catch_lbs - low_US_rec_catch_lbs) %>% 
+  mutate(high_rec_diff = high_US_rec_catch_lbs - medium_US_rec_catch_lbs) -> YE_catch_CAN_USA_forplot_wide
+
+# Recreational only
+YE_catch_CAN_USA_forplot_wide %>% 
+  dplyr::select(low_US_rec_catch_lbs, medium_rec_diff, high_rec_diff) %>% 
+  pivot_longer(cols = c(low_US_rec_catch_lbs, medium_rec_diff, high_rec_diff), names_to = "scenario") %>% 
+  mutate(scenario = ifelse(scenario == "low_US_rec_catch_lbs", "low", 
+                           ifelse(scenario == "medium_rec_diff", "medium", "high"))) %>% 
+  mutate(catch_type = "Recreational") -> YE_rec_catch_CAN_USA_forplot
+
+# Commercial only
+YE_catch_CAN_USA_forplot_wide %>% 
+  dplyr::select(low_US_comm_catch_lbs, medium_comm_diff, high_comm_diff) %>% 
+  pivot_longer(cols = c(low_US_comm_catch_lbs, medium_comm_diff, high_comm_diff), names_to = "scenario") %>% 
+  mutate(scenario = ifelse(scenario == "low_US_comm_catch_lbs", "low", 
+                           ifelse(scenario == "medium_comm_diff", "medium", "high"))) %>% 
+  mutate(catch_type = "Commercial") -> YE_comm_catch_CAN_USA_forplot
+
+# Join rec and commercial
+YE_rec_catch_CAN_USA_forplot %>% 
+  bind_rows(., YE_comm_catch_CAN_USA_forplot) %>% 
+  mutate(scenario = factor(scenario, levels = c("high", "medium", "low"))) -> YE_catch_CAN_USA_forplot_2
+
+```
+
+```{r plot_yelloweye_CAN_USA_rec_catch_for_review}
+YE_rec_catch_history_plot <- ggplot(subset(YE_catch_CAN_USA_forplot_2, catch_type == "Recreational"), aes(x = year, y = value, fill = scenario))+
+  geom_bar(stat = "identity")+
+  scale_fill_manual(values = c("#1f78b4", "#33a02c", "#ff7f00"))+
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 16),
+        panel.background = element_rect(fill = "white", color = "black"),
+        panel.grid = element_blank(),
+        legend.position = c(0.9, 0.85),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 15))+
+  xlab("Year")+
+  ylab("Catch (lbs)")+
+  scale_y_continuous(expand = c(0,0), limits = c(0, 20000))
+
+ggsave(paste0(fig_dir, "/plots_for_review/yelloweye_CAN_USA_rec_catch_history.png"), YE_rec_catch_history_plot, height = 6, width = 12)
+```
+
+```{r plot_yelloweye_commercial_catch_for_review}
+YE_comm_catch_history_plot <- ggplot(subset(YE_catch_CAN_USA_forplot_2, catch_type == "Commercial"), aes(x = year, y = value, fill = scenario))+
+  geom_bar(stat = "identity")+
+  scale_fill_manual(values = c("#1f78b4", "#33a02c", "#ff7f00"))+
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 16),
+        panel.background = element_rect(fill = "white", color = "black"),
+        panel.grid = element_blank(),
+        legend.position = c(0.9, 0.85),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 15))+
+  xlab("Year")+
+  ylab("Catch (lbs)")+
+  scale_x_continuous(breaks = seq(1920, 2020, 20)) +
+  scale_y_continuous(expand = c(0,0), limits = c(0, 20000))
+
+ggsave(paste0(fig_dir, "/plots_for_review/yelloweye_CAN_USA_comm_catch_history.png"), YE_comm_catch_history_plot, height = 6, width = 12)
+```
+
 
 
 ## Yelloweye, USDPS
@@ -3486,7 +3606,9 @@ YE_rec_catch_USDPS_forplot %>%
 ```{r plot_yelloweye_USDPS_rec_catch_for_review}
 YE_rec_catch_history_plot <- ggplot(subset(YE_catch_USDPS_forplot_2, catch_type == "Recreational"), aes(x = year, y = value, fill = scenario))+
   geom_bar(stat = "identity")+
-  scale_fill_manual(values = c("#1f78b4", "#33a02c", "#ff7f00"))+
+  # scale_fill_manual(values = c("#1f78b4", "#33a02c", "#ff7f00"))+
+  # scale_fill_manual(values = c("#deebf7", "#9ecae1", "#3182bd"))+
+  scale_fill_manual(values = c("#9ecae1", "#4292c6", "#08519c"))+
   theme(axis.text = element_text(size = 12),
         axis.title = element_text(size = 16),
         panel.background = element_rect(fill = "white", color = "black"),
@@ -3504,7 +3626,7 @@ ggsave(paste0(fig_dir, "/plots_for_review/yelloweye_USDPS_rec_catch_history.png"
 ```{r plot_yelloweye_commercial_catch_for_review}
 YE_comm_catch_history_plot <- ggplot(subset(YE_catch_USDPS_forplot_2, catch_type == "Commercial"), aes(x = year, y = value, fill = scenario))+
   geom_bar(stat = "identity")+
-  scale_fill_manual(values = c("#1f78b4", "#33a02c", "#ff7f00"))+
+  scale_fill_manual(values = c("#9ecae1", "#4292c6", "#08519c"))+
   theme(axis.text = element_text(size = 12),
         axis.title = element_text(size = 16),
         panel.background = element_rect(fill = "white", color = "black"),
@@ -3585,7 +3707,7 @@ YE_rec_catch_HC_forplot %>%
 ```{r plot_yelloweye_HC_rec_catch_for_review}
 YE_rec_catch_history_plot <- ggplot(subset(YE_catch_HC_forplot_2, catch_type == "Recreational"), aes(x = year, y = value, fill = scenario))+
   geom_bar(stat = "identity")+
-  scale_fill_manual(values = c("#1f78b4", "#33a02c", "#ff7f00"))+
+  scale_fill_manual(values = c("#9ecae1", "#4292c6", "#08519c"))+
   theme(axis.text = element_text(size = 12),
         axis.title = element_text(size = 16),
         panel.background = element_rect(fill = "white", color = "black"),
@@ -3603,7 +3725,7 @@ ggsave(paste0(fig_dir, "/plots_for_review/yelloweye_HC_rec_catch_history.png"), 
 ```{r plot_yelloweye_commercial_catch_for_review}
 YE_comm_catch_history_plot <- ggplot(subset(YE_catch_HC_forplot_2, catch_type == "Commercial"), aes(x = year, y = value, fill = scenario))+
   geom_bar(stat = "identity")+
-  scale_fill_manual(values = c("#1f78b4", "#33a02c", "#ff7f00"))+
+  scale_fill_manual(values = c("#9ecae1", "#4292c6", "#08519c"))+
   theme(axis.text = element_text(size = 12),
         axis.title = element_text(size = 16),
         panel.background = element_rect(fill = "white", color = "black"),
@@ -3690,7 +3812,7 @@ BOC_rec_catch_USDPS_forplot %>%
 ```{r plot_bocaccio_rec_catch_for_review}
 BOC_rec_catch_history_plot <- ggplot(subset(BOC_catch_USDPS_forplot_2, catch_type == "Recreational"), aes(x = year, y = value, fill = scenario))+
   geom_bar(stat = "identity")+
-  scale_fill_manual(values = c("#1f78b4", "#33a02c", "#ff7f00"))+
+  scale_fill_manual(values = c("#9ecae1", "#4292c6", "#08519c"))+
   theme(axis.text = element_text(size = 12),
         axis.title = element_text(size = 16),
         panel.background = element_rect(fill = "white", color = "black"),
@@ -3708,7 +3830,7 @@ ggsave(paste0(fig_dir, "/plots_for_review/bocaccio_USDPS_rec_catch_history.png")
 ```{r plot_bocaccio_commercial_catch_for_review}
 BOC_comm_catch_history_plot <- ggplot(subset(BOC_catch_USDPS_forplot_2, catch_type == "Commercial"), aes(x = year, y = value, fill = scenario))+
   geom_bar(stat = "identity")+
-  scale_fill_manual(values = c("#1f78b4", "#33a02c", "#ff7f00"))+
+  scale_fill_manual(values = c("#9ecae1", "#4292c6", "#08519c"))+
   theme(axis.text = element_text(size = 12),
         axis.title = element_text(size = 16),
         panel.background = element_rect(fill = "white", color = "black"),

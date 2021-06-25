@@ -3451,15 +3451,21 @@ YE_high_catch_CAN_USA %>%
 
 YE_medium_catch_CAN_USA %>% 
   dplyr::rename(medium_US_comm_catch_lbs = US_comm_catch_lbs, medium_US_rec_catch_lbs = US_rec_catch_lbs) %>% 
-  dplyr::select(-total_catch_lbs) -> YE_medium_catch_CAN_USA_forplot
+  dplyr::select(-c(total_catch_lbs, CAN_rec_catch_lbs, CAN_comm_catch_lbs, CAN_FSC_catch_lbs)) -> YE_medium_catch_CAN_USA_forplot
 
 YE_low_catch_CAN_USA %>% 
   dplyr::rename(low_US_comm_catch_lbs = US_comm_catch_lbs, low_US_rec_catch_lbs = US_rec_catch_lbs) %>% 
-  dplyr::select(-total_catch_lbs) -> YE_low_catch_CAN_USA_forplot
+  dplyr::select(-c(total_catch_lbs, CAN_rec_catch_lbs, CAN_comm_catch_lbs, CAN_FSC_catch_lbs)) -> YE_low_catch_CAN_USA_forplot
 
 YE_high_catch_CAN_USA_forplot %>% 
   left_join(., YE_medium_catch_CAN_USA_forplot, by = "year") %>% 
-  left_join(., YE_low_catch_CAN_USA_forplot, by = "year") -> YE_catch_CAN_USA_forplot_wide
+  left_join(., YE_low_catch_CAN_USA_forplot, by = "year") %>% 
+  rowwise() %>% 
+  mutate(high_US_catch_lbs = sum(high_US_comm_catch_lbs, high_US_rec_catch_lbs, na.rm = TRUE)) %>% 
+  mutate(medium_US_catch_lbs = sum(medium_US_comm_catch_lbs, medium_US_rec_catch_lbs, na.rm = TRUE)) %>% 
+  mutate(low_US_catch_lbs = sum(low_US_comm_catch_lbs, low_US_rec_catch_lbs, na.rm = TRUE)) %>% 
+  dplyr::select(-c(high_US_comm_catch_lbs, high_US_rec_catch_lbs, medium_US_comm_catch_lbs, medium_US_rec_catch_lbs,
+                   low_US_comm_catch_lbs, low_US_rec_catch_lbs))-> YE_catch_CAN_USA_forplot_wide
 
 
 # Join catch scenarios
@@ -3470,76 +3476,48 @@ mutate(YE_high_catch_CAN_USA, scenario = "high") %>%
 
 # Pivot longer
 YE_catch_CAN_USA_forplot %>% 
-  pivot_longer(., cols = c("US_comm_catch_lbs", "US_rec_catch_lbs"), names_to = "catch_type") %>% 
-  mutate(catch_type = ifelse(catch_type == "US_comm_catch_lbs", "Commercial", "Recreational")) ->  YE_catch_CAN_USA_forplot
+  pivot_longer(., cols = c("CAN_rec_catch_lbs", "CAN_comm_catch_lbs", "CAN_FSC_catch_lbs", "US_comm_catch_lbs", "US_rec_catch_lbs"), names_to = "catch_type") %>% 
+  mutate(catch_type = ifelse(catch_type %in% c("US_comm_catch_lbs", "US_rec_catch_lbs"), "US", catch_type)) %>% 
+  group_by(year, catch_type, scenario) %>% 
+  summarise(catch_lbs = sum(value))->  YE_catch_CAN_USA_forplot
 
 # Make new column so that only difference between different scenarios is plotted
 YE_catch_CAN_USA_forplot_wide %>% 
-  mutate(medium_comm_diff = medium_US_comm_catch_lbs - low_US_comm_catch_lbs) %>% 
-  mutate(high_comm_diff = high_US_comm_catch_lbs - medium_US_comm_catch_lbs) %>% 
-  mutate(medium_rec_diff = medium_US_rec_catch_lbs - low_US_rec_catch_lbs) %>% 
-  mutate(high_rec_diff = high_US_rec_catch_lbs - medium_US_rec_catch_lbs) -> YE_catch_CAN_USA_forplot_wide
+  mutate(medium_US_diff = medium_US_catch_lbs - low_US_catch_lbs) %>% 
+  mutate(high_US_diff = high_US_catch_lbs - medium_US_catch_lbs) -> YE_catch_CAN_USA_forplot_wide
 
 # Recreational only
 YE_catch_CAN_USA_forplot_wide %>% 
-  dplyr::select(low_US_rec_catch_lbs, medium_rec_diff, high_rec_diff) %>% 
-  pivot_longer(cols = c(low_US_rec_catch_lbs, medium_rec_diff, high_rec_diff), names_to = "scenario") %>% 
-  mutate(scenario = ifelse(scenario == "low_US_rec_catch_lbs", "low", 
-                           ifelse(scenario == "medium_rec_diff", "medium", "high"))) %>% 
-  mutate(catch_type = "Recreational") -> YE_rec_catch_CAN_USA_forplot
+  dplyr::select(year, low_US_catch_lbs, medium_US_diff, high_US_diff, CAN_rec_catch_lbs, CAN_comm_catch_lbs, CAN_FSC_catch_lbs) %>% 
+  pivot_longer(cols = c(low_US_catch_lbs, medium_US_diff, high_US_diff, CAN_rec_catch_lbs, CAN_comm_catch_lbs, CAN_FSC_catch_lbs), names_to = "catch_source") %>% 
+  mutate(catch_source = ifelse(catch_source == "low_US_catch_lbs", "low US (total)", 
+                           ifelse(catch_source == "medium_US_diff", "medium US (total)",
+                                  ifelse(catch_source == "high_US_diff", "high US (total)",
+                                         ifelse(catch_source == "CAN_rec_catch_lbs", "Canada recreational",
+                                                ifelse(catch_source == "CAN_comm_catch_lbs", "Canada commercial",
+                                                       ifelse(catch_source == "CAN_FSC_catch_lbs", "Canada FSC", NA))))))) -> YE_catch_CAN_USA_forplot
 
-# Commercial only
-YE_catch_CAN_USA_forplot_wide %>% 
-  dplyr::select(low_US_comm_catch_lbs, medium_comm_diff, high_comm_diff) %>% 
-  pivot_longer(cols = c(low_US_comm_catch_lbs, medium_comm_diff, high_comm_diff), names_to = "scenario") %>% 
-  mutate(scenario = ifelse(scenario == "low_US_comm_catch_lbs", "low", 
-                           ifelse(scenario == "medium_comm_diff", "medium", "high"))) %>% 
-  mutate(catch_type = "Commercial") -> YE_comm_catch_CAN_USA_forplot
-
-# Join rec and commercial
-YE_rec_catch_CAN_USA_forplot %>% 
-  bind_rows(., YE_comm_catch_CAN_USA_forplot) %>% 
-  mutate(scenario = factor(scenario, levels = c("high", "medium", "low"))) -> YE_catch_CAN_USA_forplot_2
-
+YE_catch_CAN_USA_forplot$catch_source <- factor(YE_catch_CAN_USA_forplot$catch_source, levels = c("Canada FSC", "Canada recreational", "Canada commercial", "high US (total)", "medium US (total)", "low US (total)"))
 ```
 
-```{r plot_yelloweye_CAN_USA_rec_catch_for_review}
-YE_rec_catch_history_plot <- ggplot(subset(YE_catch_CAN_USA_forplot_2, catch_type == "Recreational"), aes(x = year, y = value, fill = scenario))+
+```{r plot_yelloweye_CAN_USA_total_catch_for_review}
+YE_CAN_USA_catch_history_plot <- ggplot(YE_catch_CAN_USA_forplot, aes(x = year, y = value, fill = catch_source))+
   geom_bar(stat = "identity")+
-  scale_fill_manual(values = c("#1f78b4", "#33a02c", "#ff7f00"))+
+  scale_fill_manual(values = c("#ff7f00", "#33a02c", "#e31a1c", "#08519c", "#4292c6", "#9ecae1"))+
   theme(axis.text = element_text(size = 12),
         axis.title = element_text(size = 16),
         panel.background = element_rect(fill = "white", color = "black"),
         panel.grid = element_blank(),
-        legend.position = c(0.9, 0.85),
+        legend.position = c(0.9, 0.8),
         legend.text = element_text(size = 12),
         legend.title = element_text(size = 15))+
   xlab("Year")+
   ylab("Catch (lbs)")+
-  scale_y_continuous(expand = c(0,0), limits = c(0, 20000))
+  scale_y_continuous(expand = c(0,0), limits = c(0, 550000))+
+  scale_x_continuous(breaks = seq(1920, 2020, 20))
 
-ggsave(paste0(fig_dir, "/plots_for_review/yelloweye_CAN_USA_rec_catch_history.png"), YE_rec_catch_history_plot, height = 6, width = 12)
+ggsave(paste0(fig_dir, "/plots_for_review/yelloweye_CAN_USA_catch_history.png"), YE_CAN_USA_catch_history_plot, height = 6, width = 12)
 ```
-
-```{r plot_yelloweye_commercial_catch_for_review}
-YE_comm_catch_history_plot <- ggplot(subset(YE_catch_CAN_USA_forplot_2, catch_type == "Commercial"), aes(x = year, y = value, fill = scenario))+
-  geom_bar(stat = "identity")+
-  scale_fill_manual(values = c("#1f78b4", "#33a02c", "#ff7f00"))+
-  theme(axis.text = element_text(size = 12),
-        axis.title = element_text(size = 16),
-        panel.background = element_rect(fill = "white", color = "black"),
-        panel.grid = element_blank(),
-        legend.position = c(0.9, 0.85),
-        legend.text = element_text(size = 12),
-        legend.title = element_text(size = 15))+
-  xlab("Year")+
-  ylab("Catch (lbs)")+
-  scale_x_continuous(breaks = seq(1920, 2020, 20)) +
-  scale_y_continuous(expand = c(0,0), limits = c(0, 20000))
-
-ggsave(paste0(fig_dir, "/plots_for_review/yelloweye_CAN_USA_comm_catch_history.png"), YE_comm_catch_history_plot, height = 6, width = 12)
-```
-
 
 
 ## Yelloweye, USDPS

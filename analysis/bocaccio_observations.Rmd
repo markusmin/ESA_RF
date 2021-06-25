@@ -19,6 +19,7 @@ library(rgdal)
 library(broom)
 library(ggpubr)
 library(sf)
+library(lubridate)
 
 # Set figure directory
 fig_dir <- here("figures", "bocaccio_observations")
@@ -163,18 +164,52 @@ Bocaccio observations in ROV surveys:
 ROV_data_path <- here("ROV_data")
 
 PS_15_16_species <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2015-16 PS Species")
+PS_15_16_transects <- read_excel(paste0(ROV_data_path, "/ROV_NOAAESA5yr_20210405.xlsx"), sheet = "2015-16 PS Transects")
 
 bocaccio_15_16 <- subset(PS_15_16_species, SpeciesName == "Bocaccio")
 # Convert to decimal degrees
 bocaccio_15_16 %>% 
   mutate(., latitude = Lat_deg + Lat_decmin/60) %>% 
-  mutate(., longitude = Long_deg - Long_decmin/60) -> bocaccio_15_16
+  mutate(., longitude = Long_deg - Long_decmin/60) %>% 
+  dplyr::rename(depth = Depth) %>% 
+  # add transect date
+  left_join(., PS_15_16_transects, by = "Transect") %>% 
+  dplyr::select(Date, depth, FishCount, latitude, longitude) -> bocaccio_15_16_forjoin
+
 ```
+
+```{r load_ROV_data_2008}
+SJI_2008_boc <- read.csv(paste0(ROV_data_path, "/2008_SJI_ROV_bocaccio.csv"))
+SJI_2008_boc %>% 
+  rename(latitude = Lat_DD, longitude = Long_DD, depth = Depth_m,
+         FishCount = Count) %>% 
+  mutate(Date = mdy(Date)) %>% 
+  dplyr::select(Date, depth, FishCount, latitude, longitude) -> SJI_2018_boc_forjoin
+
+```
+
+```{r load_ROV_data_site_explorations}
+boc_site_exploration <- read_excel(paste0(ROV_data_path, "/NOAA_ROV-ESA5yr_Bocaccio_site_explorations.xlsx"))
+# Convert to decimal degrees
+boc_site_exploration %>% 
+  mutate(., latitude = LatitudeDegree + LatitudeDecimalMinute/60) %>% 
+  mutate(., longitude = LongitudeDegree - LongitudeDecimalMinute/60) %>% 
+  dplyr::rename(depth = DepthMeter)-> boc_site_exploration
+boc_site_exploration %>% 
+  dplyr::select(Date, depth, FishCount, latitude, longitude) -> boc_site_exploration_forjoin 
+```
+
+```{r join_ROV_boc_obs_reformat}
+bocaccio_15_16_forjoin %>% 
+  bind_rows(., SJI_2018_boc_forjoin) %>% 
+  bind_rows(., boc_site_exploration_forjoin) -> boc_ROV_obs
+```
+
 
 ### ROV observation map
 ```{r ROV_data_map}
 boc_ROV_survey_map <- greater_PS_map+
-  geom_point(data = bocaccio_15_16, aes(x = longitude, y = latitude), inherit.aes = FALSE)
+  geom_point(data = boc_ROV_obs, aes(x = longitude, y = latitude), inherit.aes = FALSE)
 
 boc_ROV_survey_map
 ```

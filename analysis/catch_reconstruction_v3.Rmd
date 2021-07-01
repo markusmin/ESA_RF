@@ -2816,7 +2816,8 @@ rec_38_41_annual_sums[rec_38_41_annual_sums$year %in% c(1938, 1939),]$est_RS <- 
 subset(rec_38_41_annual_sums, !is.na(est_RS)) %>% 
   mutate(total_RF = est_RF + est_RS) -> RF_RS_38_41
 
-RS_prop <- sum(RF_RS_38_41$est_RS, na.rm = TRUE)/ sum(RF_RS_38_41$total_RF, na.rm = TRUE)
+# Subset years where there is red snapper and calculate proportion of total RF
+RS_prop <- sum(subset(rec_38_41, year %in% c(1940, 1941))$red_snapper, na.rm = TRUE)/(sum(subset(rec_38_41, year %in% c(1940, 1941))$rock_cod, na.rm = TRUE) + sum(subset(rec_38_41, year %in% c(1940, 1941))$red_snapper, na.rm = TRUE))
 
 # Prorate yelloweye
 rec_38_41_annual_sums %>% 
@@ -2894,11 +2895,10 @@ Okay, let's divide effort by area by # of boathouses (approx - based on map, loo
 
 
 #### Yelloweye and Bocaccio catch scenarios
-1. High catch scenario: Use max annual Buckley (1965-1967) catch proportions
+1. High catch scenario: Use Buckley (1965-1967) catch proportions
   - The issue with this is that there are some crazy high proportions - e.g. 22% of rockfish catch in Hood canal in 1965 was yelloweye. That leads to some ridiculously high values in the high catch scenario.
-  - Maybe instead we should use the 1970-1987 proportions? These values look to be more like 1% of total rockfish catch, which would lead to values more in line with the later catches.
-2. Medium catch scenario: Use mean Buckley (1965-1967) catch proportions
-3. Low catch scenario: Use min annual Buckley (1965-1967) catch proportions
+2. Medium catch scenario: Use the mean of the Buckley (1965-1967) and MRFSS catch proportions
+3. Low catch scenario: Use the MRFSS catch proportions
 
 
 -> This causes the Hood Canal catches to look pretty inflated, because of the fact that there are some very high proportions of yelloweye in the Buckley proportions.
@@ -2940,7 +2940,7 @@ rec_43_65_effort_stats %>%
   bind_rows(., data.frame(year = 1942, fisherman_days = NA))  %>% 
   group_by(year) %>% 
   summarise(fisherman_days = sum(fisherman_days)) %>% 
-  mutate(source = ifelse(is.na(fisherman_days), "Interpolated", "WDFW estimate")) -> rec_42_65_effort_stats
+  mutate(source = ifelse(is.na(fisherman_days), "Interpolated", "WDF estimate")) -> rec_42_65_effort_stats
 
 rec_42_65_est %>% 
   left_join(., dplyr::select(rec_42_65_effort_stats, year, source), by = "year") -> rec_42_65_est_forplot
@@ -3031,7 +3031,7 @@ rec_42_65_est %>%
            subset(MRFSS_buckley_props, area == 11)$mean_ye_prop * subset(effort_by_area, area ==11)$prop_effort*est_RF
            ) %>% 
   mutate(medium_catch_lbs = medium_ye_n * YE_lbs_per_individual) %>% 
-  # Low catch estimate
+  # Low catch estimate - MRFSS proportion estimates
   mutate(low_ye_n = 
            # Area 6
            subset(MRFSS_buckley_props, area == 6)$MRFSS_ye_prop * subset(effort_by_area, area ==6)$prop_effort*est_RF +
@@ -3847,4 +3847,72 @@ BOC_comm_catch_history_plot <- ggplot(subset(BOC_catch_USDPS_forplot_2, catch_ty
 
 ggsave(paste0(fig_dir, "/plots_for_review/bocaccio_USDPS_comm_catch_history.png"), BOC_comm_catch_history_plot, height = 6, width = 12)
 ```
+
+
+
+
+# Export tables for review
+
+### Table of species composition data
+
+There will be two tables, one for yelloweye and one for bocaccio. The rows will be the various composition estimates (MRFSS, Buckley, and 1938-1941 WDF Annual Bulletin) and the columns will be the various PCAs. In each cell will be a proportion that is the species and a proportion of the total sample size, e.g. 0.9% (12/1320),
+
+```{r gather_species_comp_data}
+### MRFSS 
+MRFSS_sp_comps_counts %>% 
+  mutate(ye_prop_sample_size = paste0(round(ye_prop*100,1), "% (", total_ye, "/", total_RF, ")")) %>% 
+  mutate(boc_prop_sample_size = paste0(round(boc_prop*100,1), "% (", total_boc, "/", total_RF, ")")) -> MRFSS_sp_comps_counts_2
+
+# yelloweye
+MRFSS_sp_comps_counts_2 %>% 
+  dplyr::select(PCA, ye_prop_sample_size) %>% 
+  dplyr::rename(`MRFSS (1980-2003)` = ye_prop_sample_size) -> MRFSS_ye_props
+
+# bocaccio
+MRFSS_sp_comps_counts_2 %>% 
+  dplyr::select(PCA, boc_prop_sample_size) %>% 
+  dplyr::rename(`MRFSS (1980-2003)` = boc_prop_sample_size) -> MRFSS_boc_props
+
+### Buckley
+
+# yelloweye
+buck65_67_ESA_comps_by_area %>% 
+  dplyr::rename(PCA = area) %>% 
+  dplyr::select(PCA, ye_prop) %>% 
+  mutate(ye_prop = paste0(round(ye_prop*100,1),"%")) %>% 
+  # add an NA for PCA 13, since this wasn't around yet
+  bind_rows(., data.frame(PCA = 13, ye_prop = NA)) %>%
+  dplyr::rename(`Buckley (1965-1967)` = ye_prop) %>% 
+  as.data.frame(t()) -> buckley_ye_props
+
+# bocaccio
+buck65_67_ESA_comps_by_area %>% 
+  dplyr::rename(PCA = area) %>% 
+  dplyr::select(PCA, boc_prop) %>% 
+  mutate(boc_prop = paste0(round(boc_prop*100,1),"%")) %>% 
+  # add an NA for PCA 13, since this wasn't around yet
+  bind_rows(., data.frame(PCA = 13, boc_prop = NA)) %>%
+  dplyr::rename(`Buckley (1965-1967)` = boc_prop) %>% 
+  as.data.frame(t()) -> buckley_boc_props
+
+# 1938-1941
+RS_prop
+
+
+# Join MRFSS and Buckley, export
+buckley_ye_props %>% 
+  left_join(., MRFSS_ye_props, by = "PCA") -> ye_prop_table_for_review
+
+buckley_boc_props %>% 
+  left_join(., MRFSS_boc_props, by = "PCA") -> boc_prop_table_for_review
+
+write.csv(ye_prop_table_for_review, paste0(here("outputs"), "/yelloweye_proportion_table.csv"), row.names = FALSE)
+write.csv(boc_prop_table_for_review, paste0(here("outputs"), "/bocaccio_proportion_table.csv"), row.names = FALSE)
+
+```
+
+
+
+
+
 

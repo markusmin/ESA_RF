@@ -2768,8 +2768,8 @@ rec_38_41 %>%
   
 # Estimate total rock_cod and red_snapper by multiplying catch by est_days/fisherman_days
 rec_38_41 %>% 
-  mutate(., est_RF = rock_cod * est_days/fisherman_days) %>% 
-  mutate(., est_RS = red_snapper * est_days/fisherman_days) -> rec_38_41
+  mutate(., est_RF = rock_cod/fisherman_days * est_days) %>% 
+  mutate(., est_RS = red_snapper/fisherman_days * est_days) -> rec_38_41
 
 # Calculate rock cod CPUE by fisherman day
 rec_38_41 %>% 
@@ -2780,10 +2780,23 @@ rec_38_41 %>%
 
 mean_CPUE_38_41 <- mean(rec_38_41_CPUE$CPUE)
 
-# Interpolate the catches for missing month
-# Add zeros for years where there was no catch using tidyverse::complete
+# Interpolate the catches for missing months
+table(rec_38_41$month)
+
+# For months that were reported in some years but not others, take the mean of year where the month was reported
+# Fill in winter months (December and January) using mean November catches using tidyverse::complete
 rec_38_41 %>%
-  complete(., month = c("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"), year = seq(1938, 1941, 1), fill = list(no_boathouses = NA, fisherman_days = NA, rock_cod = NA, red_snapper = NA, total_boathouses = NA, days_per_boathouse = NA, est_days = NA, est_RF = mean(subset(rec_38_41, month == "November")$est_RF))) -> rec_38_41
+  complete(., month = c("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"), year = seq(1938, 1941, 1), fill = list(no_boathouses = NA, fisherman_days = NA, rock_cod = NA, red_snapper = NA, total_boathouses = NA, days_per_boathouse = NA, est_days = NA, est_RF = NA)) -> rec_38_41
+
+rec_38_41 %>% 
+  mutate(est_RF = ifelse(month == "April" & is.na(est_RF), mean(subset(rec_38_41, month == "April")$est_RF, na.rm = TRUE),
+                         ifelse(month == "March" & is.na(est_RF), mean(subset(rec_38_41, month == "March")$est_RF, na.rm = TRUE),
+                                ifelse(month == "February" & is.na(est_RF), mean(subset(rec_38_41, month == "February")$est_RF, na.rm = TRUE),
+                                       ifelse(month == "December" & is.na(est_RF), mean(subset(rec_38_41, month == "November")$est_RF, na.rm = TRUE),
+                                              ifelse(month == "January" & is.na(est_RF), mean(subset(rec_38_41, month == "November")$est_RF, na.rm = TRUE),est_RF)))))) -> rec_38_41
+
+# rec_38_41 %>%
+#   complete(., month = c("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"), year = seq(1938, 1941, 1), fill = list(no_boathouses = NA, fisherman_days = NA, rock_cod = NA, red_snapper = NA, total_boathouses = NA, days_per_boathouse = NA, est_days = NA, est_RF = mean(subset(rec_38_41, month == "November")$est_RF))) -> rec_38_41
 ```
 
 
@@ -2927,15 +2940,26 @@ rec_43_65_effort_stats %>%
   bind_rows(., data.frame(year = 1942, fisherman_days = NA))  %>% 
   group_by(year) %>% 
   summarise(fisherman_days = sum(fisherman_days)) %>% 
-  mutate(source = ifelse(is.na(fisherman_days), "interpolated", "WDFW estimate")) -> rec_42_65_effort_stats
+  mutate(source = ifelse(is.na(fisherman_days), "Interpolated", "WDFW estimate")) -> rec_42_65_effort_stats
 
 rec_42_65_est %>% 
   left_join(., dplyr::select(rec_42_65_effort_stats, year, source), by = "year") -> rec_42_65_est_forplot
 
-ggplot(rec_42_65_est_forplot, aes(x = year, y = est_days, color = source)) +
-  geom_point()+
-  ylab("Fisherman Days")
+rec_est_plot <- ggplot(rec_42_65_est_forplot, aes(x = year, y = est_days, color = source)) +
+  geom_point(size = 3)+
+  scale_color_manual(values = c("#33a02c", "#6a3d9a"))+
+  ylab("Fisherman Days")+
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 16),
+        panel.background = element_rect(fill = "white", color = "black"),
+        panel.grid = element_blank(),
+        legend.position = c(0.2, 0.85),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 15)) +
+  guides(color = guide_legend(title = "Source"))+
+  xlab("Year")
 
+ggsave(paste0(fig_dir, "/plots_for_review/recreational_effort_42_65.png"), rec_est_plot, heigh = 6, width = 8)
 # rec_43_65_est <- data.frame(year = seq(1943, 1965, 1),est_days = rep(0, 22), est_RF = rep(0,22), est_RS = rep(0,22))
 # # Estimate effort (est_days); use 6% annual growth
 # # Add first year value

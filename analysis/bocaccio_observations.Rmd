@@ -159,6 +159,7 @@ ggsave(paste0(fig_dir, "/bocaccio_trawl_survey_lengths.png"), boc_lengths_plot, 
 Bocaccio observations in ROV surveys:
 - 2015-16 Puget Sound: 1 Bocaccio
 - 2008 ROV survey: 4 Bocaccio
+- Site explorations: 4 Bocaccio (2012, 2014, 2019, 2021)
 
 ```{r load_ROV_data_15_16_PS}
 ROV_data_path <- here("ROV_data")
@@ -203,15 +204,28 @@ boc_site_exploration %>%
 bocaccio_15_16_forjoin %>% 
   bind_rows(., SJI_2018_boc_forjoin) %>% 
   bind_rows(., boc_site_exploration_forjoin) -> boc_ROV_obs
+
+boc_ROV_obs
+# Join together these observations
+# All 2008 observations and the 2012 observations are at the same site
+boc_ROV_obs_summarized <- data.frame(years = c("2015", "2008", "2012", "2014", "2019", "2021"), count = c(1, 4, 1, 1, 1, 1), latitude = c(47.94943, 48.581, 48.581, 47.77823, 47.70662,	47.44706), longitude = c(-122.3122, -123.1915, -123.1915, -122.4081, -122.4166, -122.3850))
+
+boc_ROV_obs_summarized_2 <- data.frame(observations = c("2015 (1)", "2008 (4), 2012 (1)", "2014 (1)", "2019 (1)", "2021 (1)"), latitude = c(47.94943, 48.581, 47.77823, 47.70662,	47.44706), longitude = c(-122.3122, -123.1915, -122.4081, -122.4166, -122.3850))
 ```
 
 
 ### ROV observation map
 ```{r ROV_data_map}
 boc_ROV_survey_map <- greater_PS_map+
-  geom_point(data = boc_ROV_obs, aes(x = longitude, y = latitude), inherit.aes = FALSE)
+  geom_point(data = boc_ROV_obs_summarized_2, aes(x = longitude, y = latitude), inherit.aes = FALSE) +
+  # Plot 2008 and 2012 right and above
+  geom_text(data = subset(boc_ROV_obs_summarized_2, observations == "2008 (4), 2012 (1)"), aes(x = longitude+0.02, y = latitude+0.04, label = observations), size = 5, inherit.aes = FALSE, hjust = 0)  +
+  # Plot other years to left
+  geom_text(data = subset(boc_ROV_obs_summarized_2, observations != "2008 (4), 2012 (1)"), aes(x = longitude-0.02, y = latitude+0.04, label = observations), size = 5, inherit.aes = FALSE, hjust = 1)
 
-boc_ROV_survey_map
+# boc_ROV_survey_map
+
+ggsave(paste0(fig_dir, "/bocaccio_ROV_survey_map.png"), boc_ROV_survey_map, height = 6, width  = 7.1)
 ```
 
 

@@ -70,6 +70,10 @@ ESA_genetics_boc_CPUE
 # Mean depth for each survey
 mean(ESA_CPUE_PSP$mean_depth, na.rm = TRUE)
 mean(PW_CPUE_PSP$mean_depth, na.rm = TRUE)
+
+# Total angler hours by survey
+sum(ESA_CPUE_PSP$angler_hours, na.rm = TRUE)
+sum(PW_CPUE_PSP$angler_hours, na.rm = TRUE)
 ```
 
 

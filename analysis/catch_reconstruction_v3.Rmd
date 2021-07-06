@@ -1210,9 +1210,10 @@ This data was based on a creel survey of anglers. Catches are overall very low, 
 #### Yelloweye/Bocaccio catch scenarios
 Calculate catch/release/standard deviation for each target type and area individually; sum these for each year.
 
-1. High catch: Creel estimate + one SD; 50% of estimated released rockfishes considered to be catch (died from barotrauma)
-2. Medium catch: Creel estimate; 20% of estimated released rockfishes considered to be catch (died from barotrauma)
-3. Low catch: Creel estimate - one SD; 5% of estimated released rockfishes considered to be catch (all released at depth, 95% survived - from Hannah et al. 2014, work done on yelloweye) 
+1.	High Catch Scenario: One standard deviation is added to the creel survey estimates of both catches and releases of Yelloweye Rockfish and Bocaccio. The 3% descending device use is assumed constant over the entire time period, meaning that 97% of rockfishes are released at the surface, and of the rockfishes released at the surface, 22% survive.
+2.	Medium Catch Scenario: The creel survey estimates of both catches and releases of Yelloweye Rockfish and Bocaccio are used. Descending device usage is assumed to have increased over time, leading to a mean usage of 10% over the entire time period. Therefore, 90% of rockfishes are released at the surface, and of the rockfishes released at the surface, 22% survive.
+3.	Low Catch Scenario: One standard deviation is subtracted from the creel survey estimates of both catches and releases of Yelloweye Rockfish and Bocaccio are used. Descending device usage is assumed to have increased significantly over time, leading to a mean usage of 25% over the entire time period. Therefore, 75% of rockfishes are released at the surface, and of the rockfishes released at the surface, 22% survive.
+
 
 
 ```{r load_2003_2019_recreational, cache = TRUE}
@@ -1241,8 +1242,6 @@ PSP_sport_all <- subset(PSP_sport_2003_2019, !(MCA %in% c("4", "5")))
 PSP_sport_all %>% 
   dplyr::select(c(Year, MCA, Target_Type, Common_Name, Est_Catch, Var_Catch,Est_Release, Var_Release, SD_catch, SD_release)) %>% 
   dplyr::rename(year = Year) -> PSP_sport_all
-
-YE_comm_complete
 ```
 
 ```{r yelloweye_recreational_2003_2019, cache = TRUE}
@@ -1256,9 +1255,9 @@ yelloweye_sport_2003_2019 %>%
   mutate(., DPS = "Hood Canal") %>% 
   ungroup() %>% 
   rowwise() %>% 
-  mutate(., high_catch_n = sum(Est_Catch, 1*SD_catch, 0.5*Est_Release, na.rm = TRUE)) %>% 
-  mutate(., medium_catch_n = sum(Est_Catch, 0*SD_catch, 0.2*Est_Release, na.rm = TRUE)) %>% 
-  mutate(., low_catch_n = sum(Est_Catch, -1*SD_catch, 0.05*Est_Release, na.rm = TRUE)) %>% 
+  mutate(., high_catch_n = sum(Est_Catch, 1*SD_catch, 0.97*0.78*(Est_Release+SD_release), na.rm = TRUE)) %>% 
+  mutate(., medium_catch_n = sum(Est_Catch, 0*SD_catch, 0.9*0.78*Est_Release, na.rm = TRUE)) %>% 
+  mutate(., low_catch_n = sum(Est_Catch, -1*SD_catch, 0.75*0.78*(Est_Release-SD_release), na.rm = TRUE)) %>% 
   dplyr::select(year, DPS, high_catch_n, medium_catch_n, low_catch_n) %>% 
   complete(., year = seq(2003, 2019, 1), fill = list(high_catch_n = 0, medium_catch_n = 0, low_catch_n = 0, DPS = "Hood Canal")) %>% 
   # Convert individuals to weights
@@ -1272,9 +1271,9 @@ yelloweye_sport_2003_2019 %>%
   subset(MCA != "12") %>% 
   ungroup() %>% 
   rowwise() %>% 
-  mutate(., high_catch_n = sum(Est_Catch, 1*SD_catch, 0.5*Est_Release, na.rm = TRUE)) %>%
-  mutate(., medium_catch_n = sum(Est_Catch, 0*SD_catch, 0.2*Est_Release, na.rm = TRUE)) %>% 
-  mutate(., low_catch_n = sum(Est_Catch, -1*SD_catch, 0.05*Est_Release, na.rm = TRUE)) %>% 
+  mutate(., high_catch_n = sum(Est_Catch, 1*SD_catch, 0.97*0.78*(Est_Release+SD_release), na.rm = TRUE)) %>% 
+  mutate(., medium_catch_n = sum(Est_Catch, 0*SD_catch, 0.9*0.78*Est_Release, na.rm = TRUE)) %>% 
+  mutate(., low_catch_n = sum(Est_Catch, -1*SD_catch, 0.75*0.78*(Est_Release-SD_release), na.rm = TRUE)) %>% 
   group_by(year) %>% 
   summarise(high_catch_n = sum(high_catch_n), medium_catch_n = sum(medium_catch_n), low_catch_n = sum(low_catch_n)) %>% 
   mutate(., DPS = "U.S. DPS except Hood Canal") %>% 
@@ -1295,9 +1294,9 @@ bocaccio_sport_2003_2019 <- subset(PSP_sport_all, Common_Name == "Bocaccio")
 bocaccio_sport_2003_2019 %>% 
   ungroup() %>% 
   rowwise() %>% 
-  mutate(., high_catch_n = sum(Est_Catch, 1*SD_catch, 0.5*Est_Release, na.rm = TRUE)) %>%
-  mutate(., medium_catch_n = sum(Est_Catch, 0*SD_catch, 0.2*Est_Release, na.rm = TRUE)) %>% 
-  mutate(., low_catch_n = sum(Est_Catch, -1*SD_catch, 0.05*Est_Release, na.rm = TRUE)) %>% 
+  mutate(., high_catch_n = sum(Est_Catch, 1*SD_catch, 0.97*0.78*(Est_Release+SD_release), na.rm = TRUE)) %>% 
+  mutate(., medium_catch_n = sum(Est_Catch, 0*SD_catch, 0.9*0.78*Est_Release, na.rm = TRUE)) %>% 
+  mutate(., low_catch_n = sum(Est_Catch, -1*SD_catch, 0.75*0.78*(Est_Release-SD_release), na.rm = TRUE)) %>% 
   group_by(year) %>% 
   summarise(high_catch_n = sum(high_catch_n), medium_catch_n = sum(medium_catch_n), low_catch_n = sum(low_catch_n)) %>% 
   mutate(., DPS = "U.S. DPS") %>% 
@@ -2618,43 +2617,156 @@ bargmann_ESA_sums %>%
 
 
 
-### 1966-1969: Combine Buckley and Bargmann
+### 1966-1969: Combine Buckley and Bargmann (catch scenarios)
 
 Don't include 1965 because of anomalously high values for yelloweye
 
-#### Yelloweye and bocaccio catch scenarios
-Single estimate for both species for this time period
+### Catch scenarios for 1966-1969
+- Same treatment as next time period regarding PCA 6 (East Juan de Fuca Strait)
 
-```{r combine_buckley_bargmann}
-ye_catch_bargmann_HC %>% 
-  # dplyr::rename(catch_n = catch) %>% 
-  mutate(year = as.numeric(year)) %>% 
-  bind_rows(., ye_catch_buck67_HC) %>% 
-  bind_rows(., ye_catch_buck66_HC) %>% 
-  # bind_rows(., ye_catch_buck65_HC) %>% 
-  # Single catch scenario
-  mutate(high_catch_lbs = catch_lbs, medium_catch_lbs = catch_lbs, low_catch_lbs = catch_lbs) -> ye_rec_catch_66_69_HC
+```{r catch_scenarios_1966_1969}
+# Yelloweye: US DPS (no Hood Canal)
+  
+# 1966
+buck66_ESA_sums %>% 
+  subset(area != 12) %>% 
+  ungroup() %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(year = 1966) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) %>% 
+  mutate(high_catch_lbs = catch_lbs) -> ye_high_catch_buck66_USDPS
 
-ye_catch_bargmann_USDPS %>% 
-  # dplyr::rename(catch_n = catch) %>% 
-  mutate(year = as.numeric(year)) %>% 
-  bind_rows(., ye_catch_buck67_USDPS) %>% 
-  bind_rows(., ye_catch_buck66_USDPS) %>% 
-  # bind_rows(., ye_catch_buck65_USDPS) %>% 
-  # Single catch scenario
-  mutate(high_catch_lbs = catch_lbs, medium_catch_lbs = catch_lbs, low_catch_lbs = catch_lbs)-> ye_rec_catch_66_69_USDPS
+buck66_ESA_sums %>% 
+  subset(area != 12) %>% 
+  ungroup() %>% 
+  mutate(ye_catch_total = ifelse(area == 6, 0.5*ye_catch_total, ye_catch_total)) %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(year = 1966) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) %>% 
+  mutate(medium_catch_lbs = catch_lbs)-> ye_medium_catch_buck66_USDPS
 
-boc_catch_bargmann %>% 
-  # dplyr::rename(catch_n = catch) %>% 
-  mutate(year = as.numeric(year)) %>% 
-  bind_rows(., boc_catch_buck67_USDPS) %>% 
-  bind_rows(., boc_catch_buck66_USDPS) %>% 
-  # bind_rows(., boc_catch_buck65_USDPS) %>% 
-  # Single catch scenario
-  mutate(high_catch_lbs = catch_lbs, medium_catch_lbs = catch_lbs, low_catch_lbs = catch_lbs)-> boc_rec_catch_66_69
+buck66_ESA_sums %>% 
+  subset(!(area %in% c(6,12))) %>% 
+  ungroup() %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(year = 1966) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) %>% 
+  mutate(low_catch_lbs = catch_lbs)-> ye_low_catch_buck66_USDPS
+
+# Join together
+dplyr::select(ye_high_catch_buck66_USDPS, year, high_catch_lbs) %>% 
+  left_join(., dplyr::select(ye_medium_catch_buck66_USDPS, year, medium_catch_lbs), by = "year") %>% 
+  left_join(., dplyr::select(ye_low_catch_buck66_USDPS, year, low_catch_lbs), by = "year") -> ye_rec_catch_buck_66_USDPS
+
+# 1967
+buck67_ESA_sums %>% 
+  subset(area != 12) %>% 
+  ungroup() %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(year = 1967) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) %>% 
+  mutate(high_catch_lbs = catch_lbs) -> ye_high_catch_buck67_USDPS
+
+buck67_ESA_sums %>% 
+  subset(area != 12) %>% 
+  ungroup() %>% 
+  mutate(ye_catch_total = ifelse(area == 6, 0.5*ye_catch_total, ye_catch_total)) %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(year = 1967) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) %>% 
+  mutate(medium_catch_lbs = catch_lbs)-> ye_medium_catch_buck67_USDPS
+
+buck67_ESA_sums %>% 
+  subset(!(area %in% c(6,12))) %>% 
+  ungroup() %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(year = 1967) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) %>% 
+  mutate(low_catch_lbs = catch_lbs)-> ye_low_catch_buck67_USDPS
+
+# Join together
+dplyr::select(ye_high_catch_buck67_USDPS, year, high_catch_lbs) %>% 
+  left_join(., dplyr::select(ye_medium_catch_buck67_USDPS, year, medium_catch_lbs), by = "year") %>% 
+  left_join(., dplyr::select(ye_low_catch_buck67_USDPS, year, low_catch_lbs), by = "year") -> ye_rec_catch_buck_67_USDPS
+
+# 1968
+
+bargmann_ESA_sums %>% 
+  subset(year == 1968) %>% 
+  subset(area != 12) %>% 
+  ungroup() %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(year = 1968) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) %>% 
+  mutate(high_catch_lbs = catch_lbs) -> ye_high_catch_bargmann68_USDPS
+
+bargmann_ESA_sums %>% 
+  subset(year == 1968) %>% 
+  subset(area != 12) %>% 
+  ungroup() %>% 
+  mutate(ye_catch_total = ifelse(area == 6, 0.5*ye_catch_total, ye_catch_total)) %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(year = 1968) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) %>% 
+  mutate(medium_catch_lbs = catch_lbs)-> ye_medium_catch_bargmann68_USDPS
+
+bargmann_ESA_sums %>% 
+  subset(year == 1968) %>% 
+  subset(!(area %in% c(6,12))) %>% 
+  ungroup() %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(year = 1968) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) %>% 
+  mutate(low_catch_lbs = catch_lbs)-> ye_low_catch_bargmann68_USDPS
+
+# Join together
+dplyr::select(ye_high_catch_bargmann68_USDPS, year, high_catch_lbs) %>% 
+  left_join(., dplyr::select(ye_medium_catch_bargmann68_USDPS, year, medium_catch_lbs), by = "year") %>% 
+  left_join(., dplyr::select(ye_low_catch_bargmann68_USDPS, year, low_catch_lbs), by = "year") -> ye_rec_catch_bargmann68_USDPS
+
+# 1969
+
+bargmann_ESA_sums %>% 
+  subset(year == 1969) %>% 
+  subset(area != 12) %>% 
+  ungroup() %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(year = 1969) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) %>% 
+  mutate(high_catch_lbs = catch_lbs) -> ye_high_catch_bargmann69_USDPS
+
+bargmann_ESA_sums %>% 
+  subset(year == 1969) %>% 
+  subset(area != 12) %>% 
+  ungroup() %>% 
+  mutate(ye_catch_total = ifelse(area == 6, 0.5*ye_catch_total, ye_catch_total)) %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(year = 1969) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) %>% 
+  mutate(medium_catch_lbs = catch_lbs)-> ye_medium_catch_bargmann69_USDPS
+
+bargmann_ESA_sums %>% 
+  subset(year == 1969) %>% 
+  subset(!(area %in% c(6,12))) %>% 
+  ungroup() %>% 
+  summarise(catch_n = sum(ye_catch_total)) %>% 
+  mutate(year = 1969) %>% 
+  mutate(catch_lbs = catch_n*YE_lbs_per_individual) %>% 
+  mutate(low_catch_lbs = catch_lbs)-> ye_low_catch_bargmann69_USDPS
+
+# Join together
+dplyr::select(ye_high_catch_bargmann69_USDPS, year, high_catch_lbs) %>% 
+  left_join(., dplyr::select(ye_medium_catch_bargmann69_USDPS, year, medium_catch_lbs), by = "year") %>% 
+  left_join(., dplyr::select(ye_low_catch_bargmann69_USDPS, year, low_catch_lbs), by = "year") -> ye_rec_catch_bargmann69_USDPS
 
 
+# Join all together
+ye_rec_catch_buck_66_USDPS %>% 
+  bind_rows(.,ye_rec_catch_buck_67_USDPS) %>% 
+  bind_rows(.,ye_rec_catch_bargmann68_USDPS) %>% 
+  bind_rows(.,ye_rec_catch_bargmann69_USDPS) -> ye_rec_catch_66_69_USDPS
 ```
+
 
 ### 1938-1942 WDFW Annual Bulletins
 
@@ -2833,16 +2945,16 @@ YE_rec_38_41 %>%
   dplyr::select(year, low_catch_lbs, medium_catch_lbs, high_catch_lbs, low_ye_n, medium_ye_n, high_ye_n) -> YE_rec_38_41_int
   
 # Hood Canal
-YE_rec_38_41_int*0.15 -> YE_rec_38_41_HC
+YE_rec_38_41_int*0.16 -> YE_rec_38_41_HC
 
 YE_rec_38_41_HC %>% 
-  mutate(year = year/0.15) -> YE_rec_38_41_HC
+  mutate(year = year/0.16) -> YE_rec_38_41_HC
 
 # US DPS
-YE_rec_38_41_int*0.85 -> YE_rec_38_41_USDPS
+YE_rec_38_41_int*0.84 -> YE_rec_38_41_USDPS
 
 YE_rec_38_41_USDPS %>% 
-  mutate(year = year/0.85) -> YE_rec_38_41_USDPS
+  mutate(year = year/0.84) -> YE_rec_38_41_USDPS
 
 # Prorate bocaccio
 rec_38_41_annual_sums %>% 
@@ -3538,7 +3650,7 @@ YE_CAN_USA_catch_history_plot <- ggplot(YE_catch_CAN_USA_forplot, aes(x = year, 
   xlab("Year")+
   ylab("Catch (lbs)")+
   scale_y_continuous(expand = c(0,0), limits = c(0, 550000))+
-  scale_x_continuous(breaks = seq(1920, 2020, 20))
+  scale_x_continuous(breaks = seq(1920, 2020, 10))
 
 ggsave(paste0(fig_dir, "/plots_for_review/yelloweye_CAN_USA_catch_history.png"), YE_CAN_USA_catch_history_plot, height = 6, width = 12)
 ```
@@ -3620,6 +3732,7 @@ YE_rec_catch_history_plot <- ggplot(subset(YE_catch_USDPS_forplot_2, catch_type 
         legend.title = element_text(size = 15))+
   xlab("Year")+
   ylab("Catch (lbs)")+
+  scale_x_continuous(breaks = seq(1940, 2020, 10)) +
   scale_y_continuous(expand = c(0,0), limits = c(0, 20000))
 
 ggsave(paste0(fig_dir, "/plots_for_review/yelloweye_USDPS_rec_catch_history.png"), YE_rec_catch_history_plot, height = 6, width = 12)
@@ -3638,7 +3751,7 @@ YE_comm_catch_history_plot <- ggplot(subset(YE_catch_USDPS_forplot_2, catch_type
         legend.title = element_text(size = 15))+
   xlab("Year")+
   ylab("Catch (lbs)")+
-  scale_x_continuous(breaks = seq(1920, 2020, 20)) +
+  scale_x_continuous(breaks = seq(1920, 2020, 10)) +
   scale_y_continuous(expand = c(0,0), limits = c(0, 20000))
 
 ggsave(paste0(fig_dir, "/plots_for_review/yelloweye_USDPS_comm_catch_history.png"), YE_comm_catch_history_plot, height = 6, width = 12)
@@ -3719,6 +3832,7 @@ YE_rec_catch_history_plot <- ggplot(subset(YE_catch_HC_forplot_2, catch_type == 
         legend.title = element_text(size = 15))+
   xlab("Year")+
   ylab("Catch (lbs)")+
+  scale_x_continuous(breaks = seq(1940, 2020, 10)) +
   scale_y_continuous(expand = c(0,0), limits = c(0, 6000))
 
 ggsave(paste0(fig_dir, "/plots_for_review/yelloweye_HC_rec_catch_history.png"), YE_rec_catch_history_plot, height = 6, width = 12)
@@ -3737,7 +3851,7 @@ YE_comm_catch_history_plot <- ggplot(subset(YE_catch_HC_forplot_2, catch_type ==
         legend.title = element_text(size = 15))+
   xlab("Year")+
   ylab("Catch (lbs)")+
-  scale_x_continuous(breaks = seq(1920, 2020, 20)) +
+  scale_x_continuous(breaks = seq(1920, 2020, 10)) +
   scale_y_continuous(expand = c(0,0), limits = c(0, 1000))
 
 ggsave(paste0(fig_dir, "/plots_for_review/yelloweye_HC_comm_catch_history.png"), YE_comm_catch_history_plot, height = 6, width = 12)
@@ -3823,6 +3937,7 @@ BOC_rec_catch_history_plot <- ggplot(subset(BOC_catch_USDPS_forplot_2, catch_typ
         legend.text = element_text(size = 12),
         legend.title = element_text(size = 15))+
   xlab("Year")+
+  scale_x_continuous(breaks = seq(1940, 2020, 10)) +
   ylab("Catch (lbs)")+
   scale_y_continuous(expand = c(0,0), limits = c(0, 80000))
 
@@ -3842,7 +3957,7 @@ BOC_comm_catch_history_plot <- ggplot(subset(BOC_catch_USDPS_forplot_2, catch_ty
         legend.title = element_text(size = 15))+
   xlab("Year")+
   ylab("Catch (lbs)")+
-  scale_x_continuous(breaks = seq(1920, 2020, 20)) +
+  scale_x_continuous(breaks = seq(1920, 2020, 10)) +
   scale_y_continuous(expand = c(0,0), limits = c(0, 20000))
 
 ggsave(paste0(fig_dir, "/plots_for_review/bocaccio_USDPS_comm_catch_history.png"), BOC_comm_catch_history_plot, height = 6, width = 12)

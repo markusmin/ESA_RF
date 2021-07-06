@@ -1,0 +1,80 @@
+---
+title: "hook_and_line_analysis"
+author: "Markus Min"
+date: "7/5/2021"
+output: html_document
+---
+
+#### Description
+This Rmd file goes over the hook and line data/analysis to be included in the 5-year review. It follow the script "CPUE_data_prep.R," which reformats/cleans up the hook and line data.
+
+1. Length composition data
+2. CPUE
+
+
+```{r load_libraries}
+library(tidyverse)
+library(here)
+library(janitor)
+```
+
+
+#### Load data
+```{r load_hook_and_line_data}
+CPUE_data <- read.csv(here("hook_and_line_data", "CPUE_data_for_model.csv"), row.names = 1)
+
+pw_orig <- clean_names(read_excel(here("hook_and_line_data", "Washington_et_al_74-77_Puget_Sound_data.xlsx")))
+
+ESA_genetics_orig <- clean_names(read_excel(here("hook_and_line_data","2014_2015_genetics_survey.xlsx"), sheet = "data"))
+
+lingcod_bycatch_orig <- clean_names(read.csv(here("hook_and_line_data","2017_2019_bycatch_survey_catch.csv")))
+```
+
+### Calculate CPUE by survey
+
+First we need to make sure the same geographic area is being covered by each survey. For Percy Washington, this is already limited to Puget Sound proper. However, I think we should take out Hood Canal, since PW was barely there and it's a different population.
+
+I don't really think we can compare the lingcod bycatch survey - the issue is that the depths are very different (shallow), targeting a different species (lingcod), and it's mostly limited to Central Sound and the SJI, with a little bit of effort around Whidbey Island
+```{r subset_PS_for_surveys}
+# Subset PS proper for each survey
+PW_CPUE_PSP <- subset(CPUE_data, survey == "Percy_Washington" & basin != "Hood Canal")
+
+ESA_CPUE_PSP <- subset(CPUE_data, survey == "ESA_Genetics" & basin %in% c("Central Sound", "Whidbey Island",  "South Sound", "Straits of Juan de Fuca", "San Juan Islands"))
+```
+
+```{r calculate_CPUE_by_survey}
+### Percy Washington
+
+# Yelloweye
+PW_ye_CPUE <- sum(PW_CPUE_PSP$yelloweye_catch/sum(PW_CPUE_PSP$angler_hours))
+
+# Bocaccio
+PW_boc_CPUE <- sum(PW_CPUE_PSP$bocaccio_catch/sum(PW_CPUE_PSP$angler_hours))
+
+
+
+### ESA genetics
+
+# Yelloweye
+ESA_genetics_ye_CPUE <- sum(ESA_CPUE_PSP$yelloweye_catch/sum(ESA_CPUE_PSP$angler_hours))
+
+# Bocaccio
+ESA_genetics_boc_CPUE <- sum(ESA_CPUE_PSP$bocaccio_catch/sum(ESA_CPUE_PSP$angler_hours))
+
+PW_ye_CPUE
+PW_boc_CPUE
+ESA_genetics_ye_CPUE
+ESA_genetics_boc_CPUE
+
+
+# Mean depth for each survey
+mean(ESA_CPUE_PSP$mean_depth, na.rm = TRUE)
+mean(PW_CPUE_PSP$mean_depth, na.rm = TRUE)
+```
+
+
+
+
+
+
+

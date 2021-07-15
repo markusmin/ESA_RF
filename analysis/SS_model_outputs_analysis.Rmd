@@ -1,0 +1,145 @@
+---
+title: "SS_model_outputs_analysis"
+author: "Markus Min"
+date: "7/15/2021"
+output: html_document
+---
+
+#### Description
+To calculate values/parameters from the outputs from the stock synthesis models run by Jason Cope. Plots have already been generated, so here we are just extracting values to report in the 5-year review. Because of the size of the model outputs, they are not included in the uploaded data to GitHub but are available upon request.
+
+```{r load_libraries}
+library(tidyverse)
+library(r4ss)
+library(gplots)
+library(here)
+```
+
+
+#### Load data
+```{r load_yelloweye_USDPS}
+# Change here directory to where SS outputs are stored
+SS_dir <- "/Users/markusmin/Documents/ESA_RF_2021_SS_runs"
+
+YE_USDPS_high_SS <- SS_output(paste0(SS_dir,"/YEY_USDPS", "/2021-07-15", "/YEY_USDPS_hi"),covar=FALSE,ncols=149)
+YE_USDPS_medium_SS <- SS_output(paste0(SS_dir,"/YEY_USDPS", "/2021-07-15", "/YEY_USDPS_med"),covar=FALSE,ncols=149)
+YE_USDPS_low_SS <- SS_output(paste0(SS_dir,"/YEY_USDPS", "/2021-07-15", "/YEY_USDPS_low"),covar=FALSE,ncols=149)
+
+base.summary.ye.usdps <- SSsummarize(list(YE_USDPS_high_SS, YE_USDPS_medium_SS, YE_USDPS_low_SS))
+```
+
+```{r load_yelloweye_HC}
+YE_HC_high_SS <- SS_output(paste0(SS_dir,"/YEY_HC", "/2021-07-15", "/YEYE_HC_hi"),covar=FALSE,ncols=149)
+YE_HC_medium_SS <- SS_output(paste0(SS_dir,"/YEY_HC", "/2021-07-15", "/YEYE_HC_med"),covar=FALSE,ncols=149)
+YE_HC_low_SS <- SS_output(paste0(SS_dir,"/YEY_HC", "/2021-07-15", "/YEYE_HC_low"),covar=FALSE,ncols=149)
+
+base.summary.ye.hc <- SSsummarize(list(YE_HC_high_SS, YE_HC_medium_SS, YE_HC_low_SS))
+```
+
+```{r load_bocaccio}
+BOC_high_SS <- SS_output(paste0(SS_dir,"/Bocaccio", "/2021-07-15", "/Bocaccio_USDPS_high"),covar=FALSE,ncols=149)
+BOC_medium_SS <- SS_output(paste0(SS_dir,"/Bocaccio", "/2021-07-15", "/Bocaccio_USDPS_med"),covar=FALSE,ncols=149)
+BOC_low_SS <- SS_output(paste0(SS_dir,"/Bocaccio", "/2021-07-15", "/Bocaccio_USDPS_low"),covar=FALSE,ncols=149)
+
+base.summary.boc <- SSsummarize(list(BOC_high_SS, BOC_medium_SS, BOC_low_SS))
+```
+
+
+### Get absolute spawning biomass estimates
+```{r absolute_SSB_YE_USDPS}
+# Get absolute spawning biomass
+spbio_ye.usdps <- as.data.frame(base.summary.ye.usdps$SpawnBio)
+colnames(spbio_ye.usdps) <- c("High", "Medium", "Low", "Label", "year")
+
+# Get uncertainty in absolute spawning biomass
+# The uncertainty appears to be symmetrical, leading to negative lower bounds:
+as.data.frame(base.summary.ye.usdps$SpawnBioLower)
+
+# Let's just take the upper bounds
+spbio_upper_ye.usdps <- as.data.frame(base.summary.ye.usdps$SpawnBioUpper)
+```
+
+
+
+
+
+
+### Get relative spawning biomass estimates
+```{r relative_SSB_YE_USDPS}
+# Get relative spawning biomass
+rel_spbio_ye.usdps <- as.data.frame(base.summary.ye.usdps$Bratio)
+colnames(rel_spbio_ye.usdps) <- c("High", "Medium", "Low", "Label", "year")
+
+# Check what year model is estimating minimum abundance
+rel_spbio_ye.usdps[rel_spbio_ye.usdps$High == min(rel_spbio_ye.usdps$High),]
+rel_spbio_ye.usdps[rel_spbio_ye.usdps$Medium == min(rel_spbio_ye.usdps$Medium),]
+rel_spbio_ye.usdps[rel_spbio_ye.usdps$Low == min(rel_spbio_ye.usdps$Low),]
+# 1994 for the high and medium scenarios, 1992 for the low scenario
+
+# Get uncertainty in relative spawning biomass
+rel_spbio_lower_ye.usdps <- as.data.frame(base.summary.ye.usdps$BratioLower)
+colnames(rel_spbio_lower_ye.usdps) <- c("High", "Medium", "Low", "Label", "year")
+rel_spbio_upper_ye.usdps <- as.data.frame(base.summary.ye.usdps$BratioUpper)
+colnames(rel_spbio_upper_ye.usdps) <- c("High", "Medium", "Low", "Label", "year")
+
+# Get estimates for 2021
+rel_spbio_lower_ye.usdps[rel_spbio_lower_ye.usdps$year == 2021,]
+rel_spbio_upper_ye.usdps[rel_spbio_upper_ye.usdps$year == 2021,]
+rel_spbio_ye.usdps[rel_spbio_ye.usdps$year == 2021,]
+
+```
+
+```{r relative_SSB_YE_HC}
+# Get relative spawning biomass
+rel_spbio_ye.hc <- as.data.frame(base.summary.ye.hc$Bratio)
+colnames(rel_spbio_ye.hc) <- c("High", "Medium", "Low", "Label", "year")
+
+# Check what year model is estimating minimum abundance
+rel_spbio_ye.hc[rel_spbio_ye.hc$High == min(rel_spbio_ye.hc$High),]
+rel_spbio_ye.hc[rel_spbio_ye.hc$Medium == min(rel_spbio_ye.hc$Medium),]
+rel_spbio_ye.hc[rel_spbio_ye.hc$Low == min(rel_spbio_ye.hc$Low),]
+# Estimates are all over the place - 1966, 1981, 1987 (high, medium, low)
+
+# Get uncertainty in relative spawning biomass
+rel_spbio_lower_ye.hc <- as.data.frame(base.summary.ye.hc$BratioLower)
+colnames(rel_spbio_lower_ye.hc) <- c("High", "Medium", "Low", "Label", "year")
+rel_spbio_upper_ye.hc <- as.data.frame(base.summary.ye.hc$BratioUpper)
+colnames(rel_spbio_upper_ye.hc) <- c("High", "Medium", "Low", "Label", "year")
+
+# Get estimates for 2021
+rel_spbio_lower_ye.hc[rel_spbio_lower_ye.hc$year == 2021,]
+rel_spbio_upper_ye.hc[rel_spbio_upper_ye.hc$year == 2021,]
+rel_spbio_ye.hc[rel_spbio_ye.hc$year == 2021,]
+
+```
+
+```{r relative_SSB_bocaccio}
+# Get relative spawning biomass
+rel_spbio_boc <- as.data.frame(base.summary.boc$Bratio)
+colnames(rel_spbio_boc) <- c("High", "Medium", "Low", "Label", "year")
+
+# Check what year model is estimating minimum abundance
+rel_spbio_boc[rel_spbio_boc$High == min(rel_spbio_boc$High),]
+rel_spbio_boc[rel_spbio_boc$Medium == min(rel_spbio_boc$Medium),]
+rel_spbio_boc[rel_spbio_boc$Low == min(rel_spbio_boc$Low),]
+# 1992 for each, but the big drop really occurs 1979/1980
+
+# Get uncertainty in relative spawning biomass
+rel_spbio_lower_boc <- as.data.frame(base.summary.boc$BratioLower)
+colnames(rel_spbio_lower_boc) <- c("High", "Medium", "Low", "Label", "year")
+rel_spbio_upper_boc <- as.data.frame(base.summary.boc$BratioUpper)
+colnames(rel_spbio_upper_boc) <- c("High", "Medium", "Low", "Label", "year")
+
+# Get estimates for 2021
+rel_spbio_lower_boc[rel_spbio_lower_boc$year == 2021,]
+rel_spbio_upper_boc[rel_spbio_upper_boc$year == 2021,]
+rel_spbio_boc[rel_spbio_boc$year == 2021,]
+
+```
+
+
+
+
+
+
+

@@ -39,7 +39,9 @@ I don't really think we can compare the lingcod bycatch survey - the issue is th
 # Subset PS proper for each survey
 PW_CPUE_PSP <- subset(CPUE_data, survey == "Percy_Washington" & basin != "Hood Canal")
 
-ESA_CPUE_PSP <- subset(CPUE_data, survey == "ESA_Genetics" & basin %in% c("Central Sound", "Whidbey Island",  "South Sound", "Straits of Juan de Fuca", "San Juan Islands"))
+
+unique(CPUE_data$basin)
+ESA_CPUE_PSP <- subset(CPUE_data, survey == "ESA_Genetics" & basin %in% c("Central Sound", "Whidbey Island",  "South Sound"))
 ```
 
 ```{r calculate_CPUE_by_survey}

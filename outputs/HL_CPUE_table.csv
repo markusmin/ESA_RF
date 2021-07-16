@@ -1,4 +1,4 @@
-surveys,survey_years,total_ye,total_boc,angler_hours,ye_CPUE,boc_CPUE
-Percy Washington,1974-1977,28,20,1575,0.0178,0.0127
-ESA Genetics,2014-2015,5,3,662,0.0076,0.0045
-Lingcod Bycatch,2017-2019,2,0,399,0.005,0
+"surveys","survey_years","total_ye","total_boc","angler_hours","mean_survey_depth","ye_CPUE","boc_CPUE"
+"Percy Washington","1974-1977",28,20,1575,62.9,0.0178,0.0127
+"ESA Genetics","2014-2015",5,3,662,71.2,0.0076,0.0045
+"Lingcod Bycatch","2017-2019",2,0,399,30.1,0.005,0

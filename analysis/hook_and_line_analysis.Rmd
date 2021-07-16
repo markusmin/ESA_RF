@@ -81,8 +81,14 @@ lingcod_bycatch_ye_CPUE <- sum(lingcod_bycatch_CPUE_PSP$yelloweye_catch)/sum(lin
 lingcod_bycatch_boc_CPUE <- sum(lingcod_bycatch_CPUE_PSP$bocaccio_catch)/sum(lingcod_bycatch_CPUE_PSP$angler_hours)
 
 # Mean depth for each survey
-mean(ESA_CPUE_PSP$mean_depth, na.rm = TRUE)
 mean(PW_CPUE_PSP$mean_depth, na.rm = TRUE)
+mean(ESA_CPUE_PSP$mean_depth, na.rm = TRUE)
+mean(lingcod_bycatch_CPUE_PSP$mean_depth, na.rm = TRUE)
+
+# Mean depth - normalized by angler hours
+mean_depth_PW <- sum(PW_CPUE_PSP$mean_depth * PW_CPUE_PSP$angler_hours, na.rm = TRUE)/sum(PW_CPUE_PSP$angler_hours, na.rm = TRUE)
+mean_depth_ESA <- sum(ESA_CPUE_PSP$mean_depth * ESA_CPUE_PSP$angler_hours, na.rm = TRUE)/sum(ESA_CPUE_PSP$angler_hours, na.rm = TRUE)
+mean_depth_lingcod_bycatch <- sum(lingcod_bycatch_CPUE_PSP$mean_depth * lingcod_bycatch_CPUE_PSP$angler_hours, na.rm = TRUE)/sum(lingcod_bycatch_CPUE_PSP$angler_hours, na.rm = TRUE)
 
 # Total angler hours by survey
 sum(ESA_CPUE_PSP$angler_hours, na.rm = TRUE)
@@ -107,14 +113,16 @@ total_boc <- c(sum(PW_CPUE_PSP$bocaccio_catch), sum(ESA_CPUE_PSP$bocaccio_catch)
 ye_CPUE <- c(PW_ye_CPUE, ESA_genetics_ye_CPUE, lingcod_bycatch_ye_CPUE)
 boc_CPUE <- c(PW_boc_CPUE, ESA_genetics_boc_CPUE, lingcod_bycatch_boc_CPUE)
 angler_hours <- c(sum(PW_CPUE_PSP$angler_hours), sum(ESA_CPUE_PSP$angler_hours), sum(lingcod_bycatch_CPUE_PSP$angler_hours))
+mean_depth <- c(mean_depth_PW, mean_depth_ESA, mean_depth_lingcod_bycatch)
 
-CPUE_table <- data.frame(surveys = surveys, survey_years = years, total_ye = total_ye, total_boc = total_boc, angler_hours = angler_hours, ye_CPUE = ye_CPUE, boc_CPUE = boc_CPUE)
+CPUE_table <- data.frame(surveys = surveys, survey_years = years, total_ye = total_ye, total_boc = total_boc, angler_hours = angler_hours, mean_survey_depth = mean_depth, ye_CPUE = ye_CPUE, boc_CPUE = boc_CPUE)
 
 # Round selected values for export
 CPUE_table %>% 
   mutate(angler_hours = round(angler_hours, 0)) %>% 
   mutate(ye_CPUE = round(ye_CPUE, 4)) %>% 
-  mutate(boc_CPUE = round(boc_CPUE, 4)) -> CPUE_table
+  mutate(boc_CPUE = round(boc_CPUE, 4)) %>% 
+  mutate(mean_survey_depth = round(mean_depth, -> CPUE_table
 
 # Export CPUE table
 write.csv(CPUE_table, paste0(here("outputs"), "/HL_CPUE_table.csv"), row.names = FALSE)

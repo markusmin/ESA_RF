@@ -60,7 +60,31 @@ spbio_upper_ye.usdps <- as.data.frame(base.summary.ye.usdps$SpawnBioUpper)
 ```
 
 
+```{r absolute_SSB_YE_HC}
+# Get absolute spawning biomass
+spbio_ye.hc <- as.data.frame(base.summary.ye.hc$SpawnBio)
+colnames(spbio_ye.hc) <- c("High", "Medium", "Low", "Label", "year")
 
+# Get uncertainty in absolute spawning biomass
+# The uncertainty appears to be symmetrical, leading to negative lower bounds:
+as.data.frame(base.summary.ye.hc$SpawnBioLower)
+
+# Let's just take the upper bounds
+spbio_upper_ye.hc <- as.data.frame(base.summary.ye.hc$SpawnBioUpper)
+```
+
+```{r absolute_SSB_boc}
+# Get absolute spawning biomass
+spbio_boc <- as.data.frame(base.summary.boc$SpawnBio)
+colnames(spbio_boc) <- c("High", "Medium", "Low", "Label", "year")
+
+# Get uncertainty in absolute spawning biomass
+# The uncertainty appears to be symmetrical, leading to negative lower bounds:
+as.data.frame(base.summary.boc$SpawnBioLower)
+
+# Let's just take the upper bounds
+spbio_upper_boc <- as.data.frame(base.summary.boc$SpawnBioUpper)
+```
 
 
 

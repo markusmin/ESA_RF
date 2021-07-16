@@ -16,6 +16,7 @@ This Rmd file goes over the hook and line data/analysis to be included in the 5-
 library(tidyverse)
 library(here)
 library(janitor)
+library(readxl)
 ```
 
 
@@ -37,37 +38,47 @@ First we need to make sure the same geographic area is being covered by each sur
 I don't really think we can compare the lingcod bycatch survey - the issue is that the depths are very different (shallow), targeting a different species (lingcod), and it's mostly limited to Central Sound and the SJI, with a little bit of effort around Whidbey Island
 ```{r subset_PS_for_surveys}
 # Subset PS proper for each survey
+unique(CPUE_data$basin)
+unique(CPUE_data$survey)
+
+# Percy Washington
 PW_CPUE_PSP <- subset(CPUE_data, survey == "Percy_Washington" & basin != "Hood Canal")
 
-
-unique(CPUE_data$basin)
+# ESA Genetics
 ESA_CPUE_PSP <- subset(CPUE_data, survey == "ESA_Genetics" & basin %in% c("Central Sound", "Whidbey Island",  "South Sound"))
+
+# Lingcod bycatch
+lingcod_bycatch_CPUE_PSP <- subset(CPUE_data, survey == "lingcod_bycatch"  & basin %in% c("Central Sound", "Whidbey Island",  "South Sound"))
+
 ```
 
 ```{r calculate_CPUE_by_survey}
 ### Percy Washington
 
 # Yelloweye
-PW_ye_CPUE <- sum(PW_CPUE_PSP$yelloweye_catch/sum(PW_CPUE_PSP$angler_hours))
+PW_ye_CPUE <- sum(PW_CPUE_PSP$yelloweye_catch)/sum(PW_CPUE_PSP$angler_hours)
 
 # Bocaccio
-PW_boc_CPUE <- sum(PW_CPUE_PSP$bocaccio_catch/sum(PW_CPUE_PSP$angler_hours))
+PW_boc_CPUE <- sum(PW_CPUE_PSP$bocaccio_catch)/sum(PW_CPUE_PSP$angler_hours)
 
 
 
 ### ESA genetics
 
 # Yelloweye
-ESA_genetics_ye_CPUE <- sum(ESA_CPUE_PSP$yelloweye_catch/sum(ESA_CPUE_PSP$angler_hours))
+ESA_genetics_ye_CPUE <- sum(ESA_CPUE_PSP$yelloweye_catch)/sum(ESA_CPUE_PSP$angler_hours)
 
 # Bocaccio
-ESA_genetics_boc_CPUE <- sum(ESA_CPUE_PSP$bocaccio_catch/sum(ESA_CPUE_PSP$angler_hours))
+ESA_genetics_boc_CPUE <- sum(ESA_CPUE_PSP$bocaccio_catch)/sum(ESA_CPUE_PSP$angler_hours)
 
-PW_ye_CPUE
-PW_boc_CPUE
-ESA_genetics_ye_CPUE
-ESA_genetics_boc_CPUE
 
+### Lingcod bycatch
+
+# Yelloweye
+lingcod_bycatch_ye_CPUE <- sum(lingcod_bycatch_CPUE_PSP$yelloweye_catch)/sum(lingcod_bycatch_CPUE_PSP$angler_hours)
+
+# Bocaccio
+lingcod_bycatch_boc_CPUE <- sum(lingcod_bycatch_CPUE_PSP$bocaccio_catch)/sum(lingcod_bycatch_CPUE_PSP$angler_hours)
 
 # Mean depth for each survey
 mean(ESA_CPUE_PSP$mean_depth, na.rm = TRUE)
@@ -78,7 +89,36 @@ sum(ESA_CPUE_PSP$angler_hours, na.rm = TRUE)
 sum(PW_CPUE_PSP$angler_hours, na.rm = TRUE)
 ```
 
+### Table of results
+Here we will export a table with the following columns:
+- survey names
+- survey years
+- total yelloweye
+- total bocaccio
+- yelloweye CPUE
+- bocaccio CPUE
+- total angler hours
 
+```{r generate_table_for_review}
+surveys <- c("Percy Washington", "ESA Genetics", "Lingcod Bycatch")
+years <- c("1974-1977", "2014-2015", "2017-2019")
+total_ye <- c(sum(PW_CPUE_PSP$yelloweye_catch), sum(ESA_CPUE_PSP$yelloweye_catch), sum(lingcod_bycatch_CPUE_PSP$yelloweye_catch))
+total_boc <- c(sum(PW_CPUE_PSP$bocaccio_catch), sum(ESA_CPUE_PSP$bocaccio_catch), sum(lingcod_bycatch_CPUE_PSP$bocaccio_catch))
+ye_CPUE <- c(PW_ye_CPUE, ESA_genetics_ye_CPUE, lingcod_bycatch_ye_CPUE)
+boc_CPUE <- c(PW_boc_CPUE, ESA_genetics_boc_CPUE, lingcod_bycatch_boc_CPUE)
+angler_hours <- c(sum(PW_CPUE_PSP$angler_hours), sum(ESA_CPUE_PSP$angler_hours), sum(lingcod_bycatch_CPUE_PSP$angler_hours))
+
+CPUE_table <- data.frame(surveys = surveys, survey_years = years, total_ye = total_ye, total_boc = total_boc, angler_hours = angler_hours, ye_CPUE = ye_CPUE, boc_CPUE = boc_CPUE)
+
+# Round selected values for export
+CPUE_table %>% 
+  mutate(angler_hours = round(angler_hours, 0)) %>% 
+  mutate(ye_CPUE = round(ye_CPUE, 4)) %>% 
+  mutate(boc_CPUE = round(boc_CPUE, 4)) -> CPUE_table
+
+# Export CPUE table
+write.csv(CPUE_table, paste0(here("outputs"), "/HL_CPUE_table.csv"), row.names = FALSE)
+```
 
 
 

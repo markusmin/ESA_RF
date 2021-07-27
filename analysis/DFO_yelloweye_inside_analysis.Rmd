@@ -1,0 +1,383 @@
+---
+title: "DFO_yelloweye_inside_analysis"
+author: "Markus Min"
+date: "7/20/2021"
+output: html_document
+---
+
+
+#### Description
+This Rmd file contains the investigation of the DFO assessment of the inside Yelloweye Rockfish population, which is essentially the Canadian portion of the Puget Sound/Georgia Basin DPS.
+
+
+
+#### Load libraries
+```{r load_libraries}
+library(tidyverse)
+library(here)
+library(readxl)
+library(ggpubr)
+library(egg)
+library(grid)
+library(r4ss)
+```
+
+### Load data from US Side for comparison
+Load the re-run from Jason that has comparable units
+```{r load_USDPS_rerun}
+# Change here directory to where SS outputs are stored
+SS_dir <- "/Users/markusmin/Documents/ESA_RF_2021_SS_runs"
+YE_USDPS_sum <- SSsummarize(list(YE_USDPS_rerun))
+
+YE_USDPS_rerun <- SS_output(paste0(SS_dir,"/re_run_2021_07_23"),covar=FALSE,ncols=149)
+
+# Get spawning biomass time series
+YE_USDPS_rerun$timeseries %>% 
+  dplyr::select(Yr, Bio_smry) -> YE_USDPS_spawnbio_mt
+
+# Approximate uncertainty for smry biomass
+YE_USDPS_sum$SpawnBio %>% 
+  dplyr::rename(spawn_output = model1) %>% 
+  dplyr::select(Yr, spawn_output) -> YE_USDPS_spawnoutput
+
+YE_USDPS_sum$SpawnBioSD %>% 
+  dplyr::rename(spawn_output_SD = model1) %>% 
+  dplyr::select(Yr, spawn_output_SD) -> YE_USDPS_spawnoutputSD
+
+YE_USDPS_spawnoutput %>% 
+  left_join(., YE_USDPS_spawnoutputSD, by = "Yr") %>% 
+  mutate(., CV = spawn_output_SD/spawn_output) %>% 
+  dplyr::select(Yr, CV) -> YE_USDPS_spawnoutputCV
+
+YE_USDPS_spawnbio_mt %>% 
+  left_join(., YE_USDPS_spawnoutputCV, by = "Yr") %>% 
+  mutate(Bio_smry_SD = CV*Bio_smry) %>% 
+  mutate(Bio_smry_upr = Bio_smry + Bio_smry_SD*1.96) %>% 
+  mutate(Bio_smry_low = max(0, Bio_smry-Bio_smry_SD*1.96)) -> YE_USDPS_spawnbio_uncertainty
+
+# Get B_ratio
+YE_USDPS_sum$Bratio %>% 
+  dplyr::rename(US_rel_ssb_median = model1) %>% 
+  dplyr::select(Yr, US_rel_ssb_median) -> YE_USDPS_Bratio_median
+YE_USDPS_sum$BratioLower %>% 
+  dplyr::rename(US_rel_ssb_lower = model1) %>% 
+  dplyr::select(Yr, US_rel_ssb_lower) -> YE_USDPS_Bratio_lwr
+YE_USDPS_sum$BratioUpper %>% 
+  dplyr::rename(US_rel_ssb_upper = model1) %>% 
+  dplyr::select(Yr, US_rel_ssb_upper) -> YE_USDPS_Bratio_upr
+
+YE_USDPS_Bratio_median %>% 
+  left_join(., YE_USDPS_Bratio_lwr, by = "Yr") %>% 
+  left_join(., YE_USDPS_Bratio_upr, by = "Yr") %>% 
+  dplyr::rename(year = Yr) -> YE_USDPS_Bratio
+```
+
+
+### Load DFO data
+Here we will plot the outputs from the model fit by DFO (Haggarty et al. 2021)
+```{r load_data}
+DFO_ye_modeloutputs <- read_excel(here("yelloweye-inside", "insideyecosewic.xlsx"))
+
+# Generate proportion relative to unfished
+DFO_ye_modeloutputs %>% 
+  group_by(scenario) %>% 
+  # Biomass
+  mutate(., rel_biomass_lwr = biomass_lwr/max(biomass_lwr)) %>% 
+  mutate(., rel_biomass_med = biomass_med/max(biomass_med)) %>% 
+  mutate(., rel_biomass_upr = biomass_upr/max(biomass_upr)) %>% 
+  # SSB
+  mutate(., rel_ssb_lwr = ssb_lwr/max(ssb_lwr)) %>% 
+  mutate(., rel_ssb_med = ssb_med/max(ssb_med)) %>% 
+  mutate(., rel_ssb_upr = ssb_upr/max(ssb_upr)) %>% 
+  dplyr::select(-c(`...1`)) %>% 
+  # Remove the catch columns
+  dplyr::select(-c(Rec_t, Comm_t)) %>% 
+  ungroup() -> DFO_ye_modeloutputs
+
+# Convert to long
+DFO_ye_modeloutputs %>% 
+  pivot_longer(., cols = colnames(DFO_ye_modeloutputs[,3:ncol(DFO_ye_modeloutputs)]), names_to = "metric") -> DFO_ye_modeloutputs_long
+
+# Subset total biomass
+DFO_ye_tot_biomass_long <- subset(DFO_ye_modeloutputs_long, metric %in% c("biomass_lwr", "biomass_med", "biomass_upr"))
+
+# Subset total SSB
+DFO_ye_tot_ssb_long <- subset(DFO_ye_modeloutputs_long, metric %in% c("ssb_lwr", "ssb_med", "ssb_upr"))
+
+# Subset relative biomass
+DFO_ye_rel_biomass_long <- subset(DFO_ye_modeloutputs_long, metric %in% c("rel_biomass_lwr", "rel_biomass_med", "rel_biomass_upr"))
+
+# Subset relative SSB
+DFO_ye_rel_ssb_long <- subset(DFO_ye_modeloutputs_long, metric %in% c("rel_ssb_lwr", "rel_ssb_med", "rel_ssb_upr"))
+
+```
+
+
+```{r plot_biomass_ssb}
+# Base model
+# Total biomass
+ggplot(subset(DFO_ye_tot_biomass_long, scenario == "(1) Base"), aes(x = year, y = value, color = metric)) + 
+  geom_line()
+
+# Total SSB
+ggplot(subset(DFO_ye_tot_ssb_long, scenario == "(1) Base"), aes(x = year, y = value, color = metric)) + 
+  geom_line()
+
+# Relative biomass
+ggplot(subset(DFO_ye_rel_biomass_long, scenario == "(1) Base"), aes(x = year, y = value, color = metric)) + 
+  geom_line()+
+  scale_y_continuous(lim = c(0,1))
+
+# Relative SSB
+ggplot(subset(DFO_ye_rel_ssb_long, scenario == "(1) Base"), aes(x = year, y = value, color = metric)) + 
+  geom_line()+
+  scale_y_continuous(lim = c(0,1))
+```
+
+
+
+### Make plots for review
+
+#### Prepare data
+```{r subset_data_for_plots}
+# Replace \r\r with \n
+DFO_ye_modeloutputs$scenario <- gsub("\r\r\n",  "\n", DFO_ye_modeloutputs$scenario)
+unique(DFO_ye_modeloutputs$scenario)
+
+DFO_basemodel <- subset(DFO_ye_modeloutputs, scenario == "(1) Base")
+DFO_lowcatch <- subset(DFO_ye_modeloutputs, scenario == "(2) Low catch")
+# DFO_epirec <- subset(DFO_ye_modeloutputs, scenario == "(3) Episodic\r\r\nrecruitment")
+# DFO_HBLL_selec <- subset(DFO_ye_modeloutputs, scenario == "(4) Estimate\r\r\nHBLL selectivity")
+DFO_epirec <- subset(DFO_ye_modeloutputs, scenario == "(3) Episodic\nrecruitment")
+DFO_HBLL_selec <- subset(DFO_ye_modeloutputs, scenario == "(4) Estimate\nHBLL selectivity")
+DFO_lowM <- subset(DFO_ye_modeloutputs, scenario == "(A) Low M")
+DFO_highHBLLCV <- subset(DFO_ye_modeloutputs, scenario == "(B) High HBLL CV" )
+```
+
+### Prepare combined DFO + NOAA relative stock status
+```{r rel_DFO_NOAA_data}
+YE_USDPS_Bratio
+
+DFO_ye_modeloutputs %>% 
+  subset(., scenario == "(1) Base") %>% 
+  dplyr::select(year, rel_ssb_lwr, rel_ssb_med, rel_ssb_upr) %>% 
+  dplyr::rename(CAN_rel_ssb_lwr = rel_ssb_lwr, CAN_rel_ssb_med = rel_ssb_med, CAN_rel_ssb_upr = rel_ssb_upr) -> DFO_ye_Bratio
+
+DFO_ye_Bratio %>% 
+  left_join(., YE_USDPS_Bratio, by = "year") -> CAN_US_YE_Bratio
+```
+
+### Prepare combined DFO + NOAA absolute SSB
+```{r rel_DFO_NOAA_data}
+YE_USDPS_spawnbio_uncertainty %>% 
+  dplyr::rename(year = Yr, USA_ssb_upr = Bio_smry_upr, USA_ssb_med = Bio_smry, USA_ssb_lwr = Bio_smry_low) %>% 
+  dplyr::select(year, USA_ssb_upr, USA_ssb_med, USA_ssb_lwr) -> YE_USDPS_SSB
+
+DFO_ye_modeloutputs %>% 
+  subset(., scenario == "(1) Base") %>% 
+  dplyr::select(year, ssb_lwr, ssb_med, ssb_upr) %>% 
+  dplyr::rename(CAN_ssb_lwr = ssb_lwr, CAN_ssb_med = ssb_med, CAN_ssb_upr = ssb_upr) -> DFO_ye_abs_SSB
+
+DFO_ye_abs_SSB %>% 
+  left_join(., YE_USDPS_SSB, by = "year") -> CAN_US_YE_SSB
+```
+
+
+#### Make functions for plotting
+```{r make_abs_SSB_plot_function}
+abs_ssb_ggplot <- function(data){
+  plot <- ggplot(data, aes(year))+
+  geom_ribbon(aes(ymin = ssb_lwr, ymax = ssb_upr), fill = "grey90") +
+  geom_line(aes(y = ssb_med))+
+  theme(panel.background = element_rect(fill = "white", color = "black"),
+        panel.grid = element_blank(),
+        legend.position = c(0.9, 0.8),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 15),
+        panel.border = element_rect(colour = "black", fill=NA, size=1),
+        plot.title = element_text(hjust = 0.5, vjust = 2, size = 15),
+        axis.text = element_text(size = 12),
+        # axis.title = element_text(size = 16)
+        axis.title = element_blank())+
+  # xlab("Year")+
+  # ylab("SSB (metric tons)")+
+  ggtitle(unique(data$scenario))+
+  scale_y_continuous(expand = c(0,0), limits = c(0, 8000))+
+  scale_x_continuous(expand = c(0,0), breaks = seq(1920, 2020, 20))
+  plot
+}
+
+abs_ssb_ggplot(data = DFO_basemodel)
+```
+
+```{r make_rel_SSB_plot_function}
+rel_ssb_ggplot <- function(data){
+  plot <- ggplot(data = data, aes(year))+
+  geom_ribbon(aes(ymin = rel_ssb_lwr, ymax = rel_ssb_upr), fill = "grey90") +
+  geom_line(aes(y = rel_ssb_med))+
+  theme(axis.text = element_text(size = 12),
+        # axis.title = element_text(size = 16),
+        axis.title = element_blank(),
+        panel.background = element_rect(fill = "white", color = "black"),
+        panel.grid = element_blank(),
+        legend.position = c(0.9, 0.8),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 15),
+        panel.border = element_rect(colour = "black", fill=NA, size=1),
+        plot.title = element_text(hjust = 0.5, vjust = 2, size = 15))+
+  # xlab("Year")+
+  # ylab(expression("SSB/SSB"[0]))+
+  scale_y_continuous(expand = c(0,0), limits = c(0, 1))+
+      ggtitle(unique(data$scenario))+
+  scale_x_continuous(expand = c(0,0), breaks = seq(1920, 2020, 20))+
+  # Add a reference line - say for 25% of unfished? Since this is detailed in the RRP
+  geom_hline(yintercept = 0.25, lty = 2)
+  plot
+}
+
+rel_ssb_ggplot(data = DFO_basemodel)
+```
+
+#### Make combined plots for export
+```{r plot_abs_ssb}
+abs_ssb_combined_plot <- egg::ggarrange(abs_ssb_ggplot(data = DFO_basemodel), 
+                                   abs_ssb_ggplot(data = DFO_lowcatch),
+                                   abs_ssb_ggplot(data = DFO_epirec),
+                                   abs_ssb_ggplot(data = DFO_HBLL_selec),
+                                   abs_ssb_ggplot(data = DFO_lowM),
+                                   abs_ssb_ggplot(data = DFO_highHBLLCV),
+                                   nrow = 2, ncol = 3,
+                                   left = textGrob("SSB (metric tons)", rot = 90, gp = gpar(cex = 1.7)))
+
+# abs_ssb_combined_plot
+
+ggsave(here("figures", "DFO_model_outputs", "abs_ssb_plot.png"), abs_ssb_combined_plot, height = 8, width = 12)
+```
+
+```{r plot_rel_ssb}
+rel_ssb_combined_plot <- egg::ggarrange(rel_ssb_ggplot(data = DFO_basemodel), 
+                                   rel_ssb_ggplot(data = DFO_lowcatch),
+                                   rel_ssb_ggplot(data = DFO_epirec),
+                                   rel_ssb_ggplot(data = DFO_HBLL_selec),
+                                   rel_ssb_ggplot(data = DFO_lowM),
+                                   rel_ssb_ggplot(data = DFO_highHBLLCV),
+                                   nrow = 2, ncol = 3,
+                                   left = textGrob(expression("SSB/SSB"[0]), rot = 90, gp = gpar(cex = 1.7)))
+
+# rel_ssb_combined_plot
+
+ggsave(here("figures", "DFO_model_outputs", "rel_ssb_plot.png"), rel_ssb_combined_plot, height = 8, width = 12)
+```
+
+
+### Plot combined CAN + USA stock status plot
+```{r CAN_USA_rel_SSB_plot}
+
+# scale_fill_manual(values = c("#b2182b", "#d6604d", "#f4a582", "#08519c", "#4292c6", "#9ecae1"))+
+country_colors <- c("Canada" = "#b2182b", "USA" = "#08519c")
+
+CAN_USA_Bratio_plot <- ggplot(CAN_US_YE_Bratio, aes(year))+
+  # uncertainty for Canada
+  geom_ribbon(aes(ymin = CAN_rel_ssb_lwr, ymax = CAN_rel_ssb_upr), fill = "#d6604d", alpha = 0.2) +
+  # line for Canada median
+  geom_line(aes(y = CAN_rel_ssb_med, color = "Canada"), size = 1.5)+
+  # uncertainty for US
+  geom_ribbon(aes(ymin = US_rel_ssb_lower, ymax = US_rel_ssb_upper), fill = "#4292c6", alpha = 0.2) +
+  # line for US median
+  geom_line(aes(y = US_rel_ssb_median, color = "USA"), size = 1.5)+
+  theme(panel.background = element_rect(fill = "white", color = "black"),
+        panel.grid = element_blank(),
+        legend.position = c(0.1, 0.9),
+        legend.text = element_text(size = 18),
+        legend.title = element_text(size = 22),
+        panel.border = element_rect(colour = "black", fill=NA, size=1),
+        plot.title = element_text(hjust = 0.5, vjust = 2, size = 15),
+        axis.text = element_text(size = 16),
+        axis.title = element_text(size = 20))+
+  labs(x = "Year", y = "Fraction of unfished", color = "Country")+
+  scale_y_continuous(expand = c(0,0), limits = c(0, 1.5), breaks = c(0, 0.25, 0.5, 1, 1.5))+
+  scale_x_continuous(expand = c(0,0), breaks = seq(1920, 2020, 20))+
+  scale_color_manual(values = country_colors)+
+  guides(color = guide_legend(override.aes = list(size = 3)))+
+  # Add a reference line - say for 25% of unfished? Since this is detailed in the RRP
+  geom_hline(yintercept = 0.25, lty = 2)
+  
+ggsave(here("figures", "DFO_model_outputs", "CAN_USA_Bratio.png"), CAN_USA_Bratio_plot, height = 8, width = 12)
+```
+
+### Plot combined CAN + USA biomass plot
+```{r CAN_USA_absolute_SSB_plot}
+CAN_USA_SSB_plot <- ggplot(CAN_US_YE_SSB, aes(year))+
+  # uncertainty for Canada
+  geom_ribbon(aes(ymin = CAN_ssb_lwr, ymax = CAN_ssb_upr), fill = "#d6604d", alpha = 0.2) +
+  # line for Canada median
+  geom_line(aes(y = CAN_ssb_med, color = "Canada"), size = 1.5)+
+  # uncertainty for US
+  geom_ribbon(aes(ymin = USA_ssb_lwr, ymax = USA_ssb_upr), fill = "#4292c6", alpha = 0.2) +
+  # line for US median
+  geom_line(aes(y = USA_ssb_med, color = "USA"), size = 1.5)+
+  theme(panel.background = element_rect(fill = "white", color = "black"),
+        panel.grid = element_blank(),
+        legend.position = c(0.9, 0.9),
+        legend.text = element_text(size = 18),
+        legend.title = element_text(size = 22),
+        panel.border = element_rect(colour = "black", fill=NA, size=1),
+        plot.title = element_text(hjust = 0.5, vjust = 2, size = 15),
+        axis.text = element_text(size = 16),
+        axis.title = element_text(size = 20))+
+  labs(x = "Year", y = "Spawning stock biomass (metric tons)", color = "Country")+
+  scale_y_continuous(expand = c(0,0), limits = c(0, 8000))+
+  scale_x_continuous(expand = c(0,0), breaks = seq(1920, 2020, 20))+
+  scale_color_manual(values = country_colors)+
+  guides(color = guide_legend(override.aes = list(size = 3)))
+
+ggsave(here("figures", "DFO_model_outputs", "CAN_USA_SSB.png"), CAN_USA_SSB_plot, height = 8, width = 12)
+```
+
+### Get values for review
+```{r get_values}
+# When was the minimum?
+DFO_basemodel[DFO_basemodel$rel_ssb_med == min(DFO_basemodel$rel_ssb_med),]
+# 2002 is the minimum biomass; median is 0.2177, 95% quantiles are 0.1065-0.6147
+
+# What was the stock status in the most recent year?
+subset(DFO_basemodel, year == 2019)
+# Relative SSB: 0.3209 (95% quantiles 0.151-0.6837)
+
+# Compare current stock sizes between Canada and USA
+subset(CAN_US_YE_SSB, year == 2019)
+subset(CAN_US_YE_SSB, year == 2019)$USA_ssb_med/subset(CAN_US_YE_SSB, year == 2019)$CAN_ssb_med
+# USA portion of stock in 2019 estimated to be at 24.7% of Canadian
+# 95% CI: 0-29.2%
+subset(CAN_US_YE_SSB, year == 2019)$USA_ssb_lwr/subset(CAN_US_YE_SSB, year == 2019)$CAN_ssb_lwr
+subset(CAN_US_YE_SSB, year == 2019)$USA_ssb_upr/subset(CAN_US_YE_SSB, year == 2019)$CAN_ssb_upr
+
+# Compare unfished stock sizes between Canada and USA
+subset(CAN_US_YE_SSB, year == 1919)$USA_ssb_med/subset(CAN_US_YE_SSB, year == 1919)$CAN_ssb_med
+# Unfished (1919): USA portion of stock estimated to be 9.6% of Canadian
+# 95% CI: 0-21.0%
+subset(CAN_US_YE_SSB, year == 1919)$USA_ssb_lwr/subset(CAN_US_YE_SSB, year == 1919)$CAN_ssb_lwr
+subset(CAN_US_YE_SSB, year == 1919)$USA_ssb_upr/subset(CAN_US_YE_SSB, year == 1919)$CAN_ssb_upr
+
+```
+
+
+
+### Hook and line data
+To get the hook and line data, we can't use the gfdata package that is used by DFO, because you need access to the PBS network and permissions to access the groundfish databases.
+
+So instead, we will read in the data that was generated from that database by the "01-get-hook-data.R" file.
+```{r investigate_HL_data}
+yelloweye_rockfish_ins_privacy <- readRDS(here("yelloweye-inside", "data-generated", "yelloweye-rockfish-ins-privacy.rds"))
+hbll_joint_index <- readRDS(here("yelloweye-inside", "data-generated", "hbll-joint-index.rds"))
+dogfish_index <- readRDS(here("yelloweye-inside", "data-generated", "dogfish-index.rds"))
+```
+
+```{r plot_indices}
+hbll_joint_index %>% 
+  mutate(index = "HBLL") %>% 
+  bind_rows(., dogfish_index) %>% 
+  mutate(index = ifelse(is.na(index), "Dogfish", index))
+```
+
+

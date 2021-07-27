@@ -25,6 +25,9 @@ YE_USDPS_high_SS <- SS_output(paste0(SS_dir,"/YEY_USDPS", "/2021-07-15", "/YEY_U
 YE_USDPS_medium_SS <- SS_output(paste0(SS_dir,"/YEY_USDPS", "/2021-07-15", "/YEY_USDPS_med"),covar=FALSE,ncols=149)
 YE_USDPS_low_SS <- SS_output(paste0(SS_dir,"/YEY_USDPS", "/2021-07-15", "/YEY_USDPS_low"),covar=FALSE,ncols=149)
 
+YE_USDPS_high_SS$timeseries
+YE_USDPS_medium_SS$timeseries
+
 base.summary.ye.usdps <- SSsummarize(list(YE_USDPS_high_SS, YE_USDPS_medium_SS, YE_USDPS_low_SS))
 ```
 

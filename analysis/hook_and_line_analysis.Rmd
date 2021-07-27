@@ -122,7 +122,7 @@ CPUE_table %>%
   mutate(angler_hours = round(angler_hours, 0)) %>% 
   mutate(ye_CPUE = round(ye_CPUE, 4)) %>% 
   mutate(boc_CPUE = round(boc_CPUE, 4)) %>% 
-  mutate(mean_survey_depth = round(mean_depth, -> CPUE_table
+  mutate(mean_survey_depth = round(mean_depth, 1)) -> CPUE_table
 
 # Export CPUE table
 write.csv(CPUE_table, paste0(here("outputs"), "/HL_CPUE_table.csv"), row.names = FALSE)

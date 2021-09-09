@@ -170,3 +170,29 @@ rel_spbio_boc[rel_spbio_boc$year == 2021,]
 
 
 
+
+
+
+# Hood Canal - alternative models
+```{r load_ye_HC_data}
+# Load SS LO
+SS_dir <- "/Users/markusmin/Documents/ESA_RF_2021_SS_runs"
+
+YE_HC_LO <- SS_output(paste0(SS_dir,"/YEYE_HC_LO"),covar=FALSE,ncols=149)
+# Get summary
+base.summary.ye.ss_lo <- SSsummarize(list(YE_HC_LO))
+
+# Load LBSPR
+ye_HC_lbspr <- read.csv(paste0(SS_dir, "/LBSPR_Yelloweye_Hood_Canal_Ests.csv"))
+
+```
+
+
+## Get values from SS-LO
+We have no sense of scale with the SS-LO model - therefore can only get relative points
+```{r HC_SS_LO_ref_points}
+# Get relative spawning biomass
+rel_spbio_ye.hc <- as.data.frame(base.summary.ye.ss_lo$Bratio)
+
+```
+

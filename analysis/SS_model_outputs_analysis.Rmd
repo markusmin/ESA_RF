@@ -192,7 +192,10 @@ ye_HC_lbspr <- read.csv(paste0(SS_dir, "/LBSPR_Yelloweye_Hood_Canal_Ests.csv"))
 We have no sense of scale with the SS-LO model - therefore can only get relative points
 ```{r HC_SS_LO_ref_points}
 # Get relative spawning biomass
-rel_spbio_ye.hc <- as.data.frame(base.summary.ye.ss_lo$Bratio)
+rel_spbio_ye.hc_SS_LO <- as.data.frame(base.summary.ye.ss_lo$Bratio)
 
+# Get uncertainty in relative spawning biomass
+rel_spbio_upper_ye.hc_SS_LO <- as.data.frame(base.summary.ye.ss_lo$BratioUpper)
+rel_spbio_lower_ye.hc_SS_LO <- as.data.frame(base.summary.ye.ss_lo$BratioLower)
 ```
 

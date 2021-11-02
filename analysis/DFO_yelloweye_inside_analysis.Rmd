@@ -27,9 +27,8 @@ Load the re-run from Jason that has comparable units
 ```{r load_USDPS_rerun}
 # Change here directory to where SS outputs are stored
 SS_dir <- "/Users/markusmin/Documents/ESA_RF_2021_SS_runs"
-YE_USDPS_sum <- SSsummarize(list(YE_USDPS_rerun))
-
 YE_USDPS_rerun <- SS_output(paste0(SS_dir,"/re_run_2021_07_23"),covar=FALSE,ncols=149)
+YE_USDPS_sum <- SSsummarize(list(YE_USDPS_rerun))
 
 # Get spawning biomass time series
 YE_USDPS_rerun$timeseries %>% 

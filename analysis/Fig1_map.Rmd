@@ -1,0 +1,137 @@
+---
+title: "Fig1_map"
+author: "Markus Min"
+date: "11/8/2021"
+output: html_document
+---
+
+#### Description
+This Rmd generates the map for the rockfish paper.
+
+
+### Load libraries
+```{r load_libraries}
+library(tidyverse)
+library(tidyverse)
+library(readxl)
+library(here)
+library(rgdal)
+library(broom)
+library(ggpubr)
+library(sf)
+library(lubridate)
+# library(ggsn)
+
+# Set figure directory
+fig_dir <- here("figures", "map_figures")
+```
+
+
+
+
+### Load data for base map of Puget Sound
+```{r PS_base_map}
+# Load data
+usa_spdf <- readOGR(dsn = here("map_files", "USA_adm0.shp"))
+
+# Convert to df(ish)
+usa_spdf_fort <- tidy(usa_spdf)
+
+# Load BC data
+BC_shp <- readOGR(dsn = here("map_files", "canada", "lpr_000b16a_e.shp"))
+# proj4string(BC_shp)
+BC_shp_transform <- spTransform(BC_shp, "+init=epsg:4326")
+BC_spdf_fort <- tidy(BC_shp_transform)
+
+
+# Create overlapping rectangles for the DPS area
+# First rectangle: Queen Charlotte Strait Entrance east
+# Second rectangle: South Puget Sound to DPS boundary in Strait of Juan de Fuca
+# Third rectangle: Strait of Georgia, north
+# Fourth rectangle: Strait of Georgia, south
+rects <- data.frame(xstart = c(-127.1733, -123.294625, -125.7, -124.28), xend = c(-122.5, -122, -122, -122),
+                    ystart = c(51.03, 47, 51.3, 51.3), yend = c(50.3, 51, 49.25, 48.49), col = c("DPS Area", "DPS Area", "DPS Area", "DPS Area"))
+
+# Scale bar length, 100 km at 47 degrees N
+# 111.321543 is length of one degree longitude at equator
+# 0.820305 is 47 degrees in radians
+length_longitude_47N <- cos(0.820305) * 111.321543
+long_100km <- 100/length_longitude_47N
+
+```
+
+### Create map in ggplot
+```{r}
+salish_sea_map <- ggplot(usa_spdf_fort, aes(x = long, y = lat, group = group))+
+  # Make the background polygons
+  geom_rect(data = rects, aes(xmin = xstart, xmax = xend, ymin = ystart, ymax = yend, fill = col),  inherit.aes = FALSE) +
+  # Annotate segments for Canada-US border
+  annotate(geom = "segment", x = -122.76, xend =  -123.32, y = 49, yend = 49, color = "black", lty = 3) +
+  annotate(geom = "segment", x = -123, xend =  -123.32, y = 48.83, yend = 49, color = "black", lty = 3) +
+  annotate(geom = "segment", x = -123, xend =  -123, y = 48.83, yend = 48.765, color = "black", lty = 3) +
+  annotate(geom = "segment", x = -123.27, xend =  -123, y = 48.69, yend = 48.765, color = "black", lty = 3) +
+  annotate(geom = "segment", x = -123.27, xend =  -123.16, y = 48.69, yend = 48.453, color = "black", lty = 3) +
+  annotate(geom = "segment", x = -123.115, xend =  -123.16, y = 48.42, yend = 48.453, color = "black", lty = 3) +
+  annotate(geom = "segment", x = -123.115, xend =  -123.25, y = 48.42, yend = 48.283, color = "black", lty = 3) +
+  annotate(geom = "segment", x = -123.29, xend =  -123.25, y = 48.26, yend = 48.283, color = "black", lty = 3) +
+  # end segments
+  scale_fill_manual(values = c("gray90", "gray90", "gray90", "gray90")) +
+  geom_polygon(color = "gray70", size = 0.2, fill = rgb(251, 234, 194, max=255))+
+  geom_polygon(data = BC_spdf_fort, aes(x = long, y = lat, group = group), inherit.aes = FALSE, color = "gray70", size = 0.2, fill = rgb(251, 234, 194, max=255)) +
+  ylab("Latitude")+
+  xlab("Longitude")+
+  coord_fixed(ylim = c(46.8,51.2),  xlim = c(-128.5,-122.1), ratio = 1.3)+
+  theme(plot.background = element_rect(fill = "white"),
+        panel.background = element_rect(fill="white", color = "black"),
+        panel.border = element_rect(colour = "black", fill=NA, size=1),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = c(0.14, 0.2),
+        legend.title = element_text(size = 14),
+        legend.text = element_text(size = 12))+
+  guides(fill = guide_legend(title = "Legend")) +
+  # Add international border to legend, manually
+  annotate(geom = "text", label = "U.S.A.-Canada Border", x = -127.8, y = 47.33, hjust = 0, size = 4.2) +
+  annotate(geom = "segment", y = 47.33, yend = 47.33, x = -127.95, xend = -128.15, lty = 3) +
+  scale_x_continuous(breaks = seq(-128, -123, 1), expand = c(0,0), labels=c(expression(paste(128*degree,"W")),
+                                                                                expression(paste(127*degree,"W")),
+                                                                                expression(paste(126*degree,"W")),
+                                                                                expression(paste(125*degree,"W")),
+                                                                                expression(paste(124*degree,"W")),
+                                                                                expression(paste(123*degree,"W"))))+
+  scale_y_continuous(breaks = seq(47, 51, 1), expand = c(0,0), labels=c(expression(paste(47*degree,"N")),
+                                                                    expression(paste(48*degree,"N")),
+                                                                    expression(paste(49*degree,"N")),
+                                                                    expression(paste(50*degree,"N")),
+                                                                    expression(paste(51*degree,"N"))))+
+  # add a scale bar
+  # annotate(geom = "segment", x = -128.15, xend = -128.15 + long_100km, y = 47, yend = 47) +
+  annotate(geom = "rect", xmin = -128.15, xmax = -128.15 + long_100km, ymin = 47.05, ymax = 47.1, fill = "black", color = "black") +
+  annotate(geom = "rect", xmin = -128.15 + long_100km*0.25, xmax = -128.15 + long_100km*0.5, ymin = 47.05, ymax = 47.1, fill = "white", color = "black") +
+  annotate(geom = "rect", xmin = -128.15 + long_100km*0.75, xmax = -128.15 + long_100km, ymin = 47.05, ymax = 47.1, fill = "white", color = "black") +
+  annotate(geom = "text", x = -128.15, y = 46.98, label = "0 km", size = 2) +
+  annotate(geom = "text", x = -128.15 + long_100km/2, y = 46.98, label = "50 km", size = 2) +
+  annotate(geom = "text", x = -128.15 + long_100km, y = 46.98, label = "100 km", size = 2) +
+  # Add a north arrow - let's make it manually
+  annotate("segment", x = -128.05, y = 48.35, xend = -128.15, yend = 48.05) + # tip to bottom-left
+  # annotate("segment", x = -128, y = 48.3, xend = -128, yend = 48.05) + # tip to bottom-center
+  annotate("segment", x = -128.05, y = 48.35, xend = -127.95, yend = 48.05) + # tip to bottom-right
+  annotate("segment", x = -128.05, y = 48.1, xend = -127.95, yend = 48.05) + # bottom-center to bottom-right
+  annotate("segment", x = -128.05, y = 48.1, xend = -128.15, yend = 48.05) + # bottom-center to bottom-left
+  annotate("text", x = -128.05, y = 48.01, label = "N", fontface = "bold") +
+  # label important features
+  annotate("segment", x = -122.84, y = 47.68, xend = -123.18, yend = 47.68) + # Hood Canal
+  annotate("text", x = -123.2, y = 47.68, label = "Hood Canal", size = 3, hjust = 1) + # Hood Canal
+  annotate("text", x = -126, y = 49.9, label = "Vancouver Island", size = 3, angle = -25) + # Vancouver Island
+  annotate("text", x = -126.153, y = 50.474, label = "Johnstone Strait", size = 3, hjust = 1) + # Johnstone Strait
+  annotate("text", x = -127.3, y = 50.75, label = "Queen\nCharlotte\nStrait", size = 3) + # Queen Charlotte Strait
+  annotate("text", x = -123.88, y = 49.33, label = "Strait of Georgia", size = 3, angle = -12) + # Strait of Georgia
+  annotate("text", x = -124.16, y = 48.35, label = "Strait of Juan de Fuca", size = 3, angle = -16) + # Strait of Juan de Fuca
+  annotate("text", x = -122.53, y = 47.95, label = "Puget\nSound", size = 4) + # Puget Sound
+  annotate("text", x = -123, y = 50.5, label = "British\nColumbia", size = 5) + # British Columbia
+  annotate("text", x = -123.7, y = 47.95, label = "Washington", size = 5) # Washington
+
+
+
+ggsave(paste0(fig_dir, "/salish_sea_map.pdf"), salish_sea_map, height = 6, width  = 7.1)  
+```

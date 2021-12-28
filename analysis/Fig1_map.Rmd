@@ -74,8 +74,12 @@ salish_sea_map <- ggplot(usa_spdf_fort, aes(x = long, y = lat, group = group))+
   annotate(geom = "segment", x = -123.115, xend =  -123.16, y = 48.42, yend = 48.453, color = "black", lty = 3) +
   annotate(geom = "segment", x = -123.115, xend =  -123.25, y = 48.42, yend = 48.283, color = "black", lty = 3) +
   annotate(geom = "segment", x = -123.29, xend =  -123.25, y = 48.26, yend = 48.283, color = "black", lty = 3) +
+  annotate(geom = "segment", x = -123.29, xend =  -123.5413, y = 48.26, yend = 48.2234, color = "black", lty = 3) +
+  annotate(geom = "segment", x = -124.0159, xend =  -123.5413, y = 48.295655, yend = 48.2234, color = "black", lty = 3) +
+  annotate(geom = "segment", x = -124.0159, xend =  -124.724558, y = 48.295655, yend = 48.490798, color = "black", lty = 3) +
+  annotate(geom = "segment", x = -124.782236, xend =  -124.724558, y = 48.493073, yend = 48.490798, color = "black", lty = 3) +
   # end segments
-  scale_fill_manual(values = c("gray90", "gray90", "gray90", "gray90")) +
+  scale_fill_manual(values = c("gray80", "gray80", "gray80", "gray80")) +
   geom_polygon(color = "gray70", size = 0.2, fill = rgb(251, 234, 194, max=255))+
   geom_polygon(data = BC_spdf_fort, aes(x = long, y = lat, group = group), inherit.aes = FALSE, color = "gray70", size = 0.2, fill = rgb(251, 234, 194, max=255)) +
   ylab("Latitude")+
@@ -104,6 +108,7 @@ salish_sea_map <- ggplot(usa_spdf_fort, aes(x = long, y = lat, group = group))+
                                                                     expression(paste(49*degree,"N")),
                                                                     expression(paste(50*degree,"N")),
                                                                     expression(paste(51*degree,"N"))))+
+  
   # add a scale bar
   # annotate(geom = "segment", x = -128.15, xend = -128.15 + long_100km, y = 47, yend = 47) +
   annotate(geom = "rect", xmin = -128.15, xmax = -128.15 + long_100km, ymin = 47.05, ymax = 47.1, fill = "black", color = "black") +
@@ -112,6 +117,7 @@ salish_sea_map <- ggplot(usa_spdf_fort, aes(x = long, y = lat, group = group))+
   annotate(geom = "text", x = -128.15, y = 46.98, label = "0 km", size = 2) +
   annotate(geom = "text", x = -128.15 + long_100km/2, y = 46.98, label = "50 km", size = 2) +
   annotate(geom = "text", x = -128.15 + long_100km, y = 46.98, label = "100 km", size = 2) +
+  
   # Add a north arrow - let's make it manually
   annotate("segment", x = -128.05, y = 48.35, xend = -128.15, yend = 48.05) + # tip to bottom-left
   # annotate("segment", x = -128, y = 48.3, xend = -128, yend = 48.05) + # tip to bottom-center
@@ -119,14 +125,20 @@ salish_sea_map <- ggplot(usa_spdf_fort, aes(x = long, y = lat, group = group))+
   annotate("segment", x = -128.05, y = 48.1, xend = -127.95, yend = 48.05) + # bottom-center to bottom-right
   annotate("segment", x = -128.05, y = 48.1, xend = -128.15, yend = 48.05) + # bottom-center to bottom-left
   annotate("text", x = -128.05, y = 48.01, label = "N", fontface = "bold") +
+  
   # label important features
-  annotate("segment", x = -122.84, y = 47.68, xend = -123.18, yend = 47.68) + # Hood Canal
+  annotate("segment", x = -122.84, y = 47.68, xend = -123.18, yend = 47.68, size = 0.5, lty = 1) + # Hood Canal
   annotate("text", x = -123.2, y = 47.68, label = "Hood Canal", size = 3, hjust = 1) + # Hood Canal
-  annotate("text", x = -126, y = 49.9, label = "Vancouver Island", size = 3, angle = -25) + # Vancouver Island
+  annotate("text", x = -126, y = 49.9, label = "Vancouver Island", size = 4, angle = -25) + # Vancouver Island
   annotate("text", x = -126.153, y = 50.474, label = "Johnstone Strait", size = 3, hjust = 1) + # Johnstone Strait
-  annotate("text", x = -127.3, y = 50.75, label = "Queen\nCharlotte\nStrait", size = 3) + # Queen Charlotte Strait
+  annotate("text", x = -127.45, y = 50.75, label = "Queen\nCharlotte\nStrait", size = 3) + # Queen Charlotte Strait
   annotate("text", x = -123.88, y = 49.33, label = "Strait of Georgia", size = 3, angle = -12) + # Strait of Georgia
-  annotate("text", x = -124.16, y = 48.35, label = "Strait of Juan de Fuca", size = 3, angle = -16) + # Strait of Juan de Fuca
+  annotate("segment", x = -124.232920, y = 48.345919, xend = -125.117319, yend = 48.145603, size = 0.5, lty = 1) + # Strait of JDF
+  annotate("text", x = -125.137319, y = 48.145603, label = "Strait of Juan de Fuca", size = 3, hjust =1) + # Strait of JDF
+  annotate("segment", x = -122.887366, y = 48.570709, xend = -123.775885, yend = 48.790568, size = 0.5, lty = 1) + # San Juan Islands
+  annotate("text", x = -123.795885, y = 48.795568, label = "San Juan Islands", size = 3, hjust = 1) + # San Juan Islands
+  annotate("segment", x = -122.821448, y = 47.202315, xend = -123.3, yend = 47.202315, size = 0.5, lty = 1) + # South Puget Sound
+  annotate("text", x = -123.5, y = 47.202315, label = "South\nPuget\nSound", size = 3) + # South Puget Sound
   annotate("text", x = -122.53, y = 47.95, label = "Puget\nSound", size = 4) + # Puget Sound
   annotate("text", x = -123, y = 50.5, label = "British\nColumbia", size = 5) + # British Columbia
   annotate("text", x = -123.7, y = 47.95, label = "Washington", size = 5) # Washington

@@ -223,8 +223,9 @@ LowM.scenarios.ci<-mutate(LowM.scenarios,low = Bratio -(1.96*SD), high = Bratio 
 # check probability of being less than 0.25 in terminal year for high catch low M
 mean_2021 <- subset(lowM_hiCt.df, Year == 2021)$Bratio
 sd_2021 <- subset(lowM_hiCt.df, Year == 2021)$SD
-qlnorm(0.25, meanlog = mean_2021, sdlog = sd_2021)
+# qlnorm(0.25, meanlog = log(mean_2021), sdlog = sd_2021/mean_2021)
 qnorm(0.25, mean = mean_2021, sd = sd_2021)
+# 34% chance of being under 0.25 of unfished
 
 fig5_gg <-ggplot(LowM.scenarios.ci,aes(Year,Bratio,color=Scenario))+
   geom_line(lwd=1.5,lty=1)+

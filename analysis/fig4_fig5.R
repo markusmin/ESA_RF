@@ -15,7 +15,7 @@ library(ggpubr)
 setwd("/Users/markusmin/Documents/ESA_RF_2021_SS_runs/YEY_USDPS/10_17_22/")
 YE_hi_comp <- SSgetoutput("USDPS-hi_profile_NatM_uniform_Fem_GP_1_prior_like_0", keyvec = c("1", "2", "3", "4", "5", "6"))
 YE_med_comp <- SSgetoutput("USDPS-med_profile_NatM_uniform_Fem_GP_1_prior_like_0", keyvec = c("1", "2", "3", "4", "5", "6"))
-YE_low_comp <- SSgetoutput("USDPS-low_profile_NatM_uniform_Fem_GP_1_prior_like_0", keyvec = c("1", "2", "3", "4", "5", "6"), getcomp = FALSE)
+YE_low_comp <- SSgetoutput("USDPS-low_profile_NatM_uniform_Fem_GP_1_prior_like_0", keyvec = c("1", "2", "3", "4", "5", "6"))
 
 
 YE_hi_M1 <- YE_hi_comp$replist1$timeseries
@@ -144,6 +144,7 @@ YE_hi_Mcomp_gg <- ggplot(YE_hi_Mcomp, aes(x = Yr, y = Bratio, color = as.factor(
                      "#2171b5",
                      "#08519c",
                      "#08306b"),
+                     labels = c("0.024", "0.028", "0.032", "0.036", "0.040", "0.044"),
                      guide = guide_legend(reverse = TRUE)) +
   theme(legend.position = c(0.2,0.3),
         panel.background = element_rect(fill = "white", color = "black"),
@@ -164,6 +165,7 @@ YE_med_Mcomp_gg <- ggplot(YE_med_Mcomp, aes(x = Yr, y = Bratio, color = as.facto
                                 "#2171b5",
                                 "#08519c",
                                 "#08306b"),
+                     labels = c("0.024", "0.028", "0.032", "0.036", "0.040", "0.044"),
                      guide = guide_legend(reverse = TRUE)) +
   theme(legend.position = c(0.2,0.3),
         panel.background = element_rect(fill = "white", color = "black"),
@@ -184,6 +186,7 @@ YE_low_Mcomp_gg <- ggplot(YE_low_Mcomp, aes(x = Yr, y = Bratio, color = as.facto
                                 "#2171b5",
                                 "#08519c",
                                 "#08306b"),
+                     labels = c("0.024", "0.028", "0.032", "0.036", "0.040", "0.044"),
                      guide = guide_legend(reverse = TRUE)) +
   theme(legend.position = c(0.2,0.3),
         panel.background = element_rect(fill = "white", color = "black"),
@@ -200,7 +203,7 @@ YE_Mcomp_combined <- ggarrange(YE_hi_Mcomp_gg, YE_med_Mcomp_gg, YE_low_Mcomp_gg,
 
 ggsave(here::here("figures", "SS_figs", "for_paper", "Fig4.pdf"), YE_Mcomp_combined, height = 12, width = 5)
 
-
+ 
 ##### Figure 5 #####
 
 ## Load data

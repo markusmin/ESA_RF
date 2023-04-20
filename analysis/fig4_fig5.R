@@ -92,11 +92,27 @@ YE_med_M4_Bratio_df <- data.frame(Yr = YE_med_M4$Yr, Bratio = YE_med_M4$SpawnBio
 YE_med_M5_Bratio_df <- data.frame(Yr = YE_med_M5$Yr, Bratio = YE_med_M5$SpawnBio/YE_med_M5$SpawnBio[1], M = 0.04)
 YE_med_M6_Bratio_df <- data.frame(Yr = YE_med_M6$Yr, Bratio = YE_med_M6$SpawnBio/YE_med_M6$SpawnBio[1], M = 0.044)
 
+# Load new SS run from Jason - 2023-04-19
+YE_med_M0.04 <- read.csv("/Users/markusmin/Documents/ESA_RF_2021_SS_runs/YEY_USDPS/2023-04-19/Medium_catch_M0_04.csv", header = FALSE)
+
+YE_med_M0.04 %>% 
+  mutate(M = 0.04) %>% 
+  dplyr::rename(Yr = V1, Bratio = V2) %>% 
+  mutate(Yr = as.numeric(gsub("Bratio_", "", Yr))) -> YE_med_M0.04
+
+# add in 1919 and 1920 as 1 for bratio
+YE_med_M0.04_1919_1920 <- data.frame(Yr = c(1919, 1920), Bratio = c(1,1), M = c(0.04, 0.04))
+
+YE_med_M0.04_1919_1920 %>% 
+  bind_rows(., YE_med_M0.04) -> YE_med_M0.04
+
+
 YE_med_M1_Bratio_df %>% 
   bind_rows(., YE_med_M2_Bratio_df) %>% 
   bind_rows(., YE_med_M3_Bratio_df) %>% 
   bind_rows(., YE_med_M4_Bratio_df) %>% 
-  bind_rows(., YE_med_M5_Bratio_df) %>% 
+  # bind_rows(., YE_med_M5_Bratio_df) %>% 
+  bind_rows(., YE_med_M0.04) %>% 
   bind_rows(., YE_med_M6_Bratio_df) -> YE_med_Mcomp
 
 ### Low catch
@@ -147,9 +163,10 @@ YE_hi_Mcomp_gg <- ggplot(YE_hi_Mcomp, aes(x = Yr, y = Bratio, color = as.factor(
                      labels = c("0.024", "0.028", "0.032", "0.036", "0.040", "0.044"),
                      guide = guide_legend(reverse = TRUE)) +
   theme(legend.position = c(0.2,0.3),
+        legend.background = element_rect(colour = 'black', fill = 'white', linetype='solid'),
         panel.background = element_rect(fill = "white", color = "black"),
-        panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(size = 0.25, color = "gray50"),
         plot.margin = unit(c(0.5, 0.5, 0.5, 0.5),"cm"))
 
 YE_med_Mcomp_gg <- ggplot(YE_med_Mcomp, aes(x = Yr, y = Bratio, color = as.factor(M))) +
@@ -168,9 +185,10 @@ YE_med_Mcomp_gg <- ggplot(YE_med_Mcomp, aes(x = Yr, y = Bratio, color = as.facto
                      labels = c("0.024", "0.028", "0.032", "0.036", "0.040", "0.044"),
                      guide = guide_legend(reverse = TRUE)) +
   theme(legend.position = c(0.2,0.3),
+        legend.background = element_rect(colour = 'black', fill = 'white', linetype='solid'),
         panel.background = element_rect(fill = "white", color = "black"),
-        panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(size = 0.25, color = "gray50"),
         plot.margin = unit(c(0.5, 0.5, 0.5, 0.5),"cm"))
 
 YE_low_Mcomp_gg <- ggplot(YE_low_Mcomp, aes(x = Yr, y = Bratio, color = as.factor(M))) +
@@ -189,9 +207,10 @@ YE_low_Mcomp_gg <- ggplot(YE_low_Mcomp, aes(x = Yr, y = Bratio, color = as.facto
                      labels = c("0.024", "0.028", "0.032", "0.036", "0.040", "0.044"),
                      guide = guide_legend(reverse = TRUE)) +
   theme(legend.position = c(0.2,0.3),
+        legend.background = element_rect(colour = 'black', fill = 'white', linetype='solid'),
         panel.background = element_rect(fill = "white", color = "black"),
-        panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(size = 0.25, color = "gray50"),
         plot.margin = unit(c(0.5, 0.5, 0.5, 0.5),"cm"))
 
 # Arrange three panels
@@ -220,6 +239,15 @@ lowM_lowCt.df<-data.frame(Year=c(1921:2021),Bratio=lowM_lowCt$derived_quants$Val
 LowM.scenarios<-rbind(lowM_hiCt.df,lowM_medCt.df,lowM_lowCt.df)
 LowM.scenarios.ci<-mutate(LowM.scenarios,low = Bratio -(1.96*SD), high = Bratio +(1.96*SD))
 
+# Use truncnorm to update confidence interval
+library(truncnorm)
+LowM.scenarios %>% 
+  mutate(low = qtruncnorm(p = c(0.025), a=0, b=Inf, mean = Bratio, sd = SD)) %>% 
+  mutate(high = qtruncnorm(p = c(0.975), a=0, b=Inf, mean = Bratio, sd = SD)) -> LowM.scenarios.ci
+
+# qtruncnorm(p = c(0.025, 0.975), a=0, b=Inf, mean = 0, sd = 1)
+
+
 # check probability of being less than 0.25 in terminal year for high catch low M
 mean_2021 <- subset(lowM_hiCt.df, Year == 2021)$Bratio
 sd_2021 <- subset(lowM_hiCt.df, Year == 2021)$SD
@@ -231,15 +259,15 @@ fig5_gg <-ggplot(LowM.scenarios.ci,aes(Year,Bratio,color=Scenario))+
   geom_line(lwd=1.5,lty=1)+
   geom_ribbon(aes(ymin = low, ymax = high), alpha = 0.05)+
   labs(x = "Year",
-       y = "Relative stock Status")+
+       y = "Fraction of unfished")+
   scale_color_manual(name = "Catch scenario", labels = c("High", "Medium", "Low"), values = c("#9ecae1", "#4292c6", "#08519c"))+
   scale_y_continuous(expand = c(0,0), lim = c(-0.1, 1.2), breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1)) +
   scale_x_continuous(expand = c(0,0), lim = c(1921, 2021), breaks = c(1921, 1940, 1960, 1980, 2000, 2020)) +
   theme(legend.position = c(0.15,0.3),
+        legend.background = element_rect(colour = 'black', fill = 'white', linetype='solid'),
         panel.background = element_rect(fill = "white", color = "black"),
-        panel.grid.major = element_blank(),
-        # panel.grid.major.y = element_line(color = "grey50", size = 0.25),
         panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(size = 0.25, color = "gray50"),
         plot.margin = unit(c(0.5, 0.5, 0.5, 0.5),"cm")) +
   geom_hline(yintercept = 1, lty = 2) + 
   geom_hline(yintercept = 0, lty = 2)

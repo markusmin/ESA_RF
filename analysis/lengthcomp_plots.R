@@ -50,6 +50,6 @@ lengthcomp_fig <- ggarrange(PW_lengthcomps, ESA_lengthcomps, ncol = 1, nrow = 2,
           labels = c("(a)", "(b)"), font.label = list(size = 25, face = "plain"),
           label.x = -0.01)
 
-ggsave(here::here("figures", "lengths", "Fig3.pdf"), lengthcomp_fig, height = 11, width  = 6) 
+ggsave(here::here("figures", "lengths", "Fig2.pdf"), lengthcomp_fig, height = 11, width  = 6) 
 
 

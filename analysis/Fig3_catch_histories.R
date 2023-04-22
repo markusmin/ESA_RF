@@ -91,4 +91,4 @@ catch_fig <- ggarrange(YE_comm_catch_history_plot, YE_rec_catch_history_plot, nc
                             labels = c("(a)", "(b)"), font.label = list(size = 25, face = "plain"),
                        label.x = -0.01)
 
-ggsave(here::here("figures", "catch_reconstruction", "for_paper", "Fig2.pdf"), catch_fig, height = 12, width  = 12) 
+ggsave(here::here("figures", "catch_reconstruction", "for_paper", "Fig3.pdf"), catch_fig, height = 12, width  = 12) 

@@ -8,8 +8,8 @@
 .Rproj.user
 
 # Ignore hook and line data
-.hook_and_line_data/PW_additional_files/
-.hook_and_line_data/Washington_et_al_74-77_Puget_Sound_data.xlsx
-.hook_and_line_data/2017_2019_bycatch_survey_catch.csv
-.hook_and_line_data/2017_2019_bycatch_survey_effort.csv
-.hook_and_line_data/2014_2015_genetics_survey.xlsx
+./hook_and_line_data/PW_additional_files/
+./hook_and_line_data/Washington_et_al_74-77_Puget_Sound_data.xlsx
+./hook_and_line_data/2017_2019_bycatch_survey_catch.csv
+./hook_and_line_data/2017_2019_bycatch_survey_effort.csv
+./hook_and_line_data/2014_2015_genetics_survey.xlsx

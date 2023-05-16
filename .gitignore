@@ -14,3 +14,7 @@
 /hook_and_line_data/2017_2019_bycatch_survey_effort.csv
 /hook_and_line_data/2014_2015_genetics_survey.xlsx
 /hook_and_line_data/FLAGGED_2014_2015_genetics_survey.xlsx
+
+# Ignore WDFW ROV and trawl data
+/WDFW_trawl_survey_data/
+/ROV_data/

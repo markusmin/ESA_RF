@@ -24,3 +24,6 @@
 
 # ignore figures of ROV data
 /figures/ROV/
+
+# ignore outputs of yelloweye abundance from ROV
+/outputs/ROV_survey_abundance_estimates.csv

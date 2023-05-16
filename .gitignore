@@ -18,3 +18,9 @@
 # Ignore WDFW ROV and trawl data
 /WDFW_trawl_survey_data/
 /ROV_data/
+
+# ignore presentation containing ROV data
+/presentations/20210525/
+
+# ignore figures of ROV data
+/figures/ROV/

@@ -4,6 +4,9 @@ library(tidyverse)
 library(here)
 library(ggpubr)
 
+# set the figure directory
+fig_dir <- here::here("figures", "catch_reconstruction")
+
 # read in completed catch history files
 YE_high <- read.csv(here::here("catch_reconstruction_data", "complete_catch_histories", 
                                "yelloweye_USDPS_catch_scenario_high.csv"))
@@ -29,6 +32,10 @@ YE_high_rec %>%
   dplyr::rename(scenario = name) %>% 
   mutate(scenario = factor(scenario, levels = c("high", "medium", "low")))-> YE_rec
 
+# edit - convert pounds to kg
+YE_rec %>% 
+  mutate(value = value * 0.453592) -> YE_rec
+
 # reformat all comm catch into one df
 dplyr::select(YE_high, year, US_comm_catch_lbs) %>% 
   dplyr::rename(high = US_comm_catch_lbs) -> YE_high_comm
@@ -46,6 +53,9 @@ YE_high_comm %>%
   dplyr::rename(scenario = name) %>% 
   mutate(scenario = factor(scenario, levels = c("high", "medium", "low")))-> YE_comm
 
+# edit - convert pounds to kg
+YE_comm %>% 
+  mutate(value = value * 0.453592) -> YE_comm
 
 # Generate the plots
 YE_rec_catch_history_plot <- ggplot(YE_rec, aes(x = year, y = value, fill = scenario))+
@@ -60,9 +70,9 @@ YE_rec_catch_history_plot <- ggplot(YE_rec, aes(x = year, y = value, fill = scen
         legend.title = element_text(size = 15),
         plot.margin = unit(c(0.5,0.5,0.5,1), "cm"))+
   xlab("Year")+
-  ylab("Catch (lbs)")+
+  ylab("Catch (kg)")+
   scale_x_continuous(breaks = seq(1920, 2020, 10)) +
-  scale_y_continuous(expand = c(0,0), limits = c(0, 20000))
+  scale_y_continuous(expand = c(0,0), limits = c(0, 10000))
 
 ggsave(paste0(fig_dir, "/for_paper/YE_rec.pdf"), YE_rec_catch_history_plot, height = 6, width = 12)
 
@@ -78,9 +88,9 @@ YE_comm_catch_history_plot <- ggplot(YE_comm, aes(x = year, y = value, fill = sc
         legend.title = element_text(size = 15),
         plot.margin = unit(c(0.5,0.5,0.5,1), "cm"))+
   xlab("Year")+
-  ylab("Catch (lbs)")+
+  ylab("Catch (kg)")+
   scale_x_continuous(breaks = seq(1920, 2020, 10)) +
-  scale_y_continuous(expand = c(0,0), limits = c(0, 20000))
+  scale_y_continuous(expand = c(0,0), limits = c(0, 10000))
 
 ggsave(paste0(fig_dir, "/for_paper/YE_comm.pdf"), YE_comm_catch_history_plot, height = 6, width = 12)
 
